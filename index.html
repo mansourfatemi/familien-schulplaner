@@ -377,6 +377,63 @@
     color: #065f46;
   }
 
+
+  /* 2-Hour Daily Goal */
+  .goal-bar-wrap {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+  }
+  .goal-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    font-weight: 600;
+  }
+  .goal-bar-label { color: var(--text); }
+  .goal-bar-time { font-size: 1.05em; font-weight: 700; }
+  .goal-bar-track {
+    width: 100%;
+    height: 18px;
+    background: #e8ecf1;
+    border-radius: 9px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .goal-bar-fill {
+    height: 100%;
+    border-radius: 9px;
+    transition: width 0.4s ease;
+  }
+  .goal-bar-status {
+    font-size: 0.82em;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .goal-bar-status.reached { color: #059669; }
+  .goal-bar-status.partial { color: #d97706; }
+  .goal-bar-status.low { color: #dc2626; }
+  .goal-bar-status.notime { color: #6b7280; }
+
+  /* Overview goal mini-badges */
+  .ov-goal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 700;
+  }
+  .ov-goal-badge.reached { background: #d1fae5; color: #065f46; }
+  .ov-goal-badge.partial  { background: #fef3c7; color: #92400e; }
+  .ov-goal-badge.low      { background: #fee2e2; color: #991b1b; }
+  .ov-goal-badge.notime   { background: #f3f4f6; color: #6b7280; }
+
   @media (max-width: 700px) {
     .schedule-grid { grid-template-columns: 60px repeat(5, 1fr); font-size: 0.85em; }
     .tabs { overflow-x: auto; }
@@ -606,6 +663,8 @@ function buildHomework(child) {
     return 0;
   });
 
+  // Goal bar above homework list
+  html += buildGoalBar(child, items);
   html += '<ul class="hw-list">';
   sorted.forEach(item => {
     const idx = item._idx;
@@ -719,9 +778,10 @@ function buildOverview() {
     const pct = total > 0 ? Math.round(done/total*100) : 0;
     const barColor = done === total && total > 0 ? 'var(--green)' : info.color;
     cardsHtml += '<div class="hw-section" style="border-left:3px solid ' + info.color + '">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
       + '<strong style="color:' + info.color + '">' + info.name + ' (' + info.grade + ')</strong>'
       + '<span style="color:var(--text-dim);font-size:0.85em">' + done + '/' + total + ' erledigt</span></div>'
+      + '<div style="margin-bottom:10px">' + goalBadgeHtml(items) + '</div>'
       + '<div style="background:#e0e4ea;border-radius:6px;height:8px;overflow:hidden;margin-bottom:10px">'
       + '<div style="background:' + barColor + ';height:100%;width:' + pct + '%;border-radius:6px;transition:width 0.3s"></div></div>';
     if (total === 0) { cardsHtml += '<div style="color:var(--text-dim);font-size:0.85em;text-align:center;padding:8px">Keine Hausaufgaben für heute</div>'; }
@@ -763,6 +823,83 @@ function switchTab(child) {
 
 function updateDateHeaders() { document.getElementById('headerDate').textContent = formatDateDE(currentDate); }
 
+
+// ======= 2-HOUR DAILY GOAL =======
+const DAILY_GOAL_MIN = 120; // 2 hours
+
+function calcStudyMinutes(items) {
+  let mins = 0;
+  let hasTime = false;
+  items.forEach(item => {
+    if (item.timeFrom && item.timeTo) {
+      const f = item.timeFrom.split(':').map(Number);
+      const t = item.timeTo.split(':').map(Number);
+      const diff = (t[0]*60+t[1]) - (f[0]*60+f[1]);
+      if (diff > 0) { mins += diff; hasTime = true; }
+    } else if (item.timeFrom) {
+      mins += 30; hasTime = true;
+    }
+  });
+  return { mins, hasTime };
+}
+
+function minsToStr(m) {
+  const h = Math.floor(m/60), min = m%60;
+  return h > 0 ? h + ' Std ' + (min > 0 ? min + ' Min' : '') : min + ' Min';
+}
+
+function buildGoalBar(child, items) {
+  const { mins, hasTime } = calcStudyMinutes(items);
+  const color = CHILDREN[child].color;
+  const pct = Math.min(100, Math.round(mins / DAILY_GOAL_MIN * 100));
+  const remaining = DAILY_GOAL_MIN - mins;
+
+  let statusClass, statusMsg, barColor;
+  if (!hasTime && items.length === 0) {
+    statusClass = 'notime';
+    statusMsg = '&#x1F4AC; Noch keine Aufgaben für heute eingetragen.';
+    barColor = '#d1d5db';
+  } else if (!hasTime) {
+    statusClass = 'notime';
+    statusMsg = '&#x26A0;&#xFE0F; Keine Zeiten eingetragen — bitte <em>von/bis</em> ausfüllen für Zeiterfassung.';
+    barColor = '#d1d5db';
+  } else if (mins >= DAILY_GOAL_MIN) {
+    statusClass = 'reached';
+    statusMsg = '&#x1F3C6; Tagesziel erreicht! <strong>' + minsToStr(mins) + '</strong> gelernt — super!';
+    barColor = '#34d399';
+  } else if (pct >= 50) {
+    statusClass = 'partial';
+    statusMsg = '&#x23F3; Noch <strong>' + minsToStr(remaining) + '</strong> bis zum 2-Stunden-Ziel (' + pct + '% geschafft)';
+    barColor = '#fbbf24';
+  } else {
+    statusClass = 'low';
+    statusMsg = '&#x1F4A1; Erst <strong>' + minsToStr(mins) + '</strong> von 2 Stunden — weiter so!';
+    barColor = '#ef4444';
+  }
+
+  return '<div class="goal-bar-wrap">'
+    + '<div class="goal-bar-header">'
+    + '<span class="goal-bar-label">&#x1F3AF; Tagesziel: 2 Stunden Lernen</span>'
+    + '<span class="goal-bar-time" style="color:' + (mins >= DAILY_GOAL_MIN ? '#059669' : color) + '">'
+    + minsToStr(mins) + ' / 2 Std</span>'
+    + '</div>'
+    + '<div class="goal-bar-track">'
+    + '<div class="goal-bar-fill" style="width:' + pct + '%;background:' + barColor + '"></div>'
+    + '</div>'
+    + '<div class="goal-bar-status ' + statusClass + '">' + statusMsg + '</div>'
+    + '</div>';
+}
+
+function goalBadgeHtml(items) {
+  const { mins, hasTime } = calcStudyMinutes(items);
+  const pct = Math.min(100, Math.round(mins / DAILY_GOAL_MIN * 100));
+  if (!hasTime && items.length === 0) return '<span class="ov-goal-badge notime">&#x23F0; keine Daten</span>';
+  if (!hasTime) return '<span class="ov-goal-badge notime">&#x26A0; Zeit fehlt</span>';
+  if (mins >= DAILY_GOAL_MIN) return '<span class="ov-goal-badge reached">&#x2705; ' + minsToStr(mins) + '</span>';
+  if (pct >= 50) return '<span class="ov-goal-badge partial">&#x1F7E1; ' + minsToStr(mins) + '</span>';
+  return '<span class="ov-goal-badge low">&#x1F534; ' + minsToStr(mins) + '</span>';
+}
+
 // ======= TAGESBERICHT (Daily Report) =======
 function buildDayReport(child) {
   const container = document.getElementById('report-day-' + child);
@@ -777,21 +914,9 @@ function buildDayReport(child) {
     return;
   }
 
-  // Calculate study time from timeFrom/timeTo fields
-  let studyMinutes = 0;
-  items.forEach(item => {
-    if (item.timeFrom && item.timeTo) {
-      const f = item.timeFrom.split(':').map(Number);
-      const t = item.timeTo.split(':').map(Number);
-      const diff = (t[0] * 60 + t[1]) - (f[0] * 60 + f[1]);
-      if (diff > 0) studyMinutes += diff;
-    } else if (item.timeFrom) {
-      studyMinutes += 30; // estimated if no end time
-    }
-  });
-  const studyH = Math.floor(studyMinutes / 60);
-  const studyM = studyMinutes % 60;
-  const studyStr = studyH > 0 ? studyH + ' Std ' + studyM + ' Min' : studyM + ' Min';
+  // Calculate study time using shared helper
+  const { mins: studyMinutes } = calcStudyMinutes(items);
+  const studyStr = minsToStr(studyMinutes);
 
   // Subjects breakdown
   const subjCount = {};
@@ -810,6 +935,9 @@ function buildDayReport(child) {
     + '<div class="rs-item"><div class="rs-num" style="color:' + (pct === 100 ? 'var(--green)' : '#f59e0b') + '">' + pct + '%</div><div class="rs-label">Fortschritt</div></div>'
     + '<div class="rs-item"><div class="rs-num" style="color:#2563eb">' + studyStr + '</div><div class="rs-label">Lernzeit</div></div>'
     + '</div>';
+
+  // Goal progress in day report
+  html += buildGoalBar(child, items);
 
   // Per-subject bars
   html += '<div style="margin-top:12px;font-weight:600;font-size:0.9em">Fächer-Details:</div>';
@@ -876,16 +1004,8 @@ function buildWeekReport(child) {
     dailyStats.push({ day: dayNames[di], total: dayTotal, done: dayDone });
 
     // Study time per day from timeFrom/timeTo
-    items.forEach(item => {
-      if (item.timeFrom && item.timeTo) {
-        const f = item.timeFrom.split(':').map(Number);
-        const t = item.timeTo.split(':').map(Number);
-        const diff = (t[0] * 60 + t[1]) - (f[0] * 60 + f[1]);
-        if (diff > 0) totalStudyMin += diff;
-      } else if (item.timeFrom) {
-        totalStudyMin += 30;
-      }
-    });
+    const { mins: dayMins } = calcStudyMinutes(items);
+    totalStudyMin += dayMins;
 
     items.forEach(item => {
       subjWeekCount[item.subject] = (subjWeekCount[item.subject] || 0) + 1;
@@ -894,9 +1014,17 @@ function buildWeekReport(child) {
   });
 
   const weekPct = weekTotal > 0 ? Math.round(weekDone / weekTotal * 100) : 0;
-  const totalStudyH = Math.floor(totalStudyMin / 60);
-  const totalStudyM = totalStudyMin % 60;
-  const studyStr = totalStudyH > 0 ? totalStudyH + ' Std ' + totalStudyM + ' Min' : totalStudyM + ' Min';
+  const studyStr = minsToStr(totalStudyMin);
+
+  // Count days where 2h goal was met
+  let goalDays = 0, goalDaysStr = '';
+  weekDays.forEach(d => {
+    const di = loadHomework(child, d);
+    const { mins } = calcStudyMinutes(di);
+    if (mins >= DAILY_GOAL_MIN) goalDays++;
+  });
+  const goalDayColor = goalDays >= 5 ? '#059669' : goalDays >= 3 ? '#d97706' : '#dc2626';
+  const goalEmoji = goalDays >= 5 ? '&#x1F3C6;' : goalDays >= 3 ? '&#x1F7E1;' : '&#x1F534;';
 
   if (weekTotal === 0) {
     container.innerHTML = '<div style="color:var(--text-dim);text-align:center;padding:16px;font-size:0.9em">Keine Daten für diese Woche — Bericht erscheint nach dem Eintragen.</div>';
@@ -911,6 +1039,7 @@ function buildWeekReport(child) {
     + '<div class="rs-item"><div class="rs-num" style="color:var(--green)">' + weekDone + '</div><div class="rs-label">Erledigt</div></div>'
     + '<div class="rs-item"><div class="rs-num" style="color:' + (weekPct === 100 ? 'var(--green)' : '#f59e0b') + '">' + weekPct + '%</div><div class="rs-label">Fortschritt</div></div>'
     + '<div class="rs-item"><div class="rs-num" style="color:#2563eb">' + studyStr + '</div><div class="rs-label">Lernzeit gesamt</div></div>'
+    + '<div class="rs-item"><div class="rs-num" style="color:' + goalDayColor + '">' + goalEmoji + ' ' + goalDays + '/7</div><div class="rs-label">Tage mit 2h-Ziel</div></div>'
     + '</div>';
 
   // Daily chart (simple bar chart)
