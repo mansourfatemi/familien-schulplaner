@@ -15,6 +15,8 @@
     --ibrahim-color: #4A90D9;
     --hosna-color: #E91E8C;
     --jasmin-color: #FF9800;
+    --zainab-color: #9B59B6;
+    --mansoor-color: #1ABC9C;
     --bg: #f0f2f5;
     --card-bg: #ffffff;
     --text: #1a1a2e;
@@ -73,6 +75,8 @@
   .tab.active[data-child="hosna"] { color: var(--hosna-color); }
   .tab.active[data-child="jasmin"] { color: var(--jasmin-color); }
   .tab.active[data-child="all"] { color: var(--green); }
+  .tab.active[data-child="zainab"] { color: var(--zainab-color); }
+  .tab.active[data-child="mansoor"] { color: var(--mansoor-color); }
   .tab .avatar {
     width: 28px; height: 28px;
     border-radius: 50%;
@@ -83,6 +87,8 @@
   .tab[data-child="hosna"] .avatar { background: var(--hosna-color); }
   .tab[data-child="jasmin"] .avatar { background: var(--jasmin-color); }
   .tab[data-child="all"] .avatar { background: var(--green); }
+  .tab[data-child="zainab"] .avatar { background: var(--zainab-color); }
+  .tab[data-child="mansoor"] .avatar { background: var(--mansoor-color); }
 
   .content { padding: 20px; max-width: 1200px; margin: 0 auto; }
   .panel { display: none; }
@@ -399,6 +405,12 @@
   <div class="tab" data-child="jasmin" onclick="switchTab('jasmin')">
     <div class="avatar">JF</div> Jasmin
   </div>
+  <div class="tab" data-child="zainab" onclick="switchTab('zainab')">
+    <div class="avatar">ZF</div> Zainab
+  </div>
+  <div class="tab" data-child="mansoor" onclick="switchTab('mansoor')">
+    <div class="avatar">MF</div> Mansoor
+  </div>
 </div>
 
 <div class="content">
@@ -461,6 +473,43 @@
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-jasmin"></div>
   </div>
+
+  <!-- ZAINAB PANEL -->
+  <div class="panel" id="panel-zainab">
+    <div class="child-info">
+      <div class="ci-avatar" style="background:var(--zainab-color)">ZF</div>
+      <div>
+        <div class="ci-name">Zainab Fatemi</div>
+        <div class="ci-detail">&#x1F3EB; Abendgymnasium</div>
+      </div>
+    </div>
+    <div class="section-title">&#x1F4C5; Stundenplan</div>
+    <div class="schedule-grid" id="schedule-zainab"></div>
+    <div class="section-title">&#x1F4DD; Hausaufgaben</div>
+    <div class="hw-section" id="hw-zainab"></div>
+    <div class="section-title">&#x1F4CA; Tagesbericht</div>
+    <div class="hw-section" id="report-day-zainab"></div>
+    <div class="section-title">&#x1F4C8; Wochenbericht</div>
+    <div class="hw-section" id="report-week-zainab"></div>
+  </div>
+
+  <!-- MANSOOR PANEL -->
+  <div class="panel" id="panel-mansoor">
+    <div class="child-info">
+      <div class="ci-avatar" style="background:var(--mansoor-color)">MF</div>
+      <div>
+        <div class="ci-name">Mansoor Fatemi</div>
+        <div class="ci-detail">&#x1F4D6; Pers&#246;nliches Lernen &mdash; Mathe &bull; Quran &bull; Englisch &bull; Deutsch</div>
+      </div>
+    </div>
+    <div class="section-title">&#x1F4DD; T&#228;gliche Lernaufgaben</div>
+    <div class="hw-section" id="hw-mansoor"></div>
+    <div class="section-title">&#x1F4CA; Tagesbericht</div>
+    <div class="hw-section" id="report-day-mansoor"></div>
+    <div class="section-title">&#x1F4C8; Wochenbericht</div>
+    <div class="hw-section" id="report-week-mansoor"></div>
+  </div>
+
 </div>
 
 <script>
@@ -476,6 +525,14 @@ const CHILDREN = {
   jasmin: {
     name: 'Jasmin', color: '#FF9800', grade: '2. Klasse',
     subjects: ['Mathematik','Deutsch','Sachunterricht','Musik','Sport','Religion','Bildnerische Erziehung','Werken','Quran']
+  },
+  zainab: {
+    name: 'Zainab', color: '#9B59B6', grade: 'Abendgymnasium',
+    subjects: ['Mathematik','Deutsch','Englisch','Geschichte','Geographie','Biologie','Physik','Chemie','Sport','Religion','Informatik','Quran']
+  },
+  mansoor: {
+    name: 'Mansoor', color: '#1ABC9C', grade: 'Persönliches Lernen',
+    subjects: ['Mathematik','Quran','Englisch','Deutsch']
   }
 };
 
@@ -640,21 +697,21 @@ function deleteHw(child, idx) {
 
 function changeDate(delta, child) {
   currentDate.setDate(currentDate.getDate() + delta);
-  if (child === 'all') { buildOverview(); ['ibrahim','hosna','jasmin'].forEach(c => { buildHomework(c); buildDayReport(c); buildWeekReport(c); }); }
+  if (child === 'all') { buildOverview(); ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(c => { buildHomework(c); buildDayReport(c); buildWeekReport(c); }); }
   else { buildHomework(child); buildDayReport(child); buildWeekReport(child); }
   updateDateHeaders();
 }
 
 function jumpToDate(val, child) {
   currentDate = new Date(val + 'T12:00:00');
-  if (child === 'all') { buildOverview(); ['ibrahim','hosna','jasmin'].forEach(c => { buildHomework(c); buildDayReport(c); buildWeekReport(c); }); }
+  if (child === 'all') { buildOverview(); ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(c => { buildHomework(c); buildDayReport(c); buildWeekReport(c); }); }
   else { buildHomework(child); buildDayReport(child); buildWeekReport(child); }
   updateDateHeaders();
 }
 
 function buildOverview() {
   let totalAll = 0, doneAll = 0, cardsHtml = '';
-  ['ibrahim','hosna','jasmin'].forEach(child => {
+  ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(child => {
     const info = CHILDREN[child];
     const items = loadHomework(child, currentDate);
     const total = items.length, done = items.filter(i => i.done).length;
@@ -684,13 +741,13 @@ function buildOverview() {
   document.getElementById('overviewStats').innerHTML =
     '<div class="stat-card"><div class="stat-num" style="color:var(--green)">' + doneAll + '/' + totalAll + '</div><div class="stat-label">Aufgaben erledigt</div></div>'
     + '<div class="stat-card"><div class="stat-num" style="color:' + (pctAll===100&&totalAll>0?'var(--green)':'var(--text)') + '">' + pctAll + '%</div><div class="stat-label">Fortschritt</div></div>'
-    + '<div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Kinder</div></div>';
+    + '<div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Mitglieder</div></div>';
   document.getElementById('overviewCards').innerHTML = cardsHtml;
   document.getElementById('overviewDate').textContent = formatDateDE(currentDate);
 }
 
 function getSubjectColor(subject) {
-  const map = { 'Mathematik':'#4A90D9','Deutsch':'#E91E8C','Englisch':'#FF9800','Sachunterricht':'#34d399','Religion':'#a78bfa','Musik':'#f472b6','Sport':'#ef4444','Bildnerische Erziehung':'#fbbf24','Werken':'#818cf8','Technisches Werken':'#818cf8','Geschichte':'#c084fc','Geographie':'#22d3ee','Biologie':'#4ade80','Physik':'#60a5fa','Quran':'#059669' };
+  const map = { 'Mathematik':'#4A90D9','Deutsch':'#E91E8C','Englisch':'#FF9800','Sachunterricht':'#34d399','Religion':'#a78bfa','Musik':'#f472b6','Sport':'#ef4444','Bildnerische Erziehung':'#fbbf24','Werken':'#818cf8','Technisches Werken':'#818cf8','Geschichte':'#c084fc','Geographie':'#22d3ee','Biologie':'#4ade80','Physik':'#60a5fa','Chemie':'#f97316','Informatik':'#06b6d4','Quran':'#059669' };
   return map[subject] || '#64748b';
 }
 
@@ -929,7 +986,7 @@ function buildWeekReport(child) {
 }
 
 function buildAllReports() {
-  ['ibrahim','hosna','jasmin'].forEach(child => {
+  ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(child => {
     buildDayReport(child);
     buildWeekReport(child);
   });
@@ -937,7 +994,8 @@ function buildAllReports() {
 
 function init() {
   updateDateHeaders();
-  ['ibrahim','hosna','jasmin'].forEach(child => { buildSchedule(child); buildHomework(child); });
+  ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildSchedule(child); buildHomework(child); });
+  buildHomework('mansoor');
   buildOverview();
   buildAllReports();
 }
@@ -1039,7 +1097,7 @@ init();
 
     // Real-time sync for homework — listen to all 3 children
     function setupRealtimeSync() {
-      ['ibrahim','hosna','jasmin'].forEach(child => {
+      ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(child => {
         // Listen to all homework entries for this child
         const r = ref(db, FAMILY_KEY + '/hw_' + child);
         onValue(r, snap => {
