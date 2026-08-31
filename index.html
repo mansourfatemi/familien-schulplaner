@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fatemi Family — Stundenplan & Hausaufgaben</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Schulplaner">
+  <link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root {
+    --ibrahim-color: #4A90D9;
+    --hosna-color: #E91E8C;
+    --jasmin-color: #FF9800;
+    --bg: #f0f2f5;
+    --card-bg: #ffffff;
+    --text: #1a1a2e;
+    --text-dim: #5f6b7a;
+    --border: #dde1e6;
+    --green: #34d399;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
+    border-bottom: 2px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header h1 {
+    font-size: 1.4em;
+    background: linear-gradient(135deg, var(--ibrahim-color), var(--hosna-color), var(--jasmin-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header .date-info { color: var(--text-dim); font-size: 0.9em; }
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--card-bg);
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 14px 24px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 0.95em;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tab:hover { color: var(--text); background: #eef1f5; }
+  .tab.active { color: var(--text); border-bottom-color: currentColor; }
+  .tab.active[data-child="ibrahim"] { color: var(--ibrahim-color); }
+  .tab.active[data-child="hosna"] { color: var(--hosna-color); }
+  .tab.active[data-child="jasmin"] { color: var(--jasmin-color); }
+  .tab.active[data-child="all"] { color: var(--green); }
+  .tab .avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8em; font-weight: 700; color: #fff;
+  }
+  .tab[data-child="ibrahim"] .avatar { background: var(--ibrahim-color); }
+  .tab[data-child="hosna"] .avatar { background: var(--hosna-color); }
+  .tab[data-child="jasmin"] .avatar { background: var(--jasmin-color); }
+  .tab[data-child="all"] .avatar { background: var(--green); }
+
+  .content { padding: 20px; max-width: 1200px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .section-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin: 20px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(5, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .schedule-grid .cell {
+    background: var(--card-bg);
+    padding: 10px 8px;
+    font-size: 0.82em;
+    text-align: center;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .schedule-grid .cell.header-cell {
+    background: #e8ecf1;
+    font-weight: 700;
+    color: var(--text);
+    font-size: 0.85em;
+  }
+  .schedule-grid .cell.time-cell {
+    background: #e8ecf1;
+    font-weight: 600;
+    color: var(--text-dim);
+    font-size: 0.78em;
+  }
+  .cell .subject-input {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed transparent;
+    color: var(--text);
+    text-align: center;
+    font-size: 0.9em;
+    padding: 4px;
+    border-radius: 4px;
+    outline: none;
+  }
+  .cell .subject-input:hover { border-color: var(--border); }
+  .cell .subject-input:focus { border-color: var(--ibrahim-color); background: #f5f7fa; }
+
+  .hw-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+  .hw-date-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .hw-date-nav button {
+    background: #e8ecf1;
+    border: none;
+    color: var(--text);
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hw-date-nav button:hover { background: #d0d5dd; }
+  .hw-date-nav .hw-date { font-weight: 700; font-size: 1.05em; }
+  .hw-date-nav input[type="date"] {
+    background: #e8ecf1;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.9em;
+  }
+  .hw-list { list-style: none; }
+  .hw-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: #f8f9fb;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .hw-item:hover { background: #eef1f5; }
+  .hw-item.done { opacity: 0.5; }
+  .hw-item.done .hw-text { text-decoration: line-through; }
+  .hw-check {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.2s;
+  }
+  .hw-check.checked { background: var(--green); border-color: var(--green); }
+  .hw-check.checked::after { content: '\2713'; color: #fff; font-size: 0.8em; font-weight: 700; }
+  .hw-body { flex: 1; }
+  .hw-subject-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .hw-text { font-size: 0.92em; color: var(--text); margin-top: 4px; min-height: 1.4em; }
+  .hw-delete {
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 1.1em;
+    padding: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .hw-item:hover .hw-delete { opacity: 1; }
+  .hw-delete:hover { color: var(--red); }
+
+  .hw-time-badge {
+    display: inline-block;
+    background: #eef1f5;
+    color: var(--text-dim);
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.75em;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .hw-time-badge.has-time { background: #dbeafe; color: #2563eb; }
+  .hw-time-input {
+    background: #f5f7fa;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 3px 6px;
+    border-radius: 6px;
+    font-size: 0.82em;
+    width: 70px;
+    cursor: pointer;
+  }
+  .hw-add-form { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
+  .hw-add-form select, .hw-add-form input[type="text"], .hw-add-form input[type="time"] {
+    background: #f5f7fa;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9em;
+  }
+  .hw-add-form input[type="time"] { width: 100px; }
+  .hw-add-form input[type="text"] { flex: 1; min-width: 180px; }
+  .hw-add-form input[type="text"]::placeholder { color: var(--text-dim); }
+  .hw-add-btn {
+    background: var(--green);
+    border: none;
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.9em;
+  }
+  .hw-add-btn:hover { filter: brightness(1.1); }
+
+  .stats-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
+  }
+  .stat-card .stat-num { font-size: 1.8em; font-weight: 700; }
+  .stat-card .stat-label { font-size: 0.8em; color: var(--text-dim); margin-top: 4px; }
+
+  .child-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .child-info .ci-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3em; font-weight: 700; color: #fff;
+  }
+  .child-info .ci-name { font-size: 1.15em; font-weight: 700; }
+  .child-info .ci-detail { font-size: 0.85em; color: var(--text-dim); }
+
+  /* Reports */
+  .report-grid {
+    display: grid;
+    grid-template-columns: 1fr 80px 60px;
+    gap: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin: 10px 0;
+  }
+  .report-grid .rg-cell {
+    padding: 8px 12px;
+    font-size: 0.85em;
+    border-bottom: 1px solid var(--border);
+  }
+  .report-grid .rg-header {
+    background: #e8ecf1;
+    font-weight: 700;
+    font-size: 0.8em;
+    color: var(--text-dim);
+  }
+  .report-summary {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+  .report-summary .rs-item {
+    background: #f5f7fa;
+    border-radius: 10px;
+    padding: 12px 16px;
+    text-align: center;
+    min-width: 100px;
+    border: 1px solid var(--border);
+  }
+  .report-summary .rs-num { font-size: 1.4em; font-weight: 700; }
+  .report-summary .rs-label { font-size: 0.75em; color: var(--text-dim); margin-top: 2px; }
+  .report-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
+  }
+  .report-bar-label { font-size: 0.82em; min-width: 130px; }
+  .report-bar-track {
+    flex: 1;
+    height: 14px;
+    background: #e8ecf1;
+    border-radius: 7px;
+    overflow: hidden;
+  }
+  .report-bar-fill {
+    height: 100%;
+    border-radius: 7px;
+    transition: width 0.3s;
+  }
+  .report-bar-val { font-size: 0.78em; color: var(--text-dim); min-width: 30px; text-align: right; }
+  .report-tip {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #fef3c7;
+    border: 1px solid #fbbf24;
+    border-radius: 8px;
+    font-size: 0.85em;
+    color: #92400e;
+  }
+  .report-tip.good {
+    background: #d1fae5;
+    border-color: #34d399;
+    color: #065f46;
+  }
+
+  @media (max-width: 700px) {
+    .schedule-grid { grid-template-columns: 60px repeat(5, 1fr); font-size: 0.85em; }
+    .tabs { overflow-x: auto; }
+    .tab { padding: 10px 14px; font-size: 0.85em; }
+    .content { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>&#x1F468;&#x1F467;&#x1F466; Familie Fatemi — Schulplaner</h1>
+  <div class="date-info" id="headerDate"></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-child="all" onclick="switchTab('all')">
+    <div class="avatar">&#x1F4CA;</div> Übersicht
+  </div>
+  <div class="tab" data-child="ibrahim" onclick="switchTab('ibrahim')">
+    <div class="avatar">SI</div> Sayed Ibrahim
+  </div>
+  <div class="tab" data-child="hosna" onclick="switchTab('hosna')">
+    <div class="avatar">HF</div> Hosna
+  </div>
+  <div class="tab" data-child="jasmin" onclick="switchTab('jasmin')">
+    <div class="avatar">JF</div> Jasmin
+  </div>
+</div>
+
+<div class="content">
+  <div class="panel active" id="panel-all">
+    <div class="section-title">&#x1F4CA; Tagesübersicht — <span id="overviewDate"></span></div>
+    <div class="stats-row" id="overviewStats"></div>
+    <div id="overviewCards"></div>
+  </div>
+
+  <div class="panel" id="panel-ibrahim">
+    <div class="child-info">
+      <div class="ci-avatar" style="background:var(--ibrahim-color)">SI</div>
+      <div>
+        <div class="ci-name">Sayed Ibrahim Fatemi</div>
+        <div class="ci-detail">&#x1F4C5; 23.07.2013 · &#x1F382; 12 Jahre · &#x1F3EB; 7. Klasse (Gymnasium)</div>
+      </div>
+    </div>
+    <div class="section-title">&#x1F4C5; Stundenplan</div>
+    <div class="schedule-grid" id="schedule-ibrahim"></div>
+    <div class="section-title">&#x1F4DD; Hausaufgaben</div>
+    <div class="hw-section" id="hw-ibrahim"></div>
+    <div class="section-title">&#x1F4CA; Tagesbericht</div>
+    <div class="hw-section" id="report-day-ibrahim"></div>
+    <div class="section-title">&#x1F4C8; Wochenbericht</div>
+    <div class="hw-section" id="report-week-ibrahim"></div>
+  </div>
+
+  <div class="panel" id="panel-hosna">
+    <div class="child-info">
+      <div class="ci-avatar" style="background:var(--hosna-color)">HF</div>
+      <div>
+        <div class="ci-name">Hosna Fatemi</div>
+        <div class="ci-detail">&#x1F4C5; 19.11.2015 · &#x1F382; 10 Jahre · &#x1F3EB; 5. Klasse</div>
+      </div>
+    </div>
+    <div class="section-title">&#x1F4C5; Stundenplan</div>
+    <div class="schedule-grid" id="schedule-hosna"></div>
+    <div class="section-title">&#x1F4DD; Hausaufgaben</div>
+    <div class="hw-section" id="hw-hosna"></div>
+    <div class="section-title">&#x1F4CA; Tagesbericht</div>
+    <div class="hw-section" id="report-day-hosna"></div>
+    <div class="section-title">&#x1F4C8; Wochenbericht</div>
+    <div class="hw-section" id="report-week-hosna"></div>
+  </div>
+
+  <div class="panel" id="panel-jasmin">
+    <div class="child-info">
+      <div class="ci-avatar" style="background:var(--jasmin-color)">JF</div>
+      <div>
+        <div class="ci-name">Jasmin Fatemi</div>
+        <div class="ci-detail">&#x1F4C5; 31.01.2019 · &#x1F382; 7 Jahre · &#x1F3EB; 2. Klasse (Volksschule)</div>
+      </div>
+    </div>
+    <div class="section-title">&#x1F4C5; Stundenplan</div>
+    <div class="schedule-grid" id="schedule-jasmin"></div>
+    <div class="section-title">&#x1F4DD; Hausaufgaben</div>
+    <div class="hw-section" id="hw-jasmin"></div>
+    <div class="section-title">&#x1F4CA; Tagesbericht</div>
+    <div class="hw-section" id="report-day-jasmin"></div>
+    <div class="section-title">&#x1F4C8; Wochenbericht</div>
+    <div class="hw-section" id="report-week-jasmin"></div>
+  </div>
+</div>
+
+<script>
+const CHILDREN = {
+  ibrahim: {
+    name: 'Sayed Ibrahim', color: '#4A90D9', grade: '7. Klasse',
+    subjects: ['Mathematik','Deutsch','Englisch','Geschichte','Geographie','Biologie','Physik','Musik','Sport','Religion','Bildnerische Erziehung','Werken','Quran']
+  },
+  hosna: {
+    name: 'Hosna', color: '#E91E8C', grade: '5. Klasse',
+    subjects: ['Mathematik','Deutsch','Englisch','Sachunterricht','Musik','Sport','Religion','Bildnerische Erziehung','Werken','Technisches Werken','Quran']
+  },
+  jasmin: {
+    name: 'Jasmin', color: '#FF9800', grade: '2. Klasse',
+    subjects: ['Mathematik','Deutsch','Sachunterricht','Musik','Sport','Religion','Bildnerische Erziehung','Werken','Quran']
+  }
+};
+
+const DAYS = ['Mo','Di','Mi','Do','Fr'];
+const TIMES = ['08:00','08:50','09:50','10:40','11:30','12:20','13:10'];
+let currentDate = new Date();
+const LS_PREFIX = 'fatemi_';
+
+function lsKey(type, child) { return LS_PREFIX + type + '_' + child; }
+function saveSchedule(child, data) { localStorage.setItem(lsKey('schedule', child), JSON.stringify(data)); }
+function loadSchedule(child) { const r = localStorage.getItem(lsKey('schedule', child)); return r ? JSON.parse(r) : {}; }
+function saveHomework(child, date, data) { localStorage.setItem(lsKey('hw', child) + '_' + dateKey(date), JSON.stringify(data)); }
+function loadHomework(child, date) { const r = localStorage.getItem(lsKey('hw', child) + '_' + dateKey(date)); return r ? JSON.parse(r) : []; }
+function dateKey(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function formatDateDE(d) {
+  const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  return days[d.getDay()] + ', ' + d.getDate() + '.' + (d.getMonth()+1) + '.' + d.getFullYear();
+}
+
+function buildSchedule(child) {
+  const grid = document.getElementById('schedule-' + child);
+  const data = loadSchedule(child);
+  let html = '<div class="cell header-cell"></div>';
+  DAYS.forEach(d => { html += '<div class="cell header-cell">' + d + '</div>'; });
+  TIMES.forEach((t, ti) => {
+    const endMin = parseInt(t.split(':')[0])*60 + parseInt(t.split(':')[1]) + 50;
+    const endH = String(Math.floor(endMin/60)).padStart(2,'0');
+    const endM = String(endMin%60).padStart(2,'0');
+    html += '<div class="cell time-cell">' + t + '<br>' + endH + ':' + endM + '</div>';
+    DAYS.forEach((d, di) => {
+      const key = di + '_' + ti;
+      const val = data[key] || '';
+      html += '<div class="cell"><input class="subject-input" value="' + escHtml(val) + '" placeholder="—" '
+        + 'onchange="onScheduleChange(\'' + child + '\',' + di + ',' + ti + ',this.value)" '
+        + 'list="subjects-' + child + '"></div>';
+    });
+  });
+  grid.innerHTML = html;
+  if (!document.getElementById('subjects-' + child)) {
+    const dl = document.createElement('datalist');
+    dl.id = 'subjects-' + child;
+    CHILDREN[child].subjects.forEach(s => { const o = document.createElement('option'); o.value = s; dl.appendChild(o); });
+    document.body.appendChild(dl);
+  }
+}
+
+function onScheduleChange(child, day, time, value) {
+  const data = loadSchedule(child);
+  data[day + '_' + time] = value;
+  saveSchedule(child, data);
+}
+
+function buildHomework(child) {
+  const container = document.getElementById('hw-' + child);
+  const items = loadHomework(child, currentDate);
+  let html = '<div class="hw-date-nav">'
+    + '<button onclick="changeDate(-1,\'' + child + '\')">&#x25C0;</button>'
+    + '<span class="hw-date">' + formatDateDE(currentDate) + '</span>'
+    + '<button onclick="changeDate(1,\'' + child + '\')">&#x25B6;</button>'
+    + '<input type="date" value="' + dateKey(currentDate) + '" onchange="jumpToDate(this.value,\'' + child + '\')">'
+    + '</div>';
+
+  // Sort items by timeFrom (items with time first, sorted ascending)
+  const sorted = items.map((item, idx) => ({...item, _idx: idx}));
+  sorted.sort((a, b) => {
+    const at = a.timeFrom || '';
+    const bt = b.timeFrom || '';
+    if (at && bt) return at.localeCompare(bt);
+    if (at) return -1;
+    if (bt) return 1;
+    return 0;
+  });
+
+  html += '<ul class="hw-list">';
+  sorted.forEach(item => {
+    const idx = item._idx;
+    const doneClass = item.done ? 'done' : '';
+    const checkClass = item.done ? 'checked' : '';
+    const color = getSubjectColor(item.subject);
+    const tf = item.timeFrom || '';
+    const tt = item.timeTo || '';
+    const timeDisplay = (tf && tt)
+      ? '<span class="hw-time-badge has-time">&#x1F552; ' + tf + ' — ' + tt + '</span>'
+      : tf ? '<span class="hw-time-badge has-time">&#x1F552; ab ' + tf + '</span>'
+      : '<span class="hw-time-badge">&#x1F552; keine Zeit</span>';
+    html += '<li class="hw-item ' + doneClass + '">'
+      + '<div class="hw-check ' + checkClass + '" onclick="toggleHw(\'' + child + '\',' + idx + ')"></div>'
+      + '<div class="hw-body">'
+      + '<span class="hw-subject-tag" style="background:' + color + '22;color:' + color + '">' + escHtml(item.subject) + '</span>'
+      + timeDisplay
+      + ' <input type="time" class="hw-time-input" value="' + tf + '" min="14:00" max="21:00" '
+      + 'onchange="setHwTimeRange(\'' + child + '\',' + idx + ',\'from\',this.value)" title="Von">'
+      + '<span style="font-size:0.75em;color:var(--text-dim)">—</span>'
+      + '<input type="time" class="hw-time-input" value="' + tt + '" min="14:00" max="22:00" '
+      + 'onchange="setHwTimeRange(\'' + child + '\',' + idx + ',\'to\',this.value)" title="Bis">'
+      + '<div class="hw-text">' + escHtml(item.text) + '</div></div>'
+      + '<span class="hw-delete" onclick="deleteHw(\'' + child + '\',' + idx + ')">&#x1F5D1;</span></li>';
+  });
+  html += '</ul>';
+
+  html += '<div class="hw-add-form"><select id="hwSubject-' + child + '">';
+  CHILDREN[child].subjects.forEach(s => { html += '<option value="' + s + '">' + s + '</option>'; });
+  html += '</select>'
+    + '<span style="font-size:0.85em;color:var(--text-dim)">von</span>'
+    + '<input type="time" id="hwTimeFrom-' + child + '" min="14:00" max="21:00" value="15:00" title="Von">'
+    + '<span style="font-size:0.85em;color:var(--text-dim)">bis</span>'
+    + '<input type="time" id="hwTimeTo-' + child + '" min="14:00" max="22:00" value="16:00" title="Bis">'
+    + '<input type="text" id="hwText-' + child + '" placeholder="Hausaufgabe eingeben..." onkeydown="if(event.key===\'Enter\')addHw(\'' + child + '\')">'
+    + '<button class="hw-add-btn" onclick="addHw(\'' + child + '\')">+ Hinzufügen</button></div>';
+  container.innerHTML = html;
+}
+
+function addHw(child) {
+  const subject = document.getElementById('hwSubject-' + child).value;
+  const text = document.getElementById('hwText-' + child).value.trim();
+  const timeFrom = document.getElementById('hwTimeFrom-' + child).value || '';
+  const timeTo = document.getElementById('hwTimeTo-' + child).value || '';
+  if (!text) return;
+  const items = loadHomework(child, currentDate);
+  items.push({ subject, text, timeFrom, timeTo, done: false });
+  saveHomework(child, currentDate, items);
+  buildHomework(child);
+  buildOverview();
+  buildDayReport(child);
+  buildWeekReport(child);
+}
+
+function setHwTimeRange(child, idx, which, value) {
+  const items = loadHomework(child, currentDate);
+  if (items[idx]) {
+    if (which === 'from') items[idx].timeFrom = value;
+    else items[idx].timeTo = value;
+    saveHomework(child, currentDate, items);
+    buildHomework(child);
+    buildOverview();
+    buildDayReport(child);
+    buildWeekReport(child);
+  }
+}
+
+function toggleHw(child, idx) {
+  const items = loadHomework(child, currentDate);
+  if (items[idx]) {
+    items[idx].done = !items[idx].done;
+    saveHomework(child, currentDate, items);
+    buildHomework(child);
+    buildOverview();
+    buildDayReport(child);
+    buildWeekReport(child);
+  }
+}
+
+function deleteHw(child, idx) {
+  const items = loadHomework(child, currentDate);
+  items.splice(idx, 1);
+  saveHomework(child, currentDate, items);
+  buildHomework(child);
+  buildOverview();
+  buildDayReport(child);
+  buildWeekReport(child);
+}
+
+function changeDate(delta, child) {
+  currentDate.setDate(currentDate.getDate() + delta);
+  if (child === 'all') { buildOverview(); ['ibrahim','hosna','jasmin'].forEach(c => { buildHomework(c); buildDayReport(c); buildWeekReport(c); }); }
+  else { buildHomework(child); buildDayReport(child); buildWeekReport(child); }
+  updateDateHeaders();
+}
+
+function jumpToDate(val, child) {
+  currentDate = new Date(val + 'T12:00:00');
+  if (child === 'all') { buildOverview(); ['ibrahim','hosna','jasmin'].forEach(c => { buildHomework(c); buildDayReport(c); buildWeekReport(c); }); }
+  else { buildHomework(child); buildDayReport(child); buildWeekReport(child); }
+  updateDateHeaders();
+}
+
+function buildOverview() {
+  let totalAll = 0, doneAll = 0, cardsHtml = '';
+  ['ibrahim','hosna','jasmin'].forEach(child => {
+    const info = CHILDREN[child];
+    const items = loadHomework(child, currentDate);
+    const total = items.length, done = items.filter(i => i.done).length;
+    totalAll += total; doneAll += done;
+    const pct = total > 0 ? Math.round(done/total*100) : 0;
+    const barColor = done === total && total > 0 ? 'var(--green)' : info.color;
+    cardsHtml += '<div class="hw-section" style="border-left:3px solid ' + info.color + '">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+      + '<strong style="color:' + info.color + '">' + info.name + ' (' + info.grade + ')</strong>'
+      + '<span style="color:var(--text-dim);font-size:0.85em">' + done + '/' + total + ' erledigt</span></div>'
+      + '<div style="background:#e0e4ea;border-radius:6px;height:8px;overflow:hidden;margin-bottom:10px">'
+      + '<div style="background:' + barColor + ';height:100%;width:' + pct + '%;border-radius:6px;transition:width 0.3s"></div></div>';
+    if (total === 0) { cardsHtml += '<div style="color:var(--text-dim);font-size:0.85em;text-align:center;padding:8px">Keine Hausaufgaben für heute</div>'; }
+    else { items.forEach(item => {
+      const icon = item.done ? '&#x2705;' : '&#x2B1C;';
+      const style = item.done ? 'text-decoration:line-through;opacity:0.5' : '';
+      const color = getSubjectColor(item.subject);
+      const timeTag = (item.timeFrom && item.timeTo) ? ' <span style="color:#2563eb;font-size:0.8em">&#x1F552; ' + item.timeFrom + '–' + item.timeTo + '</span>'
+        : item.timeFrom ? ' <span style="color:#2563eb;font-size:0.8em">&#x1F552; ab ' + item.timeFrom + '</span>' : '';
+      cardsHtml += '<div style="padding:6px 0;font-size:0.88em;' + style + '">' + icon
+        + ' <span style="background:' + color + '22;color:' + color + ';padding:1px 8px;border-radius:10px;font-size:0.8em;font-weight:600">' + escHtml(item.subject) + '</span>'
+        + timeTag + ' ' + escHtml(item.text) + '</div>';
+    }); }
+    cardsHtml += '</div>';
+  });
+  const pctAll = totalAll > 0 ? Math.round(doneAll/totalAll*100) : 0;
+  document.getElementById('overviewStats').innerHTML =
+    '<div class="stat-card"><div class="stat-num" style="color:var(--green)">' + doneAll + '/' + totalAll + '</div><div class="stat-label">Aufgaben erledigt</div></div>'
+    + '<div class="stat-card"><div class="stat-num" style="color:' + (pctAll===100&&totalAll>0?'var(--green)':'var(--text)') + '">' + pctAll + '%</div><div class="stat-label">Fortschritt</div></div>'
+    + '<div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Kinder</div></div>';
+  document.getElementById('overviewCards').innerHTML = cardsHtml;
+  document.getElementById('overviewDate').textContent = formatDateDE(currentDate);
+}
+
+function getSubjectColor(subject) {
+  const map = { 'Mathematik':'#4A90D9','Deutsch':'#E91E8C','Englisch':'#FF9800','Sachunterricht':'#34d399','Religion':'#a78bfa','Musik':'#f472b6','Sport':'#ef4444','Bildnerische Erziehung':'#fbbf24','Werken':'#818cf8','Technisches Werken':'#818cf8','Geschichte':'#c084fc','Geographie':'#22d3ee','Biologie':'#4ade80','Physik':'#60a5fa','Quran':'#059669' };
+  return map[subject] || '#64748b';
+}
+
+function escHtml(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function switchTab(child) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab[data-child="' + child + '"]').classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + child).classList.add('active');
+  if (child === 'all') buildOverview();
+}
+
+function updateDateHeaders() { document.getElementById('headerDate').textContent = formatDateDE(currentDate); }
+
+// ======= TAGESBERICHT (Daily Report) =======
+function buildDayReport(child) {
+  const container = document.getElementById('report-day-' + child);
+  const items = loadHomework(child, currentDate);
+  const total = items.length;
+  const done = items.filter(i => i.done).length;
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  const info = CHILDREN[child];
+
+  if (total === 0) {
+    container.innerHTML = '<div style="color:var(--text-dim);text-align:center;padding:16px;font-size:0.9em">Keine Hausaufgaben eingetragen — Bericht erscheint nach dem Eintragen.</div>';
+    return;
+  }
+
+  // Calculate study time from timeFrom/timeTo fields
+  let studyMinutes = 0;
+  items.forEach(item => {
+    if (item.timeFrom && item.timeTo) {
+      const f = item.timeFrom.split(':').map(Number);
+      const t = item.timeTo.split(':').map(Number);
+      const diff = (t[0] * 60 + t[1]) - (f[0] * 60 + f[1]);
+      if (diff > 0) studyMinutes += diff;
+    } else if (item.timeFrom) {
+      studyMinutes += 30; // estimated if no end time
+    }
+  });
+  const studyH = Math.floor(studyMinutes / 60);
+  const studyM = studyMinutes % 60;
+  const studyStr = studyH > 0 ? studyH + ' Std ' + studyM + ' Min' : studyM + ' Min';
+
+  // Subjects breakdown
+  const subjCount = {};
+  const subjDone = {};
+  items.forEach(item => {
+    subjCount[item.subject] = (subjCount[item.subject] || 0) + 1;
+    if (item.done) subjDone[item.subject] = (subjDone[item.subject] || 0) + 1;
+  });
+
+  let html = '<div style="font-size:0.9em;color:var(--text-dim);margin-bottom:8px">' + formatDateDE(currentDate) + '</div>';
+
+  // Summary cards
+  html += '<div class="report-summary">'
+    + '<div class="rs-item"><div class="rs-num" style="color:' + info.color + '">' + total + '</div><div class="rs-label">Aufgaben</div></div>'
+    + '<div class="rs-item"><div class="rs-num" style="color:var(--green)">' + done + '</div><div class="rs-label">Erledigt</div></div>'
+    + '<div class="rs-item"><div class="rs-num" style="color:' + (pct === 100 ? 'var(--green)' : '#f59e0b') + '">' + pct + '%</div><div class="rs-label">Fortschritt</div></div>'
+    + '<div class="rs-item"><div class="rs-num" style="color:#2563eb">' + studyStr + '</div><div class="rs-label">Lernzeit</div></div>'
+    + '</div>';
+
+  // Per-subject bars
+  html += '<div style="margin-top:12px;font-weight:600;font-size:0.9em">Fächer-Details:</div>';
+  Object.keys(subjCount).sort().forEach(subj => {
+    const t = subjCount[subj];
+    const d = subjDone[subj] || 0;
+    const p = Math.round(d / t * 100);
+    const color = getSubjectColor(subj);
+    html += '<div class="report-bar-container">'
+      + '<span class="report-bar-label" style="color:' + color + '">' + escHtml(subj) + '</span>'
+      + '<div class="report-bar-track"><div class="report-bar-fill" style="width:' + p + '%;background:' + color + '"></div></div>'
+      + '<span class="report-bar-val">' + d + '/' + t + '</span>'
+      + '</div>';
+  });
+
+  // Status message
+  if (done === total) {
+    html += '<div class="report-tip good">&#x1F389; Super! Alle Aufgaben für heute erledigt!</div>';
+  } else {
+    const remaining = total - done;
+    const unfinished = Object.keys(subjCount).filter(s => (subjDone[s] || 0) < subjCount[s]);
+    html += '<div class="report-tip">&#x26A0;&#xFE0F; Noch ' + remaining + ' Aufgabe(n) offen in: <strong>' + unfinished.join(', ') + '</strong></div>';
+  }
+
+  container.innerHTML = html;
+}
+
+// ======= WOCHENBERICHT (Weekly Report) =======
+function buildWeekReport(child) {
+  const container = document.getElementById('report-week-' + child);
+  const info = CHILDREN[child];
+
+  // Get Monday of current week
+  const monday = new Date(currentDate);
+  const dayOfWeek = monday.getDay();
+  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  monday.setDate(monday.getDate() + diff);
+
+  const weekDays = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    weekDays.push(d);
+  }
+
+  const dayNames = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+  const weekStart = monday.getDate() + '.' + (monday.getMonth()+1);
+  const sunday = weekDays[6];
+  const weekEnd = sunday.getDate() + '.' + (sunday.getMonth()+1) + '.' + sunday.getFullYear();
+
+  // Collect all homework for the week
+  let weekTotal = 0, weekDone = 0;
+  const subjWeekCount = {};
+  const subjWeekDone = {};
+  const dailyStats = [];
+  let totalStudyMin = 0;
+
+  weekDays.forEach((d, di) => {
+    const items = loadHomework(child, d);
+    const dayTotal = items.length;
+    const dayDone = items.filter(i => i.done).length;
+    weekTotal += dayTotal;
+    weekDone += dayDone;
+    dailyStats.push({ day: dayNames[di], total: dayTotal, done: dayDone });
+
+    // Study time per day from timeFrom/timeTo
+    items.forEach(item => {
+      if (item.timeFrom && item.timeTo) {
+        const f = item.timeFrom.split(':').map(Number);
+        const t = item.timeTo.split(':').map(Number);
+        const diff = (t[0] * 60 + t[1]) - (f[0] * 60 + f[1]);
+        if (diff > 0) totalStudyMin += diff;
+      } else if (item.timeFrom) {
+        totalStudyMin += 30;
+      }
+    });
+
+    items.forEach(item => {
+      subjWeekCount[item.subject] = (subjWeekCount[item.subject] || 0) + 1;
+      if (item.done) subjWeekDone[item.subject] = (subjWeekDone[item.subject] || 0) + 1;
+    });
+  });
+
+  const weekPct = weekTotal > 0 ? Math.round(weekDone / weekTotal * 100) : 0;
+  const totalStudyH = Math.floor(totalStudyMin / 60);
+  const totalStudyM = totalStudyMin % 60;
+  const studyStr = totalStudyH > 0 ? totalStudyH + ' Std ' + totalStudyM + ' Min' : totalStudyM + ' Min';
+
+  if (weekTotal === 0) {
+    container.innerHTML = '<div style="color:var(--text-dim);text-align:center;padding:16px;font-size:0.9em">Keine Daten für diese Woche — Bericht erscheint nach dem Eintragen.</div>';
+    return;
+  }
+
+  let html = '<div style="font-size:0.9em;color:var(--text-dim);margin-bottom:8px">Woche: ' + weekStart + ' — ' + weekEnd + '</div>';
+
+  // Summary
+  html += '<div class="report-summary">'
+    + '<div class="rs-item"><div class="rs-num" style="color:' + info.color + '">' + weekTotal + '</div><div class="rs-label">Aufgaben (Woche)</div></div>'
+    + '<div class="rs-item"><div class="rs-num" style="color:var(--green)">' + weekDone + '</div><div class="rs-label">Erledigt</div></div>'
+    + '<div class="rs-item"><div class="rs-num" style="color:' + (weekPct === 100 ? 'var(--green)' : '#f59e0b') + '">' + weekPct + '%</div><div class="rs-label">Fortschritt</div></div>'
+    + '<div class="rs-item"><div class="rs-num" style="color:#2563eb">' + studyStr + '</div><div class="rs-label">Lernzeit gesamt</div></div>'
+    + '</div>';
+
+  // Daily chart (simple bar chart)
+  html += '<div style="margin-top:14px;font-weight:600;font-size:0.9em">Tägliche Aktivität:</div>';
+  const maxDay = Math.max(...dailyStats.map(d => d.total), 1);
+  dailyStats.forEach(ds => {
+    const barW = Math.round(ds.total / maxDay * 100);
+    const doneW = ds.total > 0 ? Math.round(ds.done / maxDay * 100) : 0;
+    html += '<div class="report-bar-container">'
+      + '<span class="report-bar-label" style="min-width:30px;font-weight:600">' + ds.day + '</span>'
+      + '<div class="report-bar-track" style="position:relative">'
+      + '<div class="report-bar-fill" style="width:' + barW + '%;background:#dde1e6;position:absolute;top:0;left:0;height:100%"></div>'
+      + '<div class="report-bar-fill" style="width:' + doneW + '%;background:var(--green);position:relative;z-index:1"></div>'
+      + '</div>'
+      + '<span class="report-bar-val">' + ds.done + '/' + ds.total + '</span>'
+      + '</div>';
+  });
+
+  // Subject breakdown with recommendations
+  html += '<div style="margin-top:14px;font-weight:600;font-size:0.9em">Fächer-Analyse:</div>';
+  const allSubjects = CHILDREN[child].subjects;
+  const subjData = [];
+  allSubjects.forEach(subj => {
+    const t = subjWeekCount[subj] || 0;
+    const d = subjWeekDone[subj] || 0;
+    subjData.push({ subj, total: t, done: d });
+  });
+
+  // Sort: unfinished first, then by total descending
+  subjData.sort((a, b) => {
+    const aUnfinished = a.total - a.done;
+    const bUnfinished = b.total - b.done;
+    if (aUnfinished !== bUnfinished) return bUnfinished - aUnfinished;
+    return b.total - a.total;
+  });
+
+  subjData.forEach(sd => {
+    if (sd.total === 0) return;
+    const p = Math.round(sd.done / sd.total * 100);
+    const color = getSubjectColor(sd.subj);
+    let status = '';
+    if (sd.done === sd.total) status = ' &#x2705;';
+    else if (sd.done === 0) status = ' &#x1F534;';
+    else status = ' &#x1F7E1;';
+    html += '<div class="report-bar-container">'
+      + '<span class="report-bar-label" style="color:' + color + '">' + escHtml(sd.subj) + status + '</span>'
+      + '<div class="report-bar-track"><div class="report-bar-fill" style="width:' + p + '%;background:' + color + '"></div></div>'
+      + '<span class="report-bar-val">' + sd.done + '/' + sd.total + '</span>'
+      + '</div>';
+  });
+
+  // Subjects with NO homework this week
+  const noHomework = allSubjects.filter(s => !subjWeekCount[s]);
+  const needsWork = subjData.filter(sd => sd.total > 0 && sd.done < sd.total).map(sd => sd.subj);
+  const allDoneSubjects = subjData.filter(sd => sd.total > 0 && sd.done === sd.total).map(sd => sd.subj);
+
+  // Recommendations
+  html += '<div style="margin-top:14px;font-weight:600;font-size:0.9em">&#x1F4A1; Empfehlungen:</div>';
+
+  if (needsWork.length > 0) {
+    html += '<div class="report-tip">&#x1F4DA; <strong>Mehr üben:</strong> ' + needsWork.join(', ') + ' — hier sind noch offene Aufgaben.</div>';
+  }
+  if (noHomework.length > 0) {
+    html += '<div class="report-tip">&#x1F50D; <strong>Keine Einträge:</strong> ' + noHomework.join(', ') + ' — diese Woche nicht bearbeitet.</div>';
+  }
+  if (weekPct === 100) {
+    html += '<div class="report-tip good">&#x1F3C6; <strong>Perfekte Woche!</strong> Alle ' + weekTotal + ' Aufgaben erledigt. Weiter so!</div>';
+  } else if (weekPct >= 80) {
+    html += '<div class="report-tip good">&#x1F44D; <strong>Gute Woche!</strong> ' + weekPct + '% erledigt. Fast geschafft!</div>';
+  }
+
+  container.innerHTML = html;
+}
+
+function buildAllReports() {
+  ['ibrahim','hosna','jasmin'].forEach(child => {
+    buildDayReport(child);
+    buildWeekReport(child);
+  });
+}
+
+function init() {
+  updateDateHeaders();
+  ['ibrahim','hosna','jasmin'].forEach(child => { buildSchedule(child); buildHomework(child); });
+  buildOverview();
+  buildAllReports();
+}
+init();
+</script>
+
+  <!-- Firebase PWA + Sync -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCmZNTGXyf36bbUBy2UgnDukerdJW1dOl8",
+      authDomain: "fatemi-schulplaner.firebaseapp.com",
+      databaseURL: "https://fatemi-schulplaner-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "fatemi-schulplaner",
+      storageBucket: "fatemi-schulplaner.firebasestorage.app",
+      messagingSenderId: "269419033986",
+      appId: "1:269419033986:web:26e853c5db62eaa8a8cb9b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    window._fbDb = db;
+    window._fbRef = ref;
+    window._fbSet = set;
+    window._fbGet = get;
+    window._fbOnValue = onValue;
+
+    // Override localStorage with Firebase
+    const FAMILY_KEY = 'fatemi';
+
+    function fbPath(key) {
+      return FAMILY_KEY + '/' + key.replace(/\//g, '_');
+    }
+
+    // Save to both localStorage (offline cache) and Firebase
+    window.fbSave = function(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+      const r = ref(db, fbPath(key));
+      set(r, value).catch(e => console.warn('Firebase save error:', e));
+    };
+
+    // Load from Firebase (with localStorage fallback)
+    window.fbLoad = function(key, callback) {
+      const r = ref(db, fbPath(key));
+      get(r).then(snap => {
+        if (snap.exists()) {
+          const val = snap.val();
+          localStorage.setItem(key, JSON.stringify(val));
+          callback(val);
+        } else {
+          // Try localStorage fallback
+          const local = localStorage.getItem(key);
+          callback(local ? JSON.parse(local) : null);
+        }
+      }).catch(() => {
+        const local = localStorage.getItem(key);
+        callback(local ? JSON.parse(local) : null);
+      });
+    };
+
+    // Real-time listener — auto-refresh UI when another device changes data
+    window.fbListen = function(key, callback) {
+      const r = ref(db, fbPath(key));
+      return onValue(r, snap => {
+        if (snap.exists()) {
+          const val = snap.val();
+          localStorage.setItem(key, JSON.stringify(val));
+          callback(val);
+        }
+      });
+    };
+
+    // Patch saveHomework and loadHomework to use Firebase
+    const _origSave = window.saveHomework;
+    const _origLoad = window.loadHomework;
+
+    window.saveHomework = function(child, date, items) {
+      const key = 'hw_' + child + '_' + date.toISOString().split('T')[0];
+      window.fbSave(key, items);
+    };
+
+    window.loadHomework = function(child, date) {
+      const key = 'hw_' + child + '_' + date.toISOString().split('T')[0];
+      const local = localStorage.getItem(key);
+      return local ? JSON.parse(local) : [];
+    };
+
+    // Patch saveSchedule and loadSchedule
+    window.saveSchedule = function(child, data) {
+      window.fbSave('schedule_' + child, data);
+    };
+
+    window.loadSchedule = function(child) {
+      const local = localStorage.getItem('schedule_' + child);
+      return local ? JSON.parse(local) : {};
+    };
+
+    // Real-time sync for homework — listen to all 3 children
+    function setupRealtimeSync() {
+      ['ibrahim','hosna','jasmin'].forEach(child => {
+        // Listen to all homework entries for this child
+        const r = ref(db, FAMILY_KEY + '/hw_' + child);
+        onValue(r, snap => {
+          if (!snap.exists()) return;
+          // Update localStorage cache
+          const data = snap.val();
+          Object.entries(data).forEach(([dateKey, items]) => {
+            localStorage.setItem('hw_' + child + '_' + dateKey, JSON.stringify(items));
+          });
+          // Refresh UI if visible
+          try {
+            if (typeof buildHomework === 'function') buildHomework(child);
+            if (typeof buildOverview === 'function') buildOverview();
+            if (typeof buildDayReport === 'function') buildDayReport(child);
+            if (typeof buildWeekReport === 'function') buildWeekReport(child);
+          } catch(e) {}
+        });
+
+        // Schedule sync
+        const rs = ref(db, FAMILY_KEY + '/schedule_' + child);
+        onValue(rs, snap => {
+          if (!snap.exists()) return;
+          localStorage.setItem('schedule_' + child, JSON.stringify(snap.val()));
+          try { if (typeof buildSchedule === 'function') buildSchedule(child); } catch(e) {}
+        });
+      });
+    }
+
+    // Wait for page to be ready
+    if (document.readyState === 'complete') {
+      setupRealtimeSync();
+    } else {
+      window.addEventListener('load', setupRealtimeSync);
+    }
+
+    // Show sync status
+    window.addEventListener('load', () => {
+      const indicator = document.createElement('div');
+      indicator.id = 'sync-indicator';
+      indicator.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#2563eb;color:white;padding:6px 12px;border-radius:20px;font-size:0.75em;z-index:9999;opacity:0;transition:opacity 0.3s';
+      indicator.textContent = '☁️ Syncing...';
+      document.body.appendChild(indicator);
+
+      window._showSync = (msg, color) => {
+        indicator.textContent = msg;
+        indicator.style.background = color || '#2563eb';
+        indicator.style.opacity = '1';
+        setTimeout(() => indicator.style.opacity = '0', 2000);
+      };
+    });
+  </script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('SW registered'))
+        .catch(e => console.warn('SW error:', e));
+    }
+  </script>
+</body>
+</html>
