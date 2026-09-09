@@ -1335,7 +1335,7 @@ function updateDrinkUI(data) {
   const total = w + t;
   if (total === 0) {
     msg.className = 'drink-msg low';
-    msg.innerHTML = '&#x1F4AC; Noch kein Wasser oder Tee eingetragen — los geht's!';
+    msg.innerHTML = '&#x1F4AC; Noch kein Wasser oder Tee eingetragen — los geht\'s!';
   } else if (w >= DRINK_GOALS.water && t >= DRINK_GOALS.tea) {
     msg.className = 'drink-msg good';
     msg.innerHTML = '&#x1F3C6; Perfekt! Heute ' + w + ' Gläser Wasser und ' + t + ' Tassen Tee — super gemacht!';
