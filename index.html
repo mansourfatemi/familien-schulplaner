@@ -305,6 +305,117 @@
   .child-info .ci-name { font-size: 1.15em; font-weight: 700; }
   .child-info .ci-detail { font-size: 0.85em; color: var(--text-dim); }
 
+  /* ======= DRINK TRACKER ======= */
+  .drink-tracker {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .drink-tracker h3 {
+    font-size: 1em;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .drink-items {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .drink-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 130px;
+    max-width: 200px;
+  }
+  .drink-icon-btn {
+    font-size: 4em;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    display: block;
+    text-align: center;
+    line-height: 1;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.12));
+  }
+  .drink-icon-btn:hover { transform: scale(1.12); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); }
+  .drink-icon-btn:active { transform: scale(0.95); }
+  .drink-count {
+    font-size: 2.4em;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .drink-label {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--text-dim);
+  }
+  .drink-goal-bar {
+    width: 100%;
+    height: 10px;
+    background: #e8ecf1;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .drink-goal-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.4s ease;
+  }
+  .drink-goal-text {
+    font-size: 0.78em;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .drink-minus-btn {
+    background: #e8ecf1;
+    border: none;
+    color: var(--text-dim);
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .drink-minus-btn:hover { background: #d0d5dd; color: var(--red); }
+  .drink-msg {
+    text-align: center;
+    font-size: 0.88em;
+    font-weight: 600;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-top: 12px;
+  }
+  .drink-msg.good { background: #d1fae5; color: #065f46; }
+  .drink-msg.ok   { background: #dbeafe; color: #1e40af; }
+  .drink-msg.low  { background: #fef3c7; color: #92400e; }
+  .drink-reset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.78em;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.15s;
+    display: block;
+    margin-left: auto;
+  }
+  .drink-reset-btn:hover { background: #fee2e2; border-color: var(--red); color: var(--red); }
+
   /* Reports */
   .report-grid {
     display: grid;
@@ -559,6 +670,31 @@
         <div class="ci-detail">&#x1F4D6; Pers&#246;nliches Lernen &mdash; Mathe &bull; Quran &bull; Englisch &bull; Deutsch</div>
       </div>
     </div>
+
+    <div class="section-title">&#x1F4A7;&#x2615; Mein T&#228;glicher Trinktracker</div>
+    <div class="drink-tracker">
+      <div class="drink-items">
+        <div class="drink-item">
+          <span class="drink-icon-btn" onclick="drinkAdd('water')" title="Klicken = 1 Glas Wasser getrunken!">&#x1F964;</span>
+          <div class="drink-count" id="drink-count-water" style="color:#3b82f6">0</div>
+          <div class="drink-label">Gl&#228;ser Wasser</div>
+          <div class="drink-goal-bar"><div class="drink-goal-fill" id="drink-bar-water" style="background:#3b82f6;width:0%"></div></div>
+          <div class="drink-goal-text" id="drink-goal-water">Ziel: 8 Gl&#228;ser</div>
+          <button class="drink-minus-btn" onclick="drinkRemove('water')" title="Eins entfernen">&#x2212;</button>
+        </div>
+        <div class="drink-item">
+          <span class="drink-icon-btn" onclick="drinkAdd('tea')" title="Klicken = 1 Tasse Tee getrunken!">&#x2615;</span>
+          <div class="drink-count" id="drink-count-tea" style="color:#b45309">0</div>
+          <div class="drink-label">Tassen Tee</div>
+          <div class="drink-goal-bar"><div class="drink-goal-fill" id="drink-bar-tea" style="background:#b45309;width:0%"></div></div>
+          <div class="drink-goal-text" id="drink-goal-tea">Ziel: 4 Tassen</div>
+          <button class="drink-minus-btn" onclick="drinkRemove('tea')" title="Eins entfernen">&#x2212;</button>
+        </div>
+      </div>
+      <div class="drink-msg low" id="drink-msg">&#x1F4AC; Noch kein Wasser oder Tee eingetragen &#x2014; los geht&#x2019;s!</div>
+      <button class="drink-reset-btn" onclick="drinkReset()">&#x1F504; Heute zur&#252;cksetzen</button>
+    </div>
+
     <div class="section-title">&#x1F4DD; T&#228;gliche Lernaufgaben</div>
     <div class="hw-section" id="hw-mansoor"></div>
     <div class="section-title">&#x1F4CA; Tagesbericht</div>
@@ -819,6 +955,7 @@ function switchTab(child) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + child).classList.add('active');
   if (child === 'all') buildOverview();
+  if (child === 'mansoor') initDrinkTracker();
 }
 
 function updateDateHeaders() { document.getElementById('headerDate').textContent = formatDateDE(currentDate); }
@@ -1121,12 +1258,105 @@ function buildAllReports() {
   });
 }
 
+
+// ======= DRINK TRACKER =======
+const DRINK_GOALS = { water: 8, tea: 4 };
+const DRINK_LS_KEY = 'mansoor_drinks_';
+
+function drinkDateKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function loadDrinks() {
+  const key = DRINK_LS_KEY + drinkDateKey();
+  const r = localStorage.getItem(key);
+  return r ? JSON.parse(r) : { water: 0, tea: 0 };
+}
+
+function saveDrinks(data) {
+  const key = DRINK_LS_KEY + drinkDateKey();
+  localStorage.setItem(key, JSON.stringify(data));
+  if (window.fbSave) window.fbSave(key, data);
+}
+
+function drinkAdd(type) {
+  const data = loadDrinks();
+  data[type] = (data[type] || 0) + 1;
+  saveDrinks(data);
+  updateDrinkUI(data);
+  // bounce animation
+  const el = document.getElementById('drink-count-' + type);
+  if (el) { el.style.transform='scale(1.4)'; setTimeout(()=>{ el.style.transform='scale(1)'; el.style.transition='transform 0.2s'; }, 150); }
+}
+
+function drinkRemove(type) {
+  const data = loadDrinks();
+  if (data[type] > 0) { data[type]--; saveDrinks(data); updateDrinkUI(data); }
+}
+
+function drinkReset() {
+  if (!confirm('Trinktracker für heute zurücksetzen?')) return;
+  saveDrinks({ water: 0, tea: 0 });
+  updateDrinkUI({ water: 0, tea: 0 });
+}
+
+function updateDrinkUI(data) {
+  const w = data.water || 0;
+  const t = data.tea || 0;
+
+  const wEl = document.getElementById('drink-count-water');
+  const tEl = document.getElementById('drink-count-tea');
+  const wBar = document.getElementById('drink-bar-water');
+  const tBar = document.getElementById('drink-bar-tea');
+  const wGoal = document.getElementById('drink-goal-water');
+  const tGoal = document.getElementById('drink-goal-tea');
+  const msg = document.getElementById('drink-msg');
+
+  if (!wEl) return; // panel not visible yet
+
+  wEl.textContent = w;
+  tEl.textContent = t;
+
+  const wPct = Math.min(100, Math.round(w / DRINK_GOALS.water * 100));
+  const tPct = Math.min(100, Math.round(t / DRINK_GOALS.tea * 100));
+  wBar.style.width = wPct + '%';
+  tBar.style.width = tPct + '%';
+
+  wGoal.textContent = w + ' / ' + DRINK_GOALS.water + ' Gläser';
+  tGoal.textContent = t + ' / ' + DRINK_GOALS.tea + ' Tassen';
+
+  // Message
+  const total = w + t;
+  if (total === 0) {
+    msg.className = 'drink-msg low';
+    msg.innerHTML = '&#x1F4AC; Noch kein Wasser oder Tee eingetragen — los geht's!';
+  } else if (w >= DRINK_GOALS.water && t >= DRINK_GOALS.tea) {
+    msg.className = 'drink-msg good';
+    msg.innerHTML = '&#x1F3C6; Perfekt! Heute ' + w + ' Gläser Wasser und ' + t + ' Tassen Tee — super gemacht!';
+  } else if (w >= DRINK_GOALS.water) {
+    msg.className = 'drink-msg ok';
+    msg.innerHTML = '&#x1F4A7; Heute schon <strong>' + w + ' Gläser Wasser</strong> getrunken! Noch ' + (DRINK_GOALS.tea - t) + ' Tasse(n) Tee bis zum Ziel.';
+  } else if (t >= DRINK_GOALS.tea) {
+    msg.className = 'drink-msg ok';
+    msg.innerHTML = '&#x2615; Heute schon <strong>' + t + ' Tassen Tee</strong>! Noch ' + (DRINK_GOALS.water - w) + ' Glas/Gläser Wasser bis zum Ziel.';
+  } else {
+    msg.className = 'drink-msg low';
+    msg.innerHTML = '&#x1F4A7; Bisher heute: <strong>' + w + ' Wasser</strong> + <strong>' + t + ' Tee</strong>. Noch ' + (DRINK_GOALS.water - w) + ' Wasser + ' + (DRINK_GOALS.tea - t) + ' Tee bis zum Ziel!';
+  }
+}
+
+function initDrinkTracker() {
+  updateDrinkUI(loadDrinks());
+}
+
 function init() {
   updateDateHeaders();
   ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildSchedule(child); buildHomework(child); });
   buildHomework('mansoor');
   buildOverview();
   buildAllReports();
+  initDrinkTracker();
 }
 init();
 </script>
