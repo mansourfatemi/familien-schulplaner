@@ -695,7 +695,10 @@
       <button class="drink-reset-btn" onclick="drinkReset()">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
 
-    <div class="section-title">&#x1F4DD; T&#228;gliche Lernaufgaben</div>
+    <div class="section-title">&#x1F4CA; Kinder-Übersicht heute</div>
+    <div id="mansoor-kids-overview"></div>
+
+    <div class="section-title">&#x1F4DD; Meine T&#228;glichen Aktivit&#228;ten</div>
     <div class="hw-section" id="hw-mansoor"></div>
     <div class="section-title">&#x1F4CA; Tagesbericht</div>
     <div class="hw-section" id="report-day-mansoor"></div>
@@ -814,7 +817,7 @@ function buildHomework(child) {
       : tf ? '<span class="hw-time-badge has-time">&#x1F552; ab ' + tf + '</span>'
       : '<span class="hw-time-badge">&#x1F552; keine Zeit</span>';
     html += '<li class="hw-item ' + doneClass + '">'
-      + '<div class="hw-check ' + checkClass + '" onclick="toggleHw(\'' + child + '\',' + idx + ')"></div>'
+      + '<div class="hw-check ' + checkClass + '" onclick="toggleHw(\'' + child + '\',' + idx + ')" title="Elternteil bestätigt"></div>'
       + '<div class="hw-body">'
       + '<span class="hw-subject-tag" style="background:' + color + '22;color:' + color + '">' + escHtml(item.subject) + '</span>'
       + timeDisplay
@@ -835,7 +838,7 @@ function buildHomework(child) {
     + '<input type="time" id="hwTimeFrom-' + child + '" min="14:00" max="21:00" value="15:00" title="Von">'
     + '<span style="font-size:0.85em;color:var(--text-dim)">bis</span>'
     + '<input type="time" id="hwTimeTo-' + child + '" min="14:00" max="22:00" value="16:00" title="Bis">'
-    + '<input type="text" id="hwText-' + child + '" placeholder="Hausaufgabe eingeben..." onkeydown="if(event.key===\'Enter\')addHw(\'' + child + '\')">'
+    + '<input type="text" id="hwText-' + child + '" placeholder="Was habe ich heute gelernt? z.B. Mathe S.45, Vokabeln geübt..." onkeydown="if(event.key===\'Enter\')addHw(\'' + child + '\')">'
     + '<button class="hw-add-btn" onclick="addHw(\'' + child + '\')">+ Hinzufügen</button></div>';
   container.innerHTML = html;
 }
@@ -853,6 +856,7 @@ function addHw(child) {
   buildOverview();
   buildDayReport(child);
   buildWeekReport(child);
+  if (typeof buildMansoorKidsOverview === 'function') buildMansoorKidsOverview();
 }
 
 function setHwTimeRange(child, idx, which, value) {
@@ -888,6 +892,7 @@ function deleteHw(child, idx) {
   buildOverview();
   buildDayReport(child);
   buildWeekReport(child);
+  if (typeof buildMansoorKidsOverview === 'function') buildMansoorKidsOverview();
 }
 
 function changeDate(delta, child) {
@@ -916,7 +921,7 @@ function buildOverview() {
     cardsHtml += '<div class="hw-section" style="border-left:3px solid ' + info.color + '">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
       + '<strong style="color:' + info.color + '">' + info.name + ' (' + info.grade + ')</strong>'
-      + '<span style="color:var(--text-dim);font-size:0.85em">' + done + '/' + total + ' erledigt</span></div>'
+      + '<span style="color:var(--text-dim);font-size:0.85em">' + done + '/' + total + ' bestätigt</span></div>'
       + '<div style="margin-bottom:10px">' + goalBadgeHtml(items) + '</div>'
       + '<div style="background:#e0e4ea;border-radius:6px;height:8px;overflow:hidden;margin-bottom:10px">'
       + '<div style="background:' + barColor + ';height:100%;width:' + pct + '%;border-radius:6px;transition:width 0.3s"></div></div>';
@@ -955,7 +960,7 @@ function switchTab(child) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + child).classList.add('active');
   if (child === 'all') buildOverview();
-  if (child === 'mansoor') initDrinkTracker();
+  if (child === 'mansoor') { initDrinkTracker(); buildMansoorKidsOverview(); }
 }
 
 function updateDateHeaders() { document.getElementById('headerDate').textContent = formatDateDE(currentDate); }
@@ -1092,7 +1097,7 @@ function buildDayReport(child) {
 
   // Status message
   if (done === total) {
-    html += '<div class="report-tip good">&#x1F389; Super! Alle Aufgaben für heute erledigt!</div>';
+    html += '<div class="report-tip good">&#x1F389; Super! Alles für heute bestätigt! Gut gemacht!</div>';
   } else {
     const remaining = total - done;
     const unfinished = Object.keys(subjCount).filter(s => (subjDone[s] || 0) < subjCount[s]);
@@ -1350,6 +1355,129 @@ function initDrinkTracker() {
   updateDrinkUI(loadDrinks());
 }
 
+
+// ======= MANSOOR: KINDER-UEBERSICHT + ALERT =======
+const ALERT_HOUR = 17; // if no entry by 17:00, show red warning
+
+function buildMansoorKidsOverview() {
+  const container = document.getElementById('mansoor-kids-overview');
+  if (!container) return;
+  const now = new Date();
+  const hour = now.getHours();
+  const kids = ['ibrahim','hosna','jasmin','zainab'];
+  let html = '';
+
+  kids.forEach(child => {
+    const info = CHILDREN[child];
+    const items = loadHomework(child, currentDate);
+    const total = items.length;
+    const confirmed = items.filter(i => i.done).length;
+    const { mins, hasTime } = calcStudyMinutes(items);
+    const pct = Math.min(100, Math.round(mins / DAILY_GOAL_MIN * 100));
+    const goalReached = mins >= DAILY_GOAL_MIN;
+
+    // Alert: no entry after ALERT_HOUR
+    const isToday = dateKey(currentDate) === dateKey(new Date());
+    const showAlert = isToday && hour >= ALERT_HOUR && total === 0;
+
+    let statusIcon, statusColor, statusText;
+    if (showAlert) {
+      statusIcon = '&#x1F534;';
+      statusColor = '#dc2626';
+      statusText = 'Noch nichts eingetragen! (nach ' + ALERT_HOUR + ':00 Uhr)';
+    } else if (total === 0) {
+      statusIcon = '&#x23F0;';
+      statusColor = '#9ca3af';
+      statusText = 'Noch keine Einträge heute';
+    } else if (goalReached && confirmed === total) {
+      statusIcon = '&#x2705;';
+      statusColor = '#059669';
+      statusText = minsToStr(mins) + ' gelernt — bestätigt!';
+    } else if (goalReached) {
+      statusIcon = '&#x1F7E2;';
+      statusColor = '#059669';
+      statusText = minsToStr(mins) + ' gelernt — noch nicht bestätigt';
+    } else if (total > 0) {
+      statusIcon = '&#x1F7E1;';
+      statusColor = '#d97706';
+      statusText = hasTime ? minsToStr(mins) + ' von 2 Std (' + pct + '%)' : total + ' Einträge, Zeit fehlt';
+    } else {
+      statusIcon = '&#x23F0;';
+      statusColor = '#9ca3af';
+      statusText = 'Noch keine Einträge';
+    }
+
+    const barColor = goalReached ? '#34d399' : pct >= 50 ? '#fbbf24' : '#ef4444';
+
+    html += '<div style="background:#fff;border:1px solid var(--border);border-left:4px solid ' + (showAlert ? '#dc2626' : info.color) + ';'
+      + 'border-radius:10px;padding:12px 16px;margin-bottom:10px;' + (showAlert ? 'background:#fff5f5;' : '') + '">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+      + '<div style="display:flex;align-items:center;gap:8px">'
+      + '<div style="width:32px;height:32px;border-radius:50%;background:' + info.color + ';display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.75em;font-weight:700">'
+      + (child === 'ibrahim' ? 'SI' : child === 'hosna' ? 'HF' : child === 'jasmin' ? 'JF' : 'ZF')
+      + '</div>'
+      + '<div><div style="font-weight:700;font-size:0.95em">' + info.name + '</div>'
+      + '<div style="font-size:0.75em;color:var(--text-dim)">' + info.grade + '</div></div>'
+      + '</div>'
+      + '<div style="text-align:right">'
+      + '<span style="font-size:1.3em">' + statusIcon + '</span>'
+      + '</div>'
+      + '</div>';
+
+    if (total > 0 && hasTime) {
+      html += '<div style="background:#e8ecf1;border-radius:5px;height:8px;overflow:hidden;margin-bottom:6px">'
+        + '<div style="background:' + barColor + ';height:100%;width:' + pct + '%;border-radius:5px;transition:width 0.3s"></div>'
+        + '</div>';
+    }
+
+    html += '<div style="font-size:0.82em;color:' + statusColor + ';font-weight:600">' + statusText + '</div>';
+
+    // Show today's entries briefly
+    if (total > 0) {
+      html += '<div style="margin-top:6px">';
+      items.slice(0,3).forEach(item => {
+        const color = getSubjectColor(item.subject);
+        const doneStyle = item.done ? 'opacity:0.6;text-decoration:line-through;' : '';
+        html += '<div style="font-size:0.8em;' + doneStyle + 'padding:2px 0">'
+          + '<span style="background:' + color + '22;color:' + color + ';padding:1px 7px;border-radius:8px;font-weight:600;margin-right:4px">' + escHtml(item.subject) + '</span>'
+          + escHtml(item.text.substring(0, 40)) + (item.text.length > 40 ? '...' : '')
+          + '</div>';
+      });
+      if (total > 3) html += '<div style="font-size:0.78em;color:var(--text-dim);margin-top:2px">+ ' + (total-3) + ' weitere...</div>';
+      html += '</div>';
+    }
+
+    html += '</div>';
+  });
+
+  // Summary bar at top
+  const allItems = kids.map(c => loadHomework(c, currentDate));
+  const totalKids = allItems.reduce((s,a) => s + a.length, 0);
+  const totalConfirmed = allItems.reduce((s,a) => s + a.filter(i=>i.done).length, 0);
+  const kidsWithGoal = kids.filter(c => calcStudyMinutes(loadHomework(c,currentDate)).mins >= DAILY_GOAL_MIN).length;
+  const alertKids = kids.filter(c => {
+    const isToday = dateKey(currentDate) === dateKey(new Date());
+    return isToday && hour >= ALERT_HOUR && loadHomework(c,currentDate).length === 0;
+  }).length;
+
+  let summaryHtml = '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">'
+    + '<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;text-align:center;flex:1;min-width:80px">'
+    + '<div style="font-size:1.5em;font-weight:800;color:var(--mansoor-color)">' + kidsWithGoal + '/4</div>'
+    + '<div style="font-size:0.75em;color:var(--text-dim)">Ziel erreicht</div></div>'
+    + '<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;text-align:center;flex:1;min-width:80px">'
+    + '<div style="font-size:1.5em;font-weight:800;color:#2563eb">' + totalConfirmed + '/' + totalKids + '</div>'
+    + '<div style="font-size:0.75em;color:var(--text-dim)">Bestätigt</div></div>';
+
+  if (alertKids > 0) {
+    summaryHtml += '<div style="background:#fff5f5;border:1px solid #fca5a5;border-radius:10px;padding:10px 14px;text-align:center;flex:1;min-width:80px">'
+      + '<div style="font-size:1.5em;font-weight:800;color:#dc2626">&#x26A0; ' + alertKids + '</div>'
+      + '<div style="font-size:0.75em;color:#dc2626">Kein Eintrag!</div></div>';
+  }
+  summaryHtml += '</div>';
+
+  container.innerHTML = summaryHtml + html;
+}
+
 function init() {
   updateDateHeaders();
   ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildSchedule(child); buildHomework(child); });
@@ -1357,6 +1485,7 @@ function init() {
   buildOverview();
   buildAllReports();
   initDrinkTracker();
+  buildMansoorKidsOverview();
 }
 init();
 </script>
