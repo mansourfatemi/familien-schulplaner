@@ -1400,28 +1400,23 @@ function drinkAdd(child, type) {
   updateDrinkUI(child, data);
   const el = document.getElementById('drink-' + child + '-count-' + type);
   if (el) { el.style.transform='scale(1.4)'; setTimeout(()=>{ el.style.transform='scale(1)'; el.style.transition='transform 0.2s'; }, 150); }
-}, 150); }
 }
 
 function drinkRemove(child, type) {
   const data = loadDrinks(child);
   if (data[type] > 0) { data[type]--; saveDrinks(child, data); updateDrinkUI(child, data); }
 }
-}
 
 function drinkReset(child) {
   if (!confirm('Trinktracker für heute zurücksetzen?')) return;
   saveDrinks(child, { water: 0, tea: 0 });
   updateDrinkUI(child, { water: 0, tea: 0 });
-});
-  updateDrinkUI({ water: 0, tea: 0 });
 }
 
 function updateDrinkUI(child, data) {
+  const goals = DRINK_GOALS[child] || { water: 6, tea: 2 };
   const w = data.water || 0;
   const t = data.tea || 0;
-
-  const goals = DRINK_GOALS[child] || { water: 6, tea: 2 };
   const pfx = 'drink-' + child + '-';
   const wEl = document.getElementById(pfx + 'count-water');
   const tEl = document.getElementById(pfx + 'count-tea');
@@ -1445,7 +1440,6 @@ function updateDrinkUI(child, data) {
   wGoal.textContent = w + ' / ' + goals.water + ' Gläser';
   tGoal.textContent = t + ' / ' + goals.tea + ' Tassen';
 
-  // Liter calculation
   const totalMl = (w * 300) + (t * 300);
   const liters = (totalMl / 1000).toFixed(2);
   if (literEl) {
@@ -1459,23 +1453,22 @@ function updateDrinkUI(child, data) {
     }
   }
 
-  // Message
   const total = w + t;
   if (total === 0) {
     msg.className = 'drink-msg low';
-    msg.innerHTML = '&#x1F4AC; Noch kein Wasser oder Tee eingetragen — los geht&#39;s!';
+    msg.innerHTML = '&#x1F4AC; Noch kein Wasser oder Tee &#x2014; los geht&#39;s!';
   } else if (w >= goals.water && t >= goals.tea) {
     msg.className = 'drink-msg good';
-    msg.innerHTML = '&#x1F3C6; Perfekt! Heute ' + w + ' Gläser Wasser und ' + t + ' Tassen Tee — super gemacht!';
+    msg.innerHTML = '&#x1F3C6; Perfekt! ' + w + ' Gläser Wasser + ' + t + ' Tassen Tee!';
   } else if (w >= goals.water) {
     msg.className = 'drink-msg ok';
-    msg.innerHTML = '&#x1F4A7; Heute schon <strong>' + w + ' Gläser Wasser</strong> getrunken! Noch ' + (goals.tea - t) + ' Tasse(n) Tee bis zum Ziel.';
+    msg.innerHTML = '&#x1F4A7; <strong>' + w + ' Gläser Wasser</strong> erreicht! Noch ' + (goals.tea - t) + ' Tee.';
   } else if (t >= goals.tea) {
     msg.className = 'drink-msg ok';
-    msg.innerHTML = '&#x2615; Heute schon <strong>' + t + ' Tassen Tee</strong>! Noch ' + (goals.water - w) + ' Glas/Gläser Wasser bis zum Ziel.';
+    msg.innerHTML = '&#x2615; <strong>' + t + ' Tassen Tee</strong> erreicht! Noch ' + (goals.water - w) + ' Wasser.';
   } else {
     msg.className = 'drink-msg low';
-    msg.innerHTML = '&#x1F4A7; Bisher heute: <strong>' + w + ' Wasser</strong> + <strong>' + t + ' Tee</strong>. Noch ' + (goals.water - w) + ' Wasser + ' + (goals.tea - t) + ' Tee!';
+    msg.innerHTML = '&#x1F4A7; <strong>' + w + ' Wasser</strong> + <strong>' + t + ' Tee</strong>. Noch ' + (goals.water - w) + ' Wasser + ' + (goals.tea - t) + ' Tee!';
   }
 }
 
