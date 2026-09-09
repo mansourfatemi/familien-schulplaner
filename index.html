@@ -1333,7 +1333,7 @@ function updateDrinkUI(data) {
   tGoal.textContent = t + ' / ' + DRINK_GOALS.tea + ' Tassen';
 
   // Liter calculation
-  const totalMl = (w * 250) + (t * 200);
+  const totalMl = (w * 300) + (t * 300);
   const liters = (totalMl / 1000).toFixed(2);
   const literEl = document.getElementById('drink-liter-total');
   if (literEl) {
@@ -1343,7 +1343,7 @@ function updateDrinkUI(data) {
       literEl.style.display = 'block';
       literEl.innerHTML = '&#x1F4CA; Gesamt heute: <strong>' + liters + ' Liter</strong>'
         + ' <span style="color:var(--text-dim);font-size:0.9em">('
-        + (w * 250) + ' ml Wasser + ' + (t * 200) + ' ml Tee)</span>';
+        + (w * 300) + ' ml Wasser + ' + (t * 300) + ' ml Tee)</span>';
     }
   }
 
