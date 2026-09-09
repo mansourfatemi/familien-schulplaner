@@ -692,6 +692,7 @@
         </div>
       </div>
       <div class="drink-msg low" id="drink-msg">&#x1F4AC; Noch kein Wasser oder Tee eingetragen &#x2014; los geht&#x2019;s!</div>
+      <div id="drink-liter-total" style="display:none;text-align:center;font-size:0.85em;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;margin-top:8px"></div>
       <button class="drink-reset-btn" onclick="drinkReset()">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
 
@@ -1330,6 +1331,21 @@ function updateDrinkUI(data) {
 
   wGoal.textContent = w + ' / ' + DRINK_GOALS.water + ' Gläser';
   tGoal.textContent = t + ' / ' + DRINK_GOALS.tea + ' Tassen';
+
+  // Liter calculation
+  const totalMl = (w * 250) + (t * 200);
+  const liters = (totalMl / 1000).toFixed(2);
+  const literEl = document.getElementById('drink-liter-total');
+  if (literEl) {
+    if (totalMl === 0) {
+      literEl.style.display = 'none';
+    } else {
+      literEl.style.display = 'block';
+      literEl.innerHTML = '&#x1F4CA; Gesamt heute: <strong>' + liters + ' Liter</strong>'
+        + ' <span style="color:var(--text-dim);font-size:0.9em">('
+        + (w * 250) + ' ml Wasser + ' + (t * 200) + ' ml Tee)</span>';
+    }
+  }
 
   // Message
   const total = w + t;
