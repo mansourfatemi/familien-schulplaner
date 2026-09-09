@@ -667,7 +667,7 @@
       <div class="ci-avatar" style="background:var(--mansoor-color)">MF</div>
       <div>
         <div class="ci-name">Mansoor Fatemi</div>
-        <div class="ci-detail">&#x1F4D6; Pers&#246;nliches Lernen &mdash; Mathe &bull; Quran &bull; Englisch &bull; Deutsch</div>
+        <div class="ci-detail">&#x1F4D6; Persönliches Lernen &mdash; Quran &bull; Deutsch &bull; Englisch &bull; Freies Lesen &bull; Projekt</div>
       </div>
     </div>
 
@@ -725,7 +725,7 @@ const CHILDREN = {
   },
   mansoor: {
     name: 'Mansoor', color: '#1ABC9C', grade: 'Persönliches Lernen',
-    subjects: ['Mathematik','Quran','Englisch','Deutsch']
+    subjects: ['Quran','Deutsch','Englisch','Freies Lesen','Projekt','Sonstiges']
   }
 };
 
@@ -943,7 +943,7 @@ function buildOverview() {
 }
 
 function getSubjectColor(subject) {
-  const map = { 'Mathematik':'#4A90D9','Deutsch':'#E91E8C','Englisch':'#FF9800','Sachunterricht':'#34d399','Religion':'#a78bfa','Musik':'#f472b6','Sport':'#ef4444','Bildnerische Erziehung':'#fbbf24','Werken':'#818cf8','Technisches Werken':'#818cf8','Geschichte':'#c084fc','Geographie':'#22d3ee','Biologie':'#4ade80','Physik':'#60a5fa','Chemie':'#f97316','Informatik':'#06b6d4','Quran':'#059669' };
+  const map = { 'Mathematik':'#4A90D9','Deutsch':'#3b82f6','Englisch':'#f59e0b','Quran':'#059669','Freies Lesen':'#8b5cf6','Projekt':'#0ea5e9','Sonstiges':'#78716c','Sachunterricht':'#34d399','Religion':'#a78bfa','Musik':'#f472b6','Sport':'#ef4444','Bildnerische Erziehung':'#fbbf24','Werken':'#818cf8','Technisches Werken':'#818cf8','Geschichte':'#c084fc','Geographie':'#22d3ee','Biologie':'#4ade80','Physik':'#60a5fa','Chemie':'#f97316','Informatik':'#06b6d4','Quran':'#059669' };
   return map[subject] || '#64748b';
 }
 
