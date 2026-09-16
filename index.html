@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fatemi Family — Stundenplan & Hausaufgaben</title>
+<title>Fatemi Family — Hausaufgaben &amp; Verlauf</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2563eb">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -101,58 +101,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-  }
-  .schedule-grid {
-    display: grid;
-    grid-template-columns: 80px repeat(5, 1fr);
-    gap: 2px;
-    background: var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 24px;
-  }
-  .schedule-grid .cell {
-    background: var(--card-bg);
-    padding: 10px 8px;
-    font-size: 0.82em;
-    text-align: center;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .schedule-grid .cell.header-cell {
-    background: #e8ecf1;
-    font-weight: 700;
-    color: var(--text);
-    font-size: 0.85em;
-  }
-  .schedule-grid .cell.time-cell {
-    background: #e8ecf1;
-    font-weight: 600;
-    color: var(--text-dim);
-    font-size: 0.78em;
-  }
-  .cell .subject-input {
-    width: 100%;
-    background: transparent;
-    border: 1px dashed transparent;
-    color: var(--text);
-    text-align: center;
-    font-size: 0.9em;
-    padding: 4px;
-    border-radius: 4px;
-    outline: none;
-  }
-  .cell .subject-input:hover { border-color: var(--border); }
-  .cell .subject-input:focus { border-color: var(--ibrahim-color); background: #f5f7fa; }
-
-  .hw-section {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 16px;
-    border: 1px solid var(--border);
   }
   .hw-date-nav {
     display: flex;
@@ -626,12 +574,7 @@
   .ov-goal-badge.notime   { background: #f3f4f6; color: #6b7280; }
 
   @media (max-width: 700px) {
-    .schedule-grid { grid-template-columns: 60px repeat(5, 1fr); font-size: 0.85em; }
-    .tabs { overflow-x: auto; }
-    .tab { padding: 10px 14px; font-size: 0.85em; }
-    .content { padding: 12px; }
-  }
-</style>
+  </style>
 </head>
 <body>
 
@@ -704,8 +647,6 @@
       <div id="drink-ibrahim-liter" style="display:none;text-align:center;font-size:0.85em;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;margin-top:8px"></div>
       <button class="drink-reset-btn" onclick="drinkReset('ibrahim')">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
-    <div class="section-title">&#x1F4C5; Stundenplan</div>
-    <div class="schedule-grid" id="schedule-ibrahim"></div>
     <div class="section-title">&#x1F4DD; Hausaufgaben</div>
     <div class="hw-section" id="hw-ibrahim"></div>
     <div class="section-title">&#x1F4CA; Tagesbericht</div>
@@ -747,8 +688,6 @@
       <div id="drink-hosna-liter" style="display:none;text-align:center;font-size:0.85em;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;margin-top:8px"></div>
       <button class="drink-reset-btn" onclick="drinkReset('hosna')">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
-    <div class="section-title">&#x1F4C5; Stundenplan</div>
-    <div class="schedule-grid" id="schedule-hosna"></div>
     <div class="section-title">&#x1F4DD; Hausaufgaben</div>
     <div class="hw-section" id="hw-hosna"></div>
     <div class="section-title">&#x1F4CA; Tagesbericht</div>
@@ -790,8 +729,6 @@
       <div id="drink-jasmin-liter" style="display:none;text-align:center;font-size:0.85em;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;margin-top:8px"></div>
       <button class="drink-reset-btn" onclick="drinkReset('jasmin')">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
-    <div class="section-title">&#x1F4C5; Stundenplan</div>
-    <div class="schedule-grid" id="schedule-jasmin"></div>
     <div class="section-title">&#x1F4DD; Hausaufgaben</div>
     <div class="hw-section" id="hw-jasmin"></div>
     <div class="section-title">&#x1F4CA; Tagesbericht</div>
@@ -834,8 +771,6 @@
       <div id="drink-zainab-liter" style="display:none;text-align:center;font-size:0.85em;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;margin-top:8px"></div>
       <button class="drink-reset-btn" onclick="drinkReset('zainab')">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
-    <div class="section-title">&#x1F4C5; Stundenplan</div>
-    <div class="schedule-grid" id="schedule-zainab"></div>
     <div class="section-title">&#x1F4DD; Hausaufgaben</div>
     <div class="hw-section" id="hw-zainab"></div>
     <div class="section-title">&#x1F4CA; Tagesbericht</div>
@@ -1684,8 +1619,7 @@ function buildMansoorKidsOverview() {
 }
 
 function init() {
-  updateDateHeaders();
-  ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildSchedule(child); buildHomework(child); });
+  updateDateHeaders(); buildHomework(child); });
   buildHomework('mansoor');
   buildOverview();
   buildAllReports();
@@ -1857,8 +1791,7 @@ init();
         const rs = ref(db, FAMILY_KEY + '/schedule_' + child);
         onValue(rs, snap => {
           if (!snap.exists()) return;
-          localStorage.setItem('schedule_' + child, JSON.stringify(snap.val()));
-          try { if (typeof buildSchedule === 'function') buildSchedule(child); } catch(e) {}
+          localStorage.setItem('schedule_' + child, JSON.stringify(snap.val())); } catch(e) {}
         });
       });
     }
