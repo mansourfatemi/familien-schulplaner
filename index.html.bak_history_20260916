@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fatemi Family — Hausaufgaben &amp; Verlauf</title>
+<title>Fatemi Family — Stundenplan & Hausaufgaben</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2563eb">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -101,6 +101,58 @@
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(5, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .schedule-grid .cell {
+    background: var(--card-bg);
+    padding: 10px 8px;
+    font-size: 0.82em;
+    text-align: center;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .schedule-grid .cell.header-cell {
+    background: #e8ecf1;
+    font-weight: 700;
+    color: var(--text);
+    font-size: 0.85em;
+  }
+  .schedule-grid .cell.time-cell {
+    background: #e8ecf1;
+    font-weight: 600;
+    color: var(--text-dim);
+    font-size: 0.78em;
+  }
+  .cell .subject-input {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed transparent;
+    color: var(--text);
+    text-align: center;
+    font-size: 0.9em;
+    padding: 4px;
+    border-radius: 4px;
+    outline: none;
+  }
+  .cell .subject-input:hover { border-color: var(--border); }
+  .cell .subject-input:focus { border-color: var(--ibrahim-color); background: #f5f7fa; }
+
+  .hw-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
   }
   .hw-date-nav {
     display: flex;
@@ -252,86 +304,6 @@
   }
   .child-info .ci-name { font-size: 1.15em; font-weight: 700; }
   .child-info .ci-detail { font-size: 0.85em; color: var(--text-dim); }
-
-  /* ======= HISTORY / VERLAUF ======= */
-  .history-toolbar {
-    display: flex; gap: 10px; flex-wrap: wrap;
-    align-items: center; margin-bottom: 18px;
-  }
-  .history-toolbar select, .history-toolbar input[type="date"] {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 7px 12px;
-    border-radius: 8px;
-    font-size: 0.9em;
-  }
-  .history-toolbar button {
-    background: #6366f1;
-    border: none;
-    color: #fff;
-    padding: 7px 16px;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 0.88em;
-  }
-  .history-toolbar button:hover { filter: brightness(1.1); }
-  .history-summary {
-    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px;
-  }
-  .history-summary .hsum-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 18px;
-    text-align: center;
-    flex: 1; min-width: 110px;
-  }
-  .hsum-card .hsum-num { font-size: 1.7em; font-weight: 800; }
-  .hsum-card .hsum-label { font-size: 0.75em; color: var(--text-dim); margin-top: 2px; }
-  .history-table-wrap {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    overflow-x: auto;
-  }
-  .history-table {
-    width: 100%; border-collapse: collapse;
-    font-size: 0.88em; min-width: 520px;
-  }
-  .history-table thead tr {
-    background: #eef1f5;
-    border-bottom: 2px solid var(--border);
-  }
-  .history-table th {
-    padding: 10px 14px; text-align: left;
-    font-weight: 700; color: var(--text);
-  }
-  .history-table tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-  .history-table tbody tr:hover { background: #f5f7fa; }
-  .history-table td { padding: 9px 14px; color: var(--text); }
-  .history-table .badge-done {
-    background: #d1fae5; color: #065f46;
-    padding: 2px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 700;
-  }
-  .history-table .badge-open {
-    background: #fef3c7; color: #92400e;
-    padding: 2px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 700;
-  }
-  .history-table .child-dot {
-    display: inline-block;
-    width: 10px; height: 10px; border-radius: 50%;
-    margin-right: 6px; vertical-align: middle;
-  }
-  .history-empty {
-    text-align: center; padding: 40px;
-    color: var(--text-dim); font-size: 0.95em;
-  }
 
   /* ======= DRINK TRACKER ======= */
   .drink-tracker {
@@ -574,39 +546,11 @@
   .ov-goal-badge.notime   { background: #f3f4f6; color: #6b7280; }
 
   @media (max-width: 700px) {
-    /* ======= FLASHCARDS / KARTEIKARTEN ======= */
-  .fc-subject-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-  .fc-subj-chip {
-    padding: 5px 14px; border-radius: 16px; border: 2px solid #ccc;
-    font-size: 0.82em; font-weight: 600; cursor: pointer; background: #fff;
-    transition: all 0.2s;
+    .schedule-grid { grid-template-columns: 60px repeat(5, 1fr); font-size: 0.85em; }
+    .tabs { overflow-x: auto; }
+    .tab { padding: 10px 14px; font-size: 0.85em; }
+    .content { padding: 12px; }
   }
-  .fc-subj-chip:hover { filter: brightness(0.97); }
-  .fc-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .fc-card {
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
-    padding: 12px; cursor: pointer; position: relative; min-height: 120px;
-    display: flex; flex-direction: column; justify-content: center; text-align: center;
-    transition: transform 0.15s;
-  }
-  .fc-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-  .fc-photo { width: 100%; max-height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
-  .fc-q { font-weight: 700; font-size: 0.95em; }
-  .fc-a { font-weight: 700; font-size: 0.95em; color: #2563eb; }
-  .fc-hint { font-size: 0.7em; color: var(--text-dim); margin-top: 6px; }
-  .fc-delete {
-    position: absolute; top: 6px; left: 6px; color: var(--text-dim);
-    cursor: pointer; opacity: 0; transition: opacity 0.2s; font-size: 0.95em;
-  }
-  .fc-card:hover .fc-delete { opacity: 1; }
-  .fc-delete:hover { color: var(--red); }
-  .fc-empty { color: var(--text-dim); font-size: 0.9em; padding: 12px 0; }
-  .fc-add-form { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
-  .fc-add-form input[type="text"] {
-    background: #f5f7fa; border: 1px solid var(--border); color: var(--text);
-    padding: 8px 12px; border-radius: 8px; font-size: 0.9em; min-width: 160px; flex: 1;
-  }
-  .fc-add-form input[type="file"] { font-size: 0.82em; max-width: 180px; }
 </style>
 </head>
 <body>
@@ -634,9 +578,6 @@
   </div>
   <div class="tab" data-child="mansoor" onclick="switchTab('mansoor')">
     <div class="avatar">MF</div> Mansoor
-  </div>
-  <div class="tab" data-child="history" onclick="switchTab('history')" style="color:#6366f1">
-    <span class="avatar" style="background:#6366f1;font-size:0.7em">&#x1F4CB;</span> Verlauf
   </div>
 </div>
 
@@ -680,14 +621,14 @@
       <div id="drink-ibrahim-liter" style="display:none;text-align:center;font-size:0.85em;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;margin-top:8px"></div>
       <button class="drink-reset-btn" onclick="drinkReset('ibrahim')">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
+    <div class="section-title">&#x1F4C5; Stundenplan</div>
+    <div class="schedule-grid" id="schedule-ibrahim"></div>
     <div class="section-title">&#x1F4DD; Hausaufgaben</div>
     <div class="hw-section" id="hw-ibrahim"></div>
     <div class="section-title">&#x1F4CA; Tagesbericht</div>
     <div class="hw-section" id="report-day-ibrahim"></div>
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-ibrahim"></div>
-    <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
-    <div class="hw-section" id="flashcards-ibrahim"></div>
   </div>
 
   <div class="panel" id="panel-hosna">
@@ -723,14 +664,14 @@
       <div id="drink-hosna-liter" style="display:none;text-align:center;font-size:0.85em;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;margin-top:8px"></div>
       <button class="drink-reset-btn" onclick="drinkReset('hosna')">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
+    <div class="section-title">&#x1F4C5; Stundenplan</div>
+    <div class="schedule-grid" id="schedule-hosna"></div>
     <div class="section-title">&#x1F4DD; Hausaufgaben</div>
     <div class="hw-section" id="hw-hosna"></div>
     <div class="section-title">&#x1F4CA; Tagesbericht</div>
     <div class="hw-section" id="report-day-hosna"></div>
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-hosna"></div>
-    <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
-    <div class="hw-section" id="flashcards-hosna"></div>
   </div>
 
   <div class="panel" id="panel-jasmin">
@@ -766,14 +707,14 @@
       <div id="drink-jasmin-liter" style="display:none;text-align:center;font-size:0.85em;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;margin-top:8px"></div>
       <button class="drink-reset-btn" onclick="drinkReset('jasmin')">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
+    <div class="section-title">&#x1F4C5; Stundenplan</div>
+    <div class="schedule-grid" id="schedule-jasmin"></div>
     <div class="section-title">&#x1F4DD; Hausaufgaben</div>
     <div class="hw-section" id="hw-jasmin"></div>
     <div class="section-title">&#x1F4CA; Tagesbericht</div>
     <div class="hw-section" id="report-day-jasmin"></div>
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-jasmin"></div>
-    <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
-    <div class="hw-section" id="flashcards-jasmin"></div>
   </div>
 
   <!-- ZAINAB PANEL -->
@@ -810,14 +751,14 @@
       <div id="drink-zainab-liter" style="display:none;text-align:center;font-size:0.85em;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;margin-top:8px"></div>
       <button class="drink-reset-btn" onclick="drinkReset('zainab')">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
+    <div class="section-title">&#x1F4C5; Stundenplan</div>
+    <div class="schedule-grid" id="schedule-zainab"></div>
     <div class="section-title">&#x1F4DD; Hausaufgaben</div>
     <div class="hw-section" id="hw-zainab"></div>
     <div class="section-title">&#x1F4CA; Tagesbericht</div>
     <div class="hw-section" id="report-day-zainab"></div>
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-zainab"></div>
-    <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
-    <div class="hw-section" id="flashcards-zainab"></div>
   </div>
 
   <!-- MANSOOR PANEL -->
@@ -864,8 +805,6 @@
     <div class="hw-section" id="report-day-mansoor"></div>
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-mansoor"></div>
-    <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
-    <div class="hw-section" id="flashcards-mansoor"></div>
   </div>
 
 </div>
@@ -904,8 +843,6 @@ function saveSchedule(child, data) { localStorage.setItem(lsKey('schedule', chil
 function loadSchedule(child) { const r = localStorage.getItem(lsKey('schedule', child)); return r ? JSON.parse(r) : {}; }
 function saveHomework(child, date, data) { localStorage.setItem(lsKey('hw', child) + '_' + dateKey(date), JSON.stringify(data)); }
 function loadHomework(child, date) { const r = localStorage.getItem(lsKey('hw', child) + '_' + dateKey(date)); return r ? JSON.parse(r) : []; }
-function saveFlashcards(child, data) { localStorage.setItem('flashcards_' + child, JSON.stringify(data)); }
-function loadFlashcards(child) { const r = localStorage.getItem('flashcards_' + child); return r ? JSON.parse(r) : {}; }
 function dateKey(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 function formatDateDE(d) {
   const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
@@ -1124,7 +1061,6 @@ function switchTab(child) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + child).classList.add('active');
   if (child === 'all') buildOverview();
-  if (child === 'history') buildHistory();
   if (child === 'mansoor') { initDrinkTracker('mansoor'); buildMansoorKidsOverview(); }
   else if (['ibrahim','hosna','jasmin','zainab'].includes(child)) initDrinkTracker(child);
 }
@@ -1663,176 +1599,19 @@ function buildMansoorKidsOverview() {
   container.innerHTML = summaryHtml + html;
 }
 
-let fcSubjectSel = {};
-
-function buildFlashcards(child) {
-  const container = document.getElementById('flashcards-' + child);
-  if (!container) return;
-  const data = loadFlashcards(child) || {};
-  const subjects = CHILDREN[child].subjects;
-  if (!fcSubjectSel[child] || !subjects.includes(fcSubjectSel[child])) fcSubjectSel[child] = subjects[0];
-  const activeSubj = fcSubjectSel[child];
-
-  let html = '<div class="fc-subject-tabs">';
-  subjects.forEach(s => {
-    const color = getSubjectColor(s);
-    const isActive = s === activeSubj;
-    const style = isActive
-      ? ('border-color:' + color + ';background:' + color + ';color:#fff;')
-      : ('border-color:' + color + '55;color:' + color + ';');
-    html += '<span class="fc-subj-chip" style="' + style + '" onclick="fcSwitchSubject(\'' + child + '\',\'' + s.replace(/'/g,"\\'") + '\')">' + escHtml(s) + '</span>';
-  });
-  html += '</div>';
-
-  const cards = data[activeSubj] || [];
-  html += '<div class="fc-list">';
-  if (!cards.length) {
-    html += '<div class="fc-empty">Noch keine Karteikarten f&#252;r ' + escHtml(activeSubj) + '. Foto der Lektion hochladen und Frage/Antwort eintragen!</div>';
-  }
-  cards.forEach((c, idx) => {
-    html += '<div class="fc-card" onclick="fcFlip(this)">'
-      + '<span class="fc-delete" onclick="event.stopPropagation();fcDelete(\'' + child + '\',\'' + activeSubj.replace(/'/g,"\\'") + '\',' + idx + ')">&#x1F5D1;</span>'
-      + (c.photo ? '<img class="fc-photo" src="' + c.photo + '">' : '')
-      + '<div class="fc-face fc-front"><div class="fc-q">' + escHtml(c.q) + '</div><div class="fc-hint">&#x1F446; Antippen f&#252;r Antwort</div></div>'
-      + '<div class="fc-face fc-back" style="display:none"><div class="fc-a">' + escHtml(c.a) + '</div><div class="fc-hint">&#x1F446; Antippen f&#252;r Frage</div></div>'
-      + '</div>';
-  });
-  html += '</div>';
-
-  html += '<div class="fc-add-form">'
-    + '<input type="text" id="fcQ-' + child + '" placeholder="Frage / Begriff">'
-    + '<input type="text" id="fcA-' + child + '" placeholder="Antwort">'
-    + '<input type="file" id="fcPhoto-' + child + '" accept="image/*" capture="environment">'
-    + '<button class="hw-add-btn" onclick="fcAdd(\'' + child + '\')">+ Karte</button>'
-    + '</div>';
-
-  container.innerHTML = html;
-}
-
-function fcSwitchSubject(child, subj) {
-  fcSubjectSel[child] = subj;
-  buildFlashcards(child);
-}
-
-function fcFlip(el) {
-  const front = el.querySelector('.fc-front');
-  const back = el.querySelector('.fc-back');
-  if (!front || !back) return;
-  if (back.style.display === 'none') { front.style.display = 'none'; back.style.display = 'block'; }
-  else { front.style.display = ''; back.style.display = 'none'; }
-}
-
-function fcCompressImage(file, callback) {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      const maxW = 800;
-      const scale = Math.min(1, maxW / img.width);
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      callback(canvas.toDataURL('image/jpeg', 0.6));
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function fcAdd(child) {
-  const qEl = document.getElementById('fcQ-' + child);
-  const aEl = document.getElementById('fcA-' + child);
-  const fileInput = document.getElementById('fcPhoto-' + child);
-  const q = qEl.value.trim();
-  const a = aEl.value.trim();
-  const subj = fcSubjectSel[child] || CHILDREN[child].subjects[0];
-  if (!q || !a) { alert('Bitte Frage und Antwort ausf\u00fcllen.'); return; }
-
-  function saveCard(photoData) {
-    const data = loadFlashcards(child) || {};
-    if (!data[subj]) data[subj] = [];
-    data[subj].push({ q: q, a: a, photo: photoData || null, created: Date.now() });
-    saveFlashcards(child, data);
-    qEl.value = ''; aEl.value = ''; if (fileInput) fileInput.value = '';
-    buildFlashcards(child);
-  }
-
-  if (fileInput && fileInput.files && fileInput.files[0]) {
-    fcCompressImage(fileInput.files[0], saveCard);
-  } else {
-    saveCard(null);
-  }
-}
-
-function fcDelete(child, subj, idx) {
-  const data = loadFlashcards(child) || {};
-  if (data[subj] && data[subj][idx] !== undefined) {
-    data[subj].splice(idx, 1);
-    saveFlashcards(child, data);
-    buildFlashcards(child);
-  }
-}
-
 function init() {
   updateDateHeaders();
-  ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildHomework(child); });
+  ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildSchedule(child); buildHomework(child); });
   buildHomework('mansoor');
   buildOverview();
   buildAllReports();
-  ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(c => buildFlashcards(c));
   ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(c => initDrinkTracker(c));
   buildMansoorKidsOverview();
 }
 init();
 </script>
 
-  <!-- HISTORY / VERLAUF PANEL -->
-<div class="panel" id="panel-history">
-  <div class="content">
-    <div class="section-title" style="color:#6366f1">&#x1F4CB; Verlauf der Hausaufgaben</div>
-    <div class="history-toolbar">
-      <select id="hist-child">
-        <option value="all">Alle Kinder</option>
-        <option value="ibrahim">Ibrahim</option>
-        <option value="hosna">Hosna</option>
-        <option value="jasmin">Jasmin</option>
-        <option value="zainab">Zainab</option>
-      </select>
-      <select id="hist-range">
-        <option value="7">Diese Woche (7 Tage)</option>
-        <option value="14">Letzte 2 Wochen</option>
-        <option value="30">Dieser Monat (30 Tage)</option>
-        <option value="90">Letzte 3 Monate</option>
-        <option value="custom">Eigener Zeitraum...</option>
-      </select>
-      <input type="date" id="hist-from" style="display:none" placeholder="Von">
-      <input type="date" id="hist-to" style="display:none" placeholder="Bis">
-      <button onclick="buildHistory()">&#x1F50D; Anzeigen</button>
-    </div>
-    <div class="history-summary" id="hist-summary"></div>
-    <div class="history-table-wrap">
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>&#x1F4C5; Datum</th>
-            <th>&#x1F476; Kind</th>
-            <th>&#x1F4DA; Fach</th>
-            <th>&#x1F4DD; Aufgabe</th>
-            <th>&#x2705; Status</th>
-          </tr>
-        </thead>
-        <tbody id="hist-tbody"></tbody>
-      </table>
-      <div class="history-empty" id="hist-empty" style="display:none">
-        Keine Eintr&#228;ge f&#252;r den gew&#228;hlten Zeitraum.
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Firebase PWA + Sync -->
+  <!-- Firebase PWA + Sync -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -1925,15 +1704,6 @@ init();
       return local ? JSON.parse(local) : {};
     };
 
-    window.saveFlashcards = function(child, data) {
-      window.fbSave('flashcards_' + child, data);
-    };
-
-    window.loadFlashcards = function(child) {
-      const local = localStorage.getItem('flashcards_' + child);
-      return local ? JSON.parse(local) : {};
-    };
-
     // Real-time sync for homework — listen to all 3 children
     function setupRealtimeSync() {
       ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(child => {
@@ -1961,14 +1731,6 @@ init();
           if (!snap.exists()) return;
           localStorage.setItem('schedule_' + child, JSON.stringify(snap.val()));
           try { if (typeof buildSchedule === 'function') buildSchedule(child); } catch(e) {}
-        });
-
-        // Flashcards sync
-        const rf = ref(db, FAMILY_KEY + '/flashcards_' + child);
-        onValue(rf, snap => {
-          if (!snap.exists()) return;
-          localStorage.setItem('flashcards_' + child, JSON.stringify(snap.val()));
-          try { if (typeof buildFlashcards === 'function') buildFlashcards(child); } catch(e) {}
         });
       });
     }
@@ -1999,134 +1761,7 @@ init();
 
   <!-- Service Worker Registration -->
   <script>
-    // ============================================================
-  // HISTORY / VERLAUF — display homework history from localStorage
-  // ============================================================
-  var HIST_CHILD_COLORS = {
-    ibrahim: '#4A90D9', hosna: '#E91E8C',
-    jasmin: '#FF9800', zainab: '#9B59B6', mansoor: '#1ABC9C'
-  };
-  var HIST_CHILD_NAMES = {
-    ibrahim: 'Ibrahim', hosna: 'Hosna',
-    jasmin: 'Jasmin', zainab: 'Zainab', mansoor: 'Mansoor'
-  };
-
-  function buildHistory() {
-    var childFilter = document.getElementById('hist-child').value;
-    var rangeVal    = document.getElementById('hist-range').value;
-    var fromInput   = document.getElementById('hist-from');
-    var toInput     = document.getElementById('hist-to');
-
-    if (rangeVal === 'custom') {
-      fromInput.style.display = 'inline-block';
-      toInput.style.display   = 'inline-block';
-    } else {
-      fromInput.style.display = 'none';
-      toInput.style.display   = 'none';
-    }
-
-    var today = new Date();
-    var fromDate, toDate = new Date(today);
-    toDate.setHours(23,59,59,999);
-
-    if (rangeVal === 'custom') {
-      if (!fromInput.value || !toInput.value) return;
-      fromDate = new Date(fromInput.value);
-      toDate   = new Date(toInput.value);
-      toDate.setHours(23,59,59,999);
-    } else {
-      fromDate = new Date(today);
-      fromDate.setDate(today.getDate() - parseInt(rangeVal) + 1);
-      fromDate.setHours(0,0,0,0);
-    }
-
-    var children = childFilter === 'all'
-      ? ['ibrahim','hosna','jasmin','zainab','mansoor']
-      : [childFilter];
-
-    var rows = [];
-    var cur = new Date(fromDate);
-    while (cur <= toDate) {
-      var dateStr = cur.toISOString().split('T')[0];
-      children.forEach(function(child) {
-        var key   = 'hw_' + child + '_' + dateStr;
-        var local = localStorage.getItem(key);
-        if (!local) return;
-        var items;
-        try { items = JSON.parse(local); } catch(e) { return; }
-        if (!Array.isArray(items)) return;
-        items.forEach(function(item) {
-          rows.push({
-            date:    dateStr,
-            child:   child,
-            subject: item.subject || '',
-            text:    item.text    || '',
-            done:    !!item.done
-          });
-        });
-      });
-      cur.setDate(cur.getDate() + 1);
-    }
-
-    rows.sort(function(a,b) {
-      return b.date.localeCompare(a.date) || a.child.localeCompare(b.child);
-    });
-
-    var total = rows.length;
-    var done  = rows.filter(function(r){ return r.done; }).length;
-    var open  = total - done;
-    var daysSet = {};
-    rows.forEach(function(r){ daysSet[r.date] = 1; });
-    var dayCount = Object.keys(daysSet).length;
-
-    var sumEl = document.getElementById('hist-summary');
-    sumEl.innerHTML =
-      '<div class="hsum-card"><div class="hsum-num" style="color:#6366f1">' + total + '</div><div class="hsum-label">Aufgaben gesamt</div></div>' +
-      '<div class="hsum-card"><div class="hsum-num" style="color:#34d399">' + done  + '</div><div class="hsum-label">Erledigt</div></div>' +
-      '<div class="hsum-card"><div class="hsum-num" style="color:#ef4444">' + open  + '</div><div class="hsum-label">Offen</div></div>' +
-      '<div class="hsum-card"><div class="hsum-num" style="color:#f59e0b">' + dayCount + '</div><div class="hsum-label">Tage mit Einträgen</div></div>';
-
-    var tbody = document.getElementById('hist-tbody');
-    var empty = document.getElementById('hist-empty');
-    tbody.innerHTML = '';
-
-    if (rows.length === 0) {
-      empty.style.display = 'block';
-      return;
-    }
-    empty.style.display = 'none';
-
-    rows.forEach(function(r) {
-      var clr  = HIST_CHILD_COLORS[r.child] || '#888';
-      var nm   = HIST_CHILD_NAMES[r.child]  || r.child;
-      var p    = r.date.split('-');
-      var dstr = p[2] + '.' + p[1] + '.' + p[0];
-      var tr   = document.createElement('tr');
-      tr.innerHTML =
-        '<td>' + dstr + '</td>' +
-        '<td><span class="child-dot" style="background:' + clr + '"></span>' + nm + '</td>' +
-        '<td>' + r.subject + '</td>' +
-        '<td>' + r.text + '</td>' +
-        '<td>' + (r.done
-          ? '<span class="badge-done">&#x2713; Erledigt</span>'
-          : '<span class="badge-open">&#x23F3; Offen</span>') + '</td>';
-      tbody.appendChild(tr);
-    });
-  }
-
-  // wire up range selector to show/hide date pickers
-  document.addEventListener('DOMContentLoaded', function() {
-    var rangeEl = document.getElementById('hist-range');
-    if (rangeEl) {
-      rangeEl.addEventListener('change', function() {
-        var v = rangeEl.value;
-        document.getElementById('hist-from').style.display = v === 'custom' ? 'inline-block' : 'none';
-        document.getElementById('hist-to').style.display   = v === 'custom' ? 'inline-block' : 'none';
-      });
-    }
-  });
-
-  if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js')
         .then(() => console.log('SW registered'))
         .catch(e => console.warn('SW error:', e));

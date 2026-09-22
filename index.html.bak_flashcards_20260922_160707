@@ -574,40 +574,7 @@
   .ov-goal-badge.notime   { background: #f3f4f6; color: #6b7280; }
 
   @media (max-width: 700px) {
-    /* ======= FLASHCARDS / KARTEIKARTEN ======= */
-  .fc-subject-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-  .fc-subj-chip {
-    padding: 5px 14px; border-radius: 16px; border: 2px solid #ccc;
-    font-size: 0.82em; font-weight: 600; cursor: pointer; background: #fff;
-    transition: all 0.2s;
-  }
-  .fc-subj-chip:hover { filter: brightness(0.97); }
-  .fc-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .fc-card {
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
-    padding: 12px; cursor: pointer; position: relative; min-height: 120px;
-    display: flex; flex-direction: column; justify-content: center; text-align: center;
-    transition: transform 0.15s;
-  }
-  .fc-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-  .fc-photo { width: 100%; max-height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
-  .fc-q { font-weight: 700; font-size: 0.95em; }
-  .fc-a { font-weight: 700; font-size: 0.95em; color: #2563eb; }
-  .fc-hint { font-size: 0.7em; color: var(--text-dim); margin-top: 6px; }
-  .fc-delete {
-    position: absolute; top: 6px; left: 6px; color: var(--text-dim);
-    cursor: pointer; opacity: 0; transition: opacity 0.2s; font-size: 0.95em;
-  }
-  .fc-card:hover .fc-delete { opacity: 1; }
-  .fc-delete:hover { color: var(--red); }
-  .fc-empty { color: var(--text-dim); font-size: 0.9em; padding: 12px 0; }
-  .fc-add-form { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
-  .fc-add-form input[type="text"] {
-    background: #f5f7fa; border: 1px solid var(--border); color: var(--text);
-    padding: 8px 12px; border-radius: 8px; font-size: 0.9em; min-width: 160px; flex: 1;
-  }
-  .fc-add-form input[type="file"] { font-size: 0.82em; max-width: 180px; }
-</style>
+  </style>
 </head>
 <body>
 
@@ -686,8 +653,6 @@
     <div class="hw-section" id="report-day-ibrahim"></div>
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-ibrahim"></div>
-    <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
-    <div class="hw-section" id="flashcards-ibrahim"></div>
   </div>
 
   <div class="panel" id="panel-hosna">
@@ -729,8 +694,6 @@
     <div class="hw-section" id="report-day-hosna"></div>
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-hosna"></div>
-    <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
-    <div class="hw-section" id="flashcards-hosna"></div>
   </div>
 
   <div class="panel" id="panel-jasmin">
@@ -772,8 +735,6 @@
     <div class="hw-section" id="report-day-jasmin"></div>
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-jasmin"></div>
-    <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
-    <div class="hw-section" id="flashcards-jasmin"></div>
   </div>
 
   <!-- ZAINAB PANEL -->
@@ -816,8 +777,6 @@
     <div class="hw-section" id="report-day-zainab"></div>
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-zainab"></div>
-    <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
-    <div class="hw-section" id="flashcards-zainab"></div>
   </div>
 
   <!-- MANSOOR PANEL -->
@@ -864,8 +823,6 @@
     <div class="hw-section" id="report-day-mansoor"></div>
     <div class="section-title">&#x1F4C8; Wochenbericht</div>
     <div class="hw-section" id="report-week-mansoor"></div>
-    <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
-    <div class="hw-section" id="flashcards-mansoor"></div>
   </div>
 
 </div>
@@ -904,8 +861,6 @@ function saveSchedule(child, data) { localStorage.setItem(lsKey('schedule', chil
 function loadSchedule(child) { const r = localStorage.getItem(lsKey('schedule', child)); return r ? JSON.parse(r) : {}; }
 function saveHomework(child, date, data) { localStorage.setItem(lsKey('hw', child) + '_' + dateKey(date), JSON.stringify(data)); }
 function loadHomework(child, date) { const r = localStorage.getItem(lsKey('hw', child) + '_' + dateKey(date)); return r ? JSON.parse(r) : []; }
-function saveFlashcards(child, data) { localStorage.setItem('flashcards_' + child, JSON.stringify(data)); }
-function loadFlashcards(child) { const r = localStorage.getItem('flashcards_' + child); return r ? JSON.parse(r) : {}; }
 function dateKey(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 function formatDateDE(d) {
   const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
@@ -1663,125 +1618,11 @@ function buildMansoorKidsOverview() {
   container.innerHTML = summaryHtml + html;
 }
 
-let fcSubjectSel = {};
-
-function buildFlashcards(child) {
-  const container = document.getElementById('flashcards-' + child);
-  if (!container) return;
-  const data = loadFlashcards(child) || {};
-  const subjects = CHILDREN[child].subjects;
-  if (!fcSubjectSel[child] || !subjects.includes(fcSubjectSel[child])) fcSubjectSel[child] = subjects[0];
-  const activeSubj = fcSubjectSel[child];
-
-  let html = '<div class="fc-subject-tabs">';
-  subjects.forEach(s => {
-    const color = getSubjectColor(s);
-    const isActive = s === activeSubj;
-    const style = isActive
-      ? ('border-color:' + color + ';background:' + color + ';color:#fff;')
-      : ('border-color:' + color + '55;color:' + color + ';');
-    html += '<span class="fc-subj-chip" style="' + style + '" onclick="fcSwitchSubject(\'' + child + '\',\'' + s.replace(/'/g,"\\'") + '\')">' + escHtml(s) + '</span>';
-  });
-  html += '</div>';
-
-  const cards = data[activeSubj] || [];
-  html += '<div class="fc-list">';
-  if (!cards.length) {
-    html += '<div class="fc-empty">Noch keine Karteikarten f&#252;r ' + escHtml(activeSubj) + '. Foto der Lektion hochladen und Frage/Antwort eintragen!</div>';
-  }
-  cards.forEach((c, idx) => {
-    html += '<div class="fc-card" onclick="fcFlip(this)">'
-      + '<span class="fc-delete" onclick="event.stopPropagation();fcDelete(\'' + child + '\',\'' + activeSubj.replace(/'/g,"\\'") + '\',' + idx + ')">&#x1F5D1;</span>'
-      + (c.photo ? '<img class="fc-photo" src="' + c.photo + '">' : '')
-      + '<div class="fc-face fc-front"><div class="fc-q">' + escHtml(c.q) + '</div><div class="fc-hint">&#x1F446; Antippen f&#252;r Antwort</div></div>'
-      + '<div class="fc-face fc-back" style="display:none"><div class="fc-a">' + escHtml(c.a) + '</div><div class="fc-hint">&#x1F446; Antippen f&#252;r Frage</div></div>'
-      + '</div>';
-  });
-  html += '</div>';
-
-  html += '<div class="fc-add-form">'
-    + '<input type="text" id="fcQ-' + child + '" placeholder="Frage / Begriff">'
-    + '<input type="text" id="fcA-' + child + '" placeholder="Antwort">'
-    + '<input type="file" id="fcPhoto-' + child + '" accept="image/*" capture="environment">'
-    + '<button class="hw-add-btn" onclick="fcAdd(\'' + child + '\')">+ Karte</button>'
-    + '</div>';
-
-  container.innerHTML = html;
-}
-
-function fcSwitchSubject(child, subj) {
-  fcSubjectSel[child] = subj;
-  buildFlashcards(child);
-}
-
-function fcFlip(el) {
-  const front = el.querySelector('.fc-front');
-  const back = el.querySelector('.fc-back');
-  if (!front || !back) return;
-  if (back.style.display === 'none') { front.style.display = 'none'; back.style.display = 'block'; }
-  else { front.style.display = ''; back.style.display = 'none'; }
-}
-
-function fcCompressImage(file, callback) {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      const maxW = 800;
-      const scale = Math.min(1, maxW / img.width);
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      callback(canvas.toDataURL('image/jpeg', 0.6));
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function fcAdd(child) {
-  const qEl = document.getElementById('fcQ-' + child);
-  const aEl = document.getElementById('fcA-' + child);
-  const fileInput = document.getElementById('fcPhoto-' + child);
-  const q = qEl.value.trim();
-  const a = aEl.value.trim();
-  const subj = fcSubjectSel[child] || CHILDREN[child].subjects[0];
-  if (!q || !a) { alert('Bitte Frage und Antwort ausf\u00fcllen.'); return; }
-
-  function saveCard(photoData) {
-    const data = loadFlashcards(child) || {};
-    if (!data[subj]) data[subj] = [];
-    data[subj].push({ q: q, a: a, photo: photoData || null, created: Date.now() });
-    saveFlashcards(child, data);
-    qEl.value = ''; aEl.value = ''; if (fileInput) fileInput.value = '';
-    buildFlashcards(child);
-  }
-
-  if (fileInput && fileInput.files && fileInput.files[0]) {
-    fcCompressImage(fileInput.files[0], saveCard);
-  } else {
-    saveCard(null);
-  }
-}
-
-function fcDelete(child, subj, idx) {
-  const data = loadFlashcards(child) || {};
-  if (data[subj] && data[subj][idx] !== undefined) {
-    data[subj].splice(idx, 1);
-    saveFlashcards(child, data);
-    buildFlashcards(child);
-  }
-}
-
 function init() {
-  updateDateHeaders();
-  ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildHomework(child); });
+  updateDateHeaders(); buildHomework(child); });
   buildHomework('mansoor');
   buildOverview();
   buildAllReports();
-  ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(c => buildFlashcards(c));
   ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(c => initDrinkTracker(c));
   buildMansoorKidsOverview();
 }
@@ -1925,15 +1766,6 @@ init();
       return local ? JSON.parse(local) : {};
     };
 
-    window.saveFlashcards = function(child, data) {
-      window.fbSave('flashcards_' + child, data);
-    };
-
-    window.loadFlashcards = function(child) {
-      const local = localStorage.getItem('flashcards_' + child);
-      return local ? JSON.parse(local) : {};
-    };
-
     // Real-time sync for homework — listen to all 3 children
     function setupRealtimeSync() {
       ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(child => {
@@ -1959,16 +1791,7 @@ init();
         const rs = ref(db, FAMILY_KEY + '/schedule_' + child);
         onValue(rs, snap => {
           if (!snap.exists()) return;
-          localStorage.setItem('schedule_' + child, JSON.stringify(snap.val()));
-          try { if (typeof buildSchedule === 'function') buildSchedule(child); } catch(e) {}
-        });
-
-        // Flashcards sync
-        const rf = ref(db, FAMILY_KEY + '/flashcards_' + child);
-        onValue(rf, snap => {
-          if (!snap.exists()) return;
-          localStorage.setItem('flashcards_' + child, JSON.stringify(snap.val()));
-          try { if (typeof buildFlashcards === 'function') buildFlashcards(child); } catch(e) {}
+          localStorage.setItem('schedule_' + child, JSON.stringify(snap.val())); } catch(e) {}
         });
       });
     }
