@@ -607,22 +607,6 @@
     padding: 8px 12px; border-radius: 8px; font-size: 0.9em; min-width: 160px; flex: 1;
   }
   .fc-add-form input[type="file"] { font-size: 0.82em; max-width: 180px; }
-  .fc-due-badge { background:#ef4444;color:#fff;border-radius:10px;padding:1px 6px;font-size:0.75em;margin-left:2px; }
-  .fc-review-bar { margin-bottom: 12px; }
-  .fc-review-btn { background:#6366f1;border:none;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.9em; }
-  .fc-review-btn:hover { filter:brightness(1.1); }
-  .fc-review-box { max-width:420px;margin:0 auto;text-align:center; }
-  .fc-review-progress { color:var(--text-dim);font-size:0.85em;margin-bottom:10px; }
-  .fc-review-card { background:var(--card-bg);border:2px solid var(--border);border-radius:16px;padding:24px;min-height:160px;display:flex;flex-direction:column;justify-content:center;cursor:pointer; }
-  .fc-review-q { font-size:1.15em;font-weight:700; }
-  .fc-review-a { font-size:1.1em;font-weight:700;color:#2563eb; }
-  .fc-review-celebrate { font-size:1.1em;font-weight:700;color:var(--green);margin-bottom:14px; }
-  .fc-grade-row { display:flex;gap:8px;margin-top:14px; }
-  .fc-grade-btn { flex:1;padding:10px;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.88em;color:#fff; }
-  .fc-grade-again { background:#ef4444; }
-  .fc-grade-hard { background:#f59e0b; }
-  .fc-grade-easy { background:#34d399;color:#000; }
-  .fc-review-exit { margin-top:14px;background:none;border:1px solid var(--border);color:var(--text-dim);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.85em; }
 </style>
 </head>
 <body>
@@ -1684,7 +1668,6 @@ let fcSubjectSel = {};
 function buildFlashcards(child) {
   const container = document.getElementById('flashcards-' + child);
   if (!container) return;
-  if (fcReview[child]) { renderFcReview(child); return; }
   const data = loadFlashcards(child) || {};
   const subjects = CHILDREN[child].subjects;
   if (!fcSubjectSel[child] || !subjects.includes(fcSubjectSel[child])) fcSubjectSel[child] = subjects[0];
@@ -1697,17 +1680,8 @@ function buildFlashcards(child) {
     const style = isActive
       ? ('border-color:' + color + ';background:' + color + ';color:#fff;')
       : ('border-color:' + color + '55;color:' + color + ';');
-    const dueN = fcDueCount(child, s);
-    const badge = dueN > 0 ? (' <span class="fc-due-badge">' + dueN + '</span>') : '';
-    html += '<span class="fc-subj-chip" style="' + style + '" onclick="fcSwitchSubject(\'' + child + '\',\'' + s.replace(/'/g,"\\'") + '\')">' + escHtml(s) + badge + '</span>';
+    html += '<span class="fc-subj-chip" style="' + style + '" onclick="fcSwitchSubject(\'' + child + '\',\'' + s.replace(/'/g,"\\'") + '\')">' + escHtml(s) + '</span>';
   });
-  html += '</div>';
-
-  const dueCount = fcDueCount(child, activeSubj);
-  html += '<div class="fc-review-bar">';
-  if (dueCount > 0) {
-    html += '<button class="fc-review-btn" onclick="fcStartReview(\'' + child + '\')">&#x1F501; ' + dueCount + ' Karte(n) wiederholen</button>';
-  }
   html += '</div>';
 
   const cards = data[activeSubj] || [];
@@ -1779,7 +1753,7 @@ function fcAdd(child) {
   function saveCard(photoData) {
     const data = loadFlashcards(child) || {};
     if (!data[subj]) data[subj] = [];
-    data[subj].push({ q: q, a: a, photo: photoData || null, created: Date.now(), box: 0, due: fcTodayKey() });
+    data[subj].push({ q: q, a: a, photo: photoData || null, created: Date.now() });
     saveFlashcards(child, data);
     qEl.value = ''; aEl.value = ''; if (fileInput) fileInput.value = '';
     buildFlashcards(child);
@@ -1799,111 +1773,6 @@ function fcDelete(child, subj, idx) {
     saveFlashcards(child, data);
     buildFlashcards(child);
   }
-}
-
-const FC_INTERVALS = [1, 2, 4, 7, 14, 30];
-
-function fcTodayKey() {
-  const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-
-function fcAddDays(days) {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-
-function fcIsDue(card) {
-  if (!card.due) return true;
-  return card.due <= fcTodayKey();
-}
-
-function fcDueCount(child, subj) {
-  const data = loadFlashcards(child) || {};
-  const cards = data[subj] || [];
-  return cards.filter(fcIsDue).length;
-}
-
-let fcReview = {};
-
-function fcStartReview(child) {
-  const activeSubj = fcSubjectSel[child];
-  const data = loadFlashcards(child) || {};
-  const cards = data[activeSubj] || [];
-  const queue = [];
-  cards.forEach((c, idx) => { if (fcIsDue(c)) queue.push(idx); });
-  if (!queue.length) return;
-  fcReview[child] = { subj: activeSubj, queue: queue, pos: 0, revealed: false };
-  buildFlashcards(child);
-}
-
-function renderFcReview(child) {
-  const container = document.getElementById('flashcards-' + child);
-  const state = fcReview[child];
-  if (!container || !state) return;
-  const data = loadFlashcards(child) || {};
-  const cards = data[state.subj] || [];
-  if (state.pos >= state.queue.length) {
-    container.innerHTML = '<div class="fc-review-box"><div class="fc-review-celebrate">&#x1F389;&#x2705; Super! Alle Karten f&#252;r heute wiederholt!</div>'
-      + '<button class="hw-add-btn" onclick="fcExitReview(\'' + child + '\')">Zur&#252;ck zu den Karten</button></div>';
-    return;
-  }
-  const idx = state.queue[state.pos];
-  const card = cards[idx];
-  if (!card) { state.pos++; renderFcReview(child); return; }
-  let html = '<div class="fc-review-box">';
-  html += '<div class="fc-review-progress">Karte ' + (state.pos + 1) + ' von ' + state.queue.length + '</div>';
-  html += '<div class="fc-review-card" onclick="fcRevealAnswer(\'' + child + '\')">';
-  if (card.photo) html += '<img class="fc-photo" src="' + card.photo + '">';
-  html += '<div class="fc-review-q">' + escHtml(card.q) + '</div>';
-  if (state.revealed) {
-    html += '<hr style="margin:10px 0;border-color:var(--border)">';
-    html += '<div class="fc-review-a">' + escHtml(card.a) + '</div>';
-  } else {
-    html += '<div class="fc-hint">&#x1F446; Antippen f&#252;r Antwort</div>';
-  }
-  html += '</div>';
-  if (state.revealed) {
-    html += '<div class="fc-grade-row">'
-      + '<button class="fc-grade-btn fc-grade-again" onclick="fcGrade(\'' + child + '\',\'again\')">&#x1F501; Nochmal</button>'
-      + '<button class="fc-grade-btn fc-grade-hard" onclick="fcGrade(\'' + child + '\',\'hard\')">&#x1F914; Schwer</button>'
-      + '<button class="fc-grade-btn fc-grade-easy" onclick="fcGrade(\'' + child + '\',\'easy\')">&#x2705; Leicht</button>'
-      + '</div>';
-  }
-  html += '<button class="fc-review-exit" onclick="fcExitReview(\'' + child + '\')">&#x2715; Beenden</button>';
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-function fcRevealAnswer(child) {
-  if (fcReview[child]) { fcReview[child].revealed = true; renderFcReview(child); }
-}
-
-function fcGrade(child, grade) {
-  const state = fcReview[child];
-  if (!state) return;
-  const data = loadFlashcards(child) || {};
-  const cards = data[state.subj] || [];
-  const idx = state.queue[state.pos];
-  const card = cards[idx];
-  if (card) {
-    let box = card.box || 0;
-    if (grade === 'again') box = 0;
-    else if (grade === 'hard') box = Math.max(0, box);
-    else if (grade === 'easy') box = Math.min(box + 1, FC_INTERVALS.length - 1);
-    card.box = box;
-    card.due = fcAddDays(FC_INTERVALS[box]);
-    saveFlashcards(child, data);
-  }
-  state.pos++;
-  state.revealed = false;
-  renderFcReview(child);
-}
-
-function fcExitReview(child) {
-  delete fcReview[child];
-  buildFlashcards(child);
 }
 
 function init() {
