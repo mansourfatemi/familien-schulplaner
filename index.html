@@ -2071,7 +2071,9 @@ init();
 // ============================================================
 
 var ET_QUESTIONS = [
-  // ── VOCABULARY ──────────────────────────────────────────────
+  // ════════════════════════════════════════
+  // VOCABULARY
+  // ════════════════════════════════════════
   { id:"q1", sec:"vocab", type:"mc",
     text:"Sam Small saw an advert for a band looking for a singer ___",
     opts:["and said he didn\'t have what it takes.","and decided to give it a try.","and he is on his way up."],
@@ -2095,32 +2097,91 @@ var ET_QUESTIONS = [
       { left:"\"to make it\"", opts:["to stop trying","to have the talent needed","to be successful"], ans:2 }
     ]
   },
-  // ── GRAMMAR ─────────────────────────────────────────────────
+
+  // ════════════════════════════════════════
+  // GRAMMAR — Present Simple
+  // ════════════════════════════════════════
+
+  // ── Affirmative (مثبت) ──
   { id:"q6", sec:"grammar", type:"fill",
-    text:"✏️ Present Simple — fill in the correct form:<br><br>Dan and I ___ (play) the guitar in the band.",
-    ans:"play", hint:"Dan and I = we → plural, no -s" },
+    text:"<b>&#x2795; Affirmative (مثبت) — Present Simple:</b><br><br>Dan and I ___ (play) the guitar in the band.",
+    ans:"play", hint:"I / we / they / you → no -s" },
   { id:"q7", sec:"grammar", type:"fill",
-    text:"✏️ Present Simple:<br><br>Bradley ___ (sing) and plays bass.",
-    ans:"sings", hint:"Bradley = he → add -s" },
-  { id:"q8", sec:"grammar", type:"fill",
-    text:"✏️ Question form — Present Simple:<br><br>What kind of music ___ the band play? (does / do)",
-    ans:"does", hint:"the band = it/they → use \'does\' in questions" },
-  { id:"q9", sec:"grammar", type:"fill",
-    text:"✏️ Past Simple — fill in the correct form:<br><br>Last year, Shannon ___ (dream) of being a pop star.",
-    ans:"dreamed", alt:"dreamt", hint:"Regular verb → add -ed (or dreamt)" },
-  { id:"q10", sec:"grammar", type:"fill",
-    text:"✏️ Past Simple — irregular verb:<br><br>So she ___ (take) some guitar lessons.",
+    text:"<b>&#x2795; Affirmative — Present Simple:</b><br><br>Bradley ___ (sing) and plays bass.",
+    ans:"sings", hint:"he / she / it → add -s" },
+  { id:"q7b", sec:"grammar", type:"fill",
+    text:"<b>&#x2795; Affirmative — Present Simple:</b><br><br>Shannon ___ (have) a lot of talent.",
+    ans:"has", hint:"have → has (irregular, he/she/it)" },
+  { id:"q7c", sec:"grammar", type:"fill",
+    text:"<b>&#x2795; Affirmative — Present Simple:</b><br><br>The band ___ (practice) every Saturday.",
+    ans:"practices", hint:"he/she/it + verb ending in -ce → add -s" },
+
+  // ── Negative (منفی) ──
+  { id:"q8a", sec:"grammar", type:"fill",
+    text:"<b>&#x2796; Negative (منفی) — Present Simple:</b><br><br>Bradley ___ (not / like) playing other bands\' music.",
+    ans:"doesn\'t like", alt:"does not like", hint:"he/she/it → doesn\'t + base verb" },
+  { id:"q8b", sec:"grammar", type:"fill",
+    text:"<b>&#x2796; Negative — Present Simple:</b><br><br>Dan and I ___ (not / play) classical music.",
+    ans:"don\'t play", alt:"do not play", hint:"I/we/they/you → don\'t + base verb" },
+  { id:"q8c", sec:"grammar", type:"mc",
+    text:"<b>&#x2796; Negative — choose the correct form:</b><br><br>Shannon ___ like pop music. She prefers jazz.",
+    opts:["don\'t","doesn\'t","isn\'t"],
+    ans:1 },
+
+  // ── Question (سوالی) ──
+  { id:"q9a", sec:"grammar", type:"fill",
+    text:"<b>&#x2753; Question (سوالی) — Present Simple:</b><br><br>___ the band play their own songs? (do/does)",
+    ans:"Does", hint:"the band = it/they → Does" },
+  { id:"q9b", sec:"grammar", type:"fill",
+    text:"<b>&#x2753; Question — Present Simple:</b><br><br>___ Dan and Bradley play in the same band? (do/does)",
+    ans:"Do", hint:"Dan and Bradley = they → Do" },
+  { id:"q9c", sec:"grammar", type:"fill",
+    text:"<b>&#x2753; Question — Present Simple:</b><br><br>What kind of music ___ the band play?",
+    ans:"does", hint:"the band = it → does" },
+
+  // ── Short Answers (جواب کوتاه) ──
+  { id:"q10a", sec:"grammar", type:"mc",
+    text:"<b>&#x2714;&#xFE0F; Short Answer (جواب کوتاه):</b><br><br>\"Does Bradley sing in the band?\"<br>\"___ , he does.\"",
+    opts:["No","Yes","Do"],
+    ans:1 },
+  { id:"q10b", sec:"grammar", type:"mc",
+    text:"<b>&#x2714;&#xFE0F; Short Answer:</b><br><br>\"Do Dan and Bradley play guitar?\"<br>\"___ , Dan plays guitar but Bradley plays bass.\"",
+    opts:["Yes, they do","No, they don\'t","Yes, he does"],
+    ans:1 },
+  { id:"q10c", sec:"grammar", type:"fill",
+    text:"<b>&#x2714;&#xFE0F; Short Answer — write the full short answer:</b><br><br>\"Does Shannon write the band\'s songs?\"<br>\"No, ___.\" (she / doesn\'t)",
+    ans:"she doesn\'t", alt:"No, she doesn\'t", hint:"No, she doesn\'t." },
+
+  // ── Transform (تبدیل جمله) ──
+  { id:"q11a", sec:"grammar", type:"fill",
+    text:"<b>&#x1F504; Transform (تبدیل) — Make it NEGATIVE:</b><br><br>&#x2795; The band plays jazz.<br>&#x2796; The band ___ jazz.",
+    ans:"doesn\'t play", alt:"does not play", hint:"doesn\'t + base verb (no -s)" },
+  { id:"q11b", sec:"grammar", type:"fill",
+    text:"<b>&#x1F504; Transform — Make it a QUESTION:</b><br><br>&#x2795; Shannon plays the guitar.<br>&#x2753; ___ Shannon play the guitar?",
+    ans:"Does", hint:"Does / Do + subject + base verb?" },
+  { id:"q11c", sec:"grammar", type:"fill",
+    text:"<b>&#x1F504; Transform — Make it AFFIRMATIVE:</b><br><br>&#x2796; Sam doesn\'t have talent.<br>&#x2795; Sam ___ talent.",
+    ans:"has", alt:"has got", hint:"has / has got" },
+
+  // ════════════════════════════════════════
+  // GRAMMAR — Past Simple
+  // ════════════════════════════════════════
+  { id:"q12a", sec:"grammar", type:"fill",
+    text:"<b>&#x23F0; Past Simple — regular verb:</b><br><br>Last year, Shannon ___ (dream) of being a pop star.",
+    ans:"dreamed", alt:"dreamt", hint:"Regular → add -ed (or dreamt)" },
+  { id:"q12b", sec:"grammar", type:"fill",
+    text:"<b>&#x23F0; Past Simple — irregular verb:</b><br><br>She ___ (take) some guitar lessons.",
     ans:"took", hint:"Irregular! take → took" },
-  { id:"q11", sec:"grammar", type:"fill",
-    text:"✏️ Past Simple — irregular verb:<br><br>The day before the show, the guitar player ___ (get) ill.",
+  { id:"q12c", sec:"grammar", type:"fill",
+    text:"<b>&#x23F0; Past Simple — irregular verb:</b><br><br>The guitar player ___ (get) ill before the show.",
     ans:"got", hint:"Irregular! get → got" },
-  { id:"q12", sec:"grammar", type:"fill",
-    text:"✏️ Past Simple — regular verb:<br><br>So Bradley ___ (ask) her to play for them.",
+  { id:"q12d", sec:"grammar", type:"fill",
+    text:"<b>&#x23F0; Past Simple — regular verb:</b><br><br>Bradley ___ (ask) Shannon to play for them.",
     ans:"asked", hint:"Regular → add -ed" },
-  { id:"q13", sec:"grammar", type:"fill",
-    text:"✏️ Present Simple negative:<br><br>Bradley ___ (not like) playing other bands\' music.",
-    ans:"doesn\'t like", alt:"does not like", hint:"He/she/it → doesn\'t + base verb" },
-  // ── READING ─────────────────────────────────────────────────
+
+  // ════════════════════════════════════════
+  // READING
+  // ════════════════════════════════════════
   { id:"q14", sec:"reading", type:"tf",
     text:"True or False: In the band, there are two boys and two girls.", ans:true },
   { id:"q15", sec:"reading", type:"tf",
@@ -2135,7 +2196,10 @@ var ET_QUESTIONS = [
     ans:1 },
   { id:"q18", sec:"reading", type:"open",
     text:"Why did the band play a SECOND concert? Write 1-2 sentences." },
-  // ── DIALOGUE ────────────────────────────────────────────────
+
+  // ════════════════════════════════════════
+  // DIALOGUE
+  // ════════════════════════════════════════
   { id:"q19", sec:"dialogue", type:"mc",
     text:"Choose the best response:<br><br>A: \"I thought the play was brilliant.\"<br>B: \"___\"",
     opts:["Me neither. It was a bit boring.","I couldn\'t agree more. Everyone was brilliant.","Do you think so? I think United might beat them."],
@@ -2151,9 +2215,12 @@ var ET_QUESTIONS = [
     text:"Which phrase shows the STRONGEST agreement?",
     opts:["Do you think so?","I couldn\'t agree more.","It\'s a bit disappointing."],
     ans:1 },
-  // ── WRITING ─────────────────────────────────────────────────
+
+  // ════════════════════════════════════════
+  // WRITING
+  // ════════════════════════════════════════
   { id:"q23", sec:"writing", type:"essay",
-    text:"✍️ Write an email (60-80 words) to a friend about a film or concert you saw recently.<br><br>Include: <b>title · type of film/music · your opinion · recommendation</b>" }
+    text:"&#x270D;&#xFE0F; Write an email (60-80 words) to a friend about a film or concert you saw recently.<br><br>Include: <b>title &middot; type of film/music &middot; your opinion &middot; recommendation</b>" }
 ];
 
 var ET_SEC_LABELS = {
