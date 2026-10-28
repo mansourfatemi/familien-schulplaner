@@ -1145,8 +1145,9 @@ function switchTab(child) {
   document.getElementById('panel-' + child).classList.add('active');
   if (child === 'all') buildOverview();
   if (child === 'history') buildHistory();
-  if (child === 'mansoor') { initDrinkTracker('mansoor'); buildMansoorKidsOverview(); }
+  if (child === 'mansoor') { initDrinkTracker('mansoor'); buildMansoorKidsOverview(); setTimeout(function(){ if(typeof etRenderMansoorResults==='function') etRenderMansoorResults(); }, 80); }
   else if (['ibrahim','hosna','jasmin','zainab'].includes(child)) initDrinkTracker(child);
+  if (child === 'ibrahim') { setTimeout(function(){ if(typeof buildFlashcards==='function') buildFlashcards('ibrahim'); if(typeof etRenderIbrahim==='function') etRenderIbrahim(); }, 80); }
 }
 
 function updateDateHeaders() { document.getElementById('headerDate').textContent = formatDateDE(currentDate); }
@@ -2604,21 +2605,13 @@ function etRenderMansoorResults() {
   }
 }
 
-// Hook into tab switching
-var _origEtShowTab = window.showTab;
-window.showTab = function(child) {
-  if (_origEtShowTab) _origEtShowTab(child);
-  if (child === 'ibrahim') setTimeout(etRenderIbrahim, 50);
-  if (child === 'mansoor') setTimeout(etRenderMansoorResults, 50);
-};
-
-// Auto-render if already on ibrahim tab
+// Auto-render on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
   var activeTab = document.querySelector('.tab.active');
   if (activeTab) {
     var c = activeTab.getAttribute('data-child');
-    if (c === 'ibrahim') etRenderIbrahim();
-    if (c === 'mansoor') etRenderMansoorResults();
+    if (c === 'ibrahim') { if(typeof etRenderIbrahim==='function') etRenderIbrahim(); }
+    if (c === 'mansoor') { if(typeof etRenderMansoorResults==='function') etRenderMansoorResults(); }
   }
 });
 
