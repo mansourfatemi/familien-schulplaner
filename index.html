@@ -1922,6 +1922,312 @@ function init() {
   buildMansoorKidsOverview();
 }
 init();
+
+
+// ENGLISH TEST — Unit 1 (Ibrahim)
+// ============================================================
+
+var ET_QUESTIONS = [
+  { id:"q1", sec:"vocab", type:"mc",
+    text:"Sam Small saw an advert for a band looking for a singer ___",
+    opts:["and said he didn't have what it takes.","and decided to give it a try.","and he is on his way up.","he did some training with his mum."],
+    ans:1 },
+  { id:"q2", sec:"vocab", type:"fill",
+    text:"Sam was disappointed but he didn't ___ on his dream.",
+    ans:"give up", hint:"phrasal verb = stop trying" },
+  { id:"q3", sec:"vocab", type:"mc",
+    text:"What does 'audition' mean?",
+    opts:["A music concert for fans","A test performance to get a role in a band or show","A type of musical instrument"],
+    ans:1 },
+  { id:"q4", sec:"vocab", type:"multi",
+    text:"Which are musical styles from Unit 1? Select ALL that apply:",
+    opts:["jazz","blues","football","reggae","opera","classical","chemistry"],
+    ans:[0,1,3,4,5] },
+  { id:"q5a", sec:"vocab", type:"match3",
+    text:"Match the phrases:",
+    pairs:[
+      { left:"\"to give up\"", opts:["to stop trying","to have the talent needed","to be successful"], ans:0 },
+      { left:"\"to have got what it takes\"", opts:["to stop trying","to have the talent needed","to be successful"], ans:1 },
+      { left:"\"to make it\"", opts:["to stop trying","to have the talent needed","to be successful"], ans:2 }
+    ]
+  },
+  { id:"q6", sec:"grammar", type:"fill", text:"Dan and I ___ the guitar.", ans:"play", hint:"Dan and I = plural" },
+  { id:"q7", sec:"grammar", type:"fill", text:"Bradley ___ and plays bass.", ans:"sings", hint:"Bradley = he" },
+  { id:"q8", sec:"grammar", type:"fill", text:"What kind of music ___ the band play?", ans:"does" },
+  { id:"q9", sec:"grammar", type:"fill", text:"Shannon ___ (dream) of being a pop star.", ans:"dreamed", alt:"dreamt" },
+  { id:"q10", sec:"grammar", type:"fill", text:"She ___ (take) some lessons.", ans:"took", hint:"Irregular!" },
+  { id:"q11", sec:"grammar", type:"fill", text:"The day before the show, the guitar player ___ (get) ill.", ans:"got", hint:"Irregular!" },
+  { id:"q12", sec:"grammar", type:"fill", text:"Bradley ___ (ask) her to play for them.", ans:"asked" },
+  { id:"q13", sec:"grammar", type:"fill", text:"Make negative: Bradley ___ like playing other bands' music.", ans:"doesn't", alt:"does not" },
+  { id:"q14", sec:"reading", type:"tf", text:"True or False: In the band, there are two boys and two girls.", ans:true },
+  { id:"q15", sec:"reading", type:"tf", text:"True or False: The band wrote 'Butterfly Blues' themselves.", ans:true },
+  { id:"q16", sec:"reading", type:"mc",
+    text:"Why did Josh want the band to do a charity concert?",
+    opts:["To buy new guitars for the band","To raise money for new school computers","To become famous"],
+    ans:1 },
+  { id:"q17", sec:"reading", type:"mc",
+    text:"How did they solve the argument about charity money?",
+    opts:["Adrian left the band","They gave half the money to children's homes too","They cancelled the concert"],
+    ans:1 },
+  { id:"q18", sec:"reading", type:"open", text:"Why did the band play a SECOND concert? (Write 1-2 sentences)" },
+  { id:"q19", sec:"dialogue", type:"mc",
+    text:"\"I thought the play was brilliant.\"",
+    opts:["Me neither. It was a bit boring.","I couldn't agree more. Everyone was brilliant.","Do you think so? I think United might beat them."],
+    ans:1 },
+  { id:"q20", sec:"dialogue", type:"mc",
+    text:"\"I didn't really enjoy the film.\"",
+    opts:["I couldn't agree more. Can't stop singing it.","Me neither. It was a bit boring.","Me too. Everyone was brilliant."],
+    ans:1 },
+  { id:"q21", sec:"dialogue", type:"fill", text:"In my ___, it's OK but not as good as the last film.", ans:"opinion", hint:"= I think that..." },
+  { id:"q22", sec:"dialogue", type:"mc",
+    text:"Which phrase shows STRONG agreement?",
+    opts:["Do you think so?","I couldn't agree more.","It's a bit disappointing."],
+    ans:1 },
+  { id:"q23", sec:"writing", type:"essay",
+    text:"Write an email (60-80 words) to a friend about a film you saw. Include: title, type, your opinion, recommendation." }
+];
+
+var ET_SEC_LABELS = {
+  vocab:"&#x1F4DA; Vocabulary",
+  grammar:"&#x270F;&#xFE0F; Grammar",
+  reading:"&#x1F4D6; Reading",
+  dialogue:"&#x1F4AC; Dialogue",
+  writing:"&#x270D;&#xFE0F; Writing"
+};
+var ET_SEC_COLORS = {
+  vocab:"#1976D2", grammar:"#7B1FA2", reading:"#E65100", dialogue:"#00796B", writing:"#C62828"
+};
+var _etTFState = {};
+
+function etRenderIbrahim() {
+  var con = document.getElementById("engtest-ibrahim-container");
+  if (!con) return;
+  var html = "<div style='background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.08);overflow:hidden;margin-bottom:16px'>";
+  html += "<div style='background:linear-gradient(135deg,#1565C0,#4A90D9);color:#fff;padding:14px 20px;font-weight:700;font-size:1em'>&#x1F3B5; Unit 1 &mdash; Music makes the world go round</div>";
+  html += "<div style='padding:18px 20px'>";
+  var curSec = "";
+  ET_QUESTIONS.forEach(function(q, qi) {
+    if (q.sec !== curSec) {
+      curSec = q.sec;
+      html += "<div style='font-weight:700;margin:18px 0 10px;padding:8px 14px;border-radius:6px;color:#fff;background:" + ET_SEC_COLORS[curSec] + "'>" + ET_SEC_LABELS[curSec] + "</div>";
+    }
+    html += "<div style='margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #eee' id='etq-" + q.id + "'>";
+    html += "<div style='font-weight:600;margin-bottom:10px;font-size:0.93em;line-height:1.5'><span style='display:inline-block;background:#4caf50;color:#fff;border-radius:50%;width:22px;height:22px;text-align:center;line-height:22px;font-size:0.8em;margin-right:7px'>" + (qi+1) + "</span>" + q.text + "</div>";
+    if (q.type === "mc") {
+      q.opts.forEach(function(o, oi) {
+        html += "<label style='display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:7px;border:2px solid #ddd;margin-bottom:6px;cursor:pointer;font-size:0.9em' id='etopt-" + q.id + "-" + oi + "'><input type='radio' name='et-" + q.id + "' value='" + oi + "' style='width:17px;height:17px'> " + o + "</label>";
+      });
+    } else if (q.type === "fill") {
+      html += "<input type='text' id='etfill-" + q.id + "' placeholder='...' style='border:none;border-bottom:2px solid #999;outline:none;font-size:0.95em;padding:3px 8px;min-width:140px;font-family:inherit'>";
+      if (q.hint) html += "<div style='font-size:0.8em;color:#888;margin-top:4px;font-style:italic'>&#x1F4A1; " + q.hint + "</div>";
+    } else if (q.type === "tf") {
+      html += "<div style='display:flex;gap:12px;margin-top:6px'>";
+      html += "<button onclick=\"etTF('" + q.id + "',true)\" id='ettf-" + q.id + "-t' style='padding:7px 18px;border:2px solid #bbb;border-radius:18px;cursor:pointer;font-weight:600;background:#fff;font-size:0.88em'>TRUE</button>";
+      html += "<button onclick=\"etTF('" + q.id + "',false)\" id='ettf-" + q.id + "-f' style='padding:7px 18px;border:2px solid #bbb;border-radius:18px;cursor:pointer;font-weight:600;background:#fff;font-size:0.88em'>FALSE</button>";
+      html += "</div>";
+    } else if (q.type === "multi") {
+      q.opts.forEach(function(o, oi) {
+        html += "<label style='display:flex;align-items:center;gap:9px;padding:7px 12px;border-radius:7px;border:2px solid #ddd;margin-bottom:5px;cursor:pointer;font-size:0.9em'><input type='checkbox' name='et-" + q.id + "' value='" + oi + "' style='width:17px;height:17px'> " + o + "</label>";
+      });
+    } else if (q.type === "match3") {
+      q.pairs.forEach(function(p, pi) {
+        html += "<div style='display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap'>";
+        html += "<div style='flex:1;min-width:150px;background:#e3f2fd;padding:7px 11px;border-radius:6px;font-size:0.88em'>" + p.left + "</div>";
+        html += "<select id='etmatch-" + q.id + "-" + pi + "' style='padding:7px;border:2px solid #bbb;border-radius:6px;font-size:0.88em;min-width:160px'><option value=''>-- choose --</option>";
+        p.opts.forEach(function(o, oi) { html += "<option value='" + oi + "'>" + o + "</option>"; });
+        html += "</select></div>";
+      });
+    } else if (q.type === "open" || q.type === "essay") {
+      var ph = q.type === "essay" ? "Hi [friend],\\n\\n...\\n\\nBye,\\nIbrahim" : "Write your answer here...";
+      var wcAttr = q.type === "essay" ? " onkeyup=\"etWC(this,'etWC-" + q.id + "')\"" : "";
+      html += "<textarea id='etfill-" + q.id + "' rows='" + (q.type==="essay"?7:3) + "' style='width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:0.9em;font-family:inherit;resize:vertical' placeholder='" + ph + "'" + wcAttr + "></textarea>";
+      if (q.type === "essay") {
+        html += "<div id='etWC-" + q.id + "' style='font-size:0.8em;color:#888;text-align:right;margin-top:3px'>Words: 0 / target 60-80</div>";
+        html += "<div style='background:#e3f2fd;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:0.85em;line-height:1.8'><b>&#x1F4A1; Useful phrases:</b><br>It's really awesome / great... | It's a bit disappointing... | My favourite... | I'm not so keen on... | I couldn't recommend it more.</div>";
+      }
+    }
+    html += "</div>";
+  });
+  html += "</div>";
+  html += "<div style='padding:0 20px 20px;text-align:center'>";
+  html += "<button onclick='etSubmit()' style='background:linear-gradient(135deg,#2c7a3f,#4caf50);color:#fff;border:none;padding:13px 40px;font-size:1em;font-weight:700;border-radius:25px;cursor:pointer;box-shadow:0 4px 12px rgba(76,175,80,0.4)'>&#x2705; Abschicken &amp; Speichern</button>";
+  html += "</div></div>";
+  con.innerHTML = html;
+}
+
+function etTF(qid, val) {
+  _etTFState[qid] = val;
+  var bt = document.getElementById("ettf-"+qid+"-t");
+  var bf = document.getElementById("ettf-"+qid+"-f");
+  if(bt){ bt.style.background = val===true?"#1976D2":"#fff"; bt.style.color = val===true?"#fff":"#222"; }
+  if(bf){ bf.style.background = val===false?"#e65100":"#fff"; bf.style.color = val===false?"#fff":"#222"; }
+}
+
+function etWC(el, wcId) {
+  var w = el.value.trim() === "" ? 0 : el.value.trim().split(/\s+/).length;
+  var el2 = document.getElementById(wcId);
+  if (el2) { el2.textContent = "Words: " + w + " / target 60-80"; el2.style.color = (w>=60&&w<=80)?"#2e7d32":(w>80?"#e53935":"#888"); }
+}
+
+function etCollectAnswers() {
+  var ans = {};
+  ET_QUESTIONS.forEach(function(q) {
+    if (q.type === "mc") {
+      var sel = document.querySelector("input[name='et-" + q.id + "']:checked");
+      ans[q.id] = sel ? parseInt(sel.value) : null;
+    } else if (q.type === "fill" || q.type === "open" || q.type === "essay") {
+      var el = document.getElementById("etfill-" + q.id);
+      ans[q.id] = el ? el.value.trim() : "";
+    } else if (q.type === "tf") {
+      ans[q.id] = _etTFState[q.id] !== undefined ? _etTFState[q.id] : null;
+    } else if (q.type === "multi") {
+      ans[q.id] = Array.from(document.querySelectorAll("input[name='et-" + q.id + "']:checked")).map(function(i){return parseInt(i.value);});
+    } else if (q.type === "match3") {
+      var vals = {};
+      q.pairs.forEach(function(p, pi) {
+        var sel = document.getElementById("etmatch-" + q.id + "-" + pi);
+        vals[pi] = sel && sel.value !== "" ? parseInt(sel.value) : null;
+      });
+      ans[q.id] = vals;
+    }
+  });
+  return ans;
+}
+
+function etCalcScore(ans) {
+  var score = { total:0, earned:0, secs:{} };
+  Object.keys(ET_SEC_LABELS).forEach(function(s){ score.secs[s] = {earned:0, total:0}; });
+  ET_QUESTIONS.forEach(function(q) {
+    var sec = q.sec;
+    score.secs[sec].total++; score.total++;
+    if (q.type === "open" || q.type === "essay") {
+      if ((ans[q.id]||"").length > 15) { score.secs[sec].earned++; score.earned++; }
+    } else if (q.type === "mc") {
+      if (ans[q.id] === q.ans) { score.secs[sec].earned++; score.earned++; }
+    } else if (q.type === "fill") {
+      var v = (ans[q.id]||"").toLowerCase().trim();
+      if (v === q.ans.toLowerCase() || (q.alt && v === q.alt.toLowerCase())) { score.secs[sec].earned++; score.earned++; }
+    } else if (q.type === "tf") {
+      if (ans[q.id] === q.ans) { score.secs[sec].earned++; score.earned++; }
+    } else if (q.type === "multi") {
+      var a = (ans[q.id]||[]).slice().sort().join(",");
+      var b = q.ans.slice().sort().join(",");
+      if (a === b) { score.secs[sec].earned++; score.earned++; }
+    } else if (q.type === "match3") {
+      q.pairs.forEach(function(p, pi) {
+        score.secs[sec].total++; score.total++;
+        if (ans[q.id] && ans[q.id][pi] === p.ans) { score.secs[sec].earned++; score.earned++; }
+      });
+      score.secs[sec].total--; score.total--;  // correct for initial increment
+    }
+  });
+  return score;
+}
+
+function etSubmit() {
+  var ans = etCollectAnswers();
+  var score = etCalcScore(ans);
+  var pct = Math.round(score.earned / score.total * 100);
+  var now = new Date();
+  var record = {
+    date: now.toLocaleDateString("de-AT"),
+    time: now.toLocaleTimeString("de-AT", {hour:"2-digit",minute:"2-digit"}),
+    score: score.earned, total: score.total, pct: pct,
+    secs: score.secs, answers: ans, ts: now.getTime()
+  };
+  var path = "fatemi/engtest_ibrahim/" + now.getTime();
+  try {
+    var dbRef = window._fbRef(window._fbDb, path);
+    window._fbSet(dbRef, record).then(function() {
+      etShowResult(score, pct, record, true);
+    }).catch(function() {
+      var saved = JSON.parse(localStorage.getItem("engtest_ibrahim") || "[]");
+      saved.push(record); localStorage.setItem("engtest_ibrahim", JSON.stringify(saved));
+      etShowResult(score, pct, record, false);
+    });
+  } catch(e) {
+    var saved = JSON.parse(localStorage.getItem("engtest_ibrahim") || "[]");
+    saved.push(record); localStorage.setItem("engtest_ibrahim", JSON.stringify(saved));
+    etShowResult(score, pct, record, false);
+  }
+}
+
+function etShowResult(score, pct, record, synced) {
+  var color = pct>=80?"#4caf50":pct>=60?"#ff9800":"#e53935";
+  var emoji = pct>=80?"&#x1F3C6;":pct>=60?"&#x1F44D;":"&#x1F4AA;";
+  var msg = pct>=80?"Excellent, Ibrahim! Well done!":pct>=60?"Good job! Review the sections below.":"Keep practising!";
+  var html = "<div style='background:white;border-radius:12px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.1);margin-top:8px;text-align:center'>";
+  html += "<div style='width:100px;height:100px;border-radius:50%;background:" + color + ";color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.7em;font-weight:700'>" + pct + "%<span style='font-size:0.4em;font-weight:400'>" + record.score + "/" + record.total + " Pts</span></div>";
+  html += "<div style='font-size:1.2em;font-weight:700;margin-bottom:6px'>" + emoji + " " + (pct>=80?"Excellent!":pct>=60?"Good Job!":"Keep Trying!") + "</div>";
+  html += "<div style='color:#555;font-size:0.9em;margin-bottom:18px'>" + msg + "</div>";
+  html += "<table style='width:100%;border-collapse:collapse;text-align:left;margin-bottom:16px'>";
+  html += "<tr style='background:#f5f5f5'><th style='padding:8px 12px;font-size:0.85em'>Section</th><th style='padding:8px 12px;font-size:0.85em'>Score</th><th style='padding:8px 12px;font-size:0.85em'>%</th></tr>";
+  Object.keys(score.secs).forEach(function(k) {
+    var s = score.secs[k];
+    var sp = s.total>0 ? Math.round(s.earned/s.total*100) : 0;
+    var sc = sp>=80?"#2e7d32":sp>=60?"#e65100":"#c62828";
+    html += "<tr><td style='padding:8px 12px;font-size:0.85em;border-bottom:1px solid #eee'>" + ET_SEC_LABELS[k] + "</td><td style='padding:8px 12px;font-size:0.85em;border-bottom:1px solid #eee'>" + s.earned + "/" + s.total + "</td><td style='padding:8px 12px;font-size:0.85em;border-bottom:1px solid #eee;color:" + sc + ";font-weight:700'>" + sp + "%</td></tr>";
+  });
+  html += "</table>";
+  html += "<div style='font-size:0.82em;color:" + (synced?"#2e7d32":"#888") + "'>" + (synced?"&#x2705; Gespeichert &amp; an Vater gesendet!":"&#x26A0;&#xFE0F; Lokal gespeichert") + "</div></div>";
+  var con = document.getElementById("engtest-ibrahim-container");
+  if (con) con.innerHTML = html + "<div style='text-align:center;margin-top:14px'><button onclick='etRenderIbrahim()' style='background:#4A90D9;color:#fff;border:none;padding:10px 28px;border-radius:20px;cursor:pointer;font-size:0.9em'>&#x1F504; Nochmals versuchen</button></div>";
+}
+
+function etRenderMansoorResults() {
+  var con = document.getElementById("engtest-results-mansoor");
+  if (!con) return;
+  function renderResults(records) {
+    if (!records || records.length === 0) {
+      con.innerHTML = "<div style='color:#888;font-size:0.9em;padding:12px 0'>Noch keine Testergebnisse von Ibrahim.</div>";
+      return;
+    }
+    records.sort(function(a,b){ return b.ts - a.ts; });
+    var html = "";
+    records.slice(0,5).forEach(function(rec, idx) {
+      var color = rec.pct>=80?"#4caf50":rec.pct>=60?"#ff9800":"#e53935";
+      var emoji = rec.pct>=80?"&#x1F3C6;":rec.pct>=60?"&#x1F44D;":"&#x1F4AA;";
+      html += "<div style='background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 6px rgba(0,0,0,0.08);display:flex;align-items:center;gap:14px;flex-wrap:wrap'>";
+      html += "<div style='width:56px;height:56px;border-radius:50%;background:" + color + ";color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.1em;font-weight:700;flex-shrink:0'>" + rec.pct + "%</div>";
+      html += "<div style='flex:1;min-width:160px'>";
+      html += "<div style='font-weight:700;font-size:0.95em'>" + emoji + " " + rec.date + " um " + rec.time + (idx===0?" <span style='background:#4caf50;color:#fff;font-size:0.7em;padding:1px 6px;border-radius:10px;margin-left:6px'>Neu</span>":"") + "</div>";
+      html += "<div style='font-size:0.85em;color:#555;margin-top:3px'>" + rec.score + " / " + rec.total + " Punkte";
+      if (rec.secs) {
+        var weak = [];
+        Object.keys(rec.secs).forEach(function(k){
+          var s = rec.secs[k];
+          if(s.total>0 && Math.round(s.earned/s.total*100)<60) weak.push(k);
+        });
+        if (weak.length>0) html += " &nbsp;|&nbsp; <span style='color:#e53935'>&#x26A0;&#xFE0F; Schwach: " + weak.join(", ") + "</span>";
+        else html += " &nbsp;|&nbsp; <span style='color:#2e7d32'>&#x2705; Alle Bereiche OK</span>";
+      }
+      html += "</div></div></div>";
+    });
+    con.innerHTML = html;
+  }
+  try {
+    var dbRef = window._fbRef(window._fbDb, "fatemi/engtest_ibrahim");
+    window._fbOnValue(dbRef, function(snapshot) {
+      var data = snapshot.val();
+      renderResults(data ? Object.values(data) : []);
+    });
+  } catch(e) {
+    renderResults(JSON.parse(localStorage.getItem("engtest_ibrahim") || "[]"));
+  }
+}
+
+// Auto-render on DOMContentLoaded
+document.addEventListener("DOMContentLoaded", function() {
+  var activeTab = document.querySelector(".tab.active");
+  if (activeTab) {
+    var c = activeTab.getAttribute("data-child");
+    if (c === "ibrahim") { if(typeof etRenderIbrahim==="function") etRenderIbrahim(); }
+    if (c === "mansoor") { if(typeof etRenderMansoorResults==="function") etRenderMansoorResults(); }
+  }
+});
+
+
+
 </script>
 
   <!-- HISTORY / VERLAUF PANEL -->
@@ -2270,308 +2576,6 @@ init();
   
 
 // ============================================================
-// ENGLISH TEST — Unit 1 (Ibrahim)
-// ============================================================
-
-var ET_QUESTIONS = [
-  { id:"q1", sec:"vocab", type:"mc",
-    text:"Sam Small saw an advert for a band looking for a singer ___",
-    opts:["and said he didn't have what it takes.","and decided to give it a try.","and he is on his way up.","he did some training with his mum."],
-    ans:1 },
-  { id:"q2", sec:"vocab", type:"fill",
-    text:"Sam was disappointed but he didn't ___ on his dream.",
-    ans:"give up", hint:"phrasal verb = stop trying" },
-  { id:"q3", sec:"vocab", type:"mc",
-    text:"What does 'audition' mean?",
-    opts:["A music concert for fans","A test performance to get a role in a band or show","A type of musical instrument"],
-    ans:1 },
-  { id:"q4", sec:"vocab", type:"multi",
-    text:"Which are musical styles from Unit 1? Select ALL that apply:",
-    opts:["jazz","blues","football","reggae","opera","classical","chemistry"],
-    ans:[0,1,3,4,5] },
-  { id:"q5a", sec:"vocab", type:"match3",
-    text:"Match the phrases:",
-    pairs:[
-      { left:"\"to give up\"", opts:["to stop trying","to have the talent needed","to be successful"], ans:0 },
-      { left:"\"to have got what it takes\"", opts:["to stop trying","to have the talent needed","to be successful"], ans:1 },
-      { left:"\"to make it\"", opts:["to stop trying","to have the talent needed","to be successful"], ans:2 }
-    ]
-  },
-  { id:"q6", sec:"grammar", type:"fill", text:"Dan and I ___ the guitar.", ans:"play", hint:"Dan and I = plural" },
-  { id:"q7", sec:"grammar", type:"fill", text:"Bradley ___ and plays bass.", ans:"sings", hint:"Bradley = he" },
-  { id:"q8", sec:"grammar", type:"fill", text:"What kind of music ___ the band play?", ans:"does" },
-  { id:"q9", sec:"grammar", type:"fill", text:"Shannon ___ (dream) of being a pop star.", ans:"dreamed", alt:"dreamt" },
-  { id:"q10", sec:"grammar", type:"fill", text:"She ___ (take) some lessons.", ans:"took", hint:"Irregular!" },
-  { id:"q11", sec:"grammar", type:"fill", text:"The day before the show, the guitar player ___ (get) ill.", ans:"got", hint:"Irregular!" },
-  { id:"q12", sec:"grammar", type:"fill", text:"Bradley ___ (ask) her to play for them.", ans:"asked" },
-  { id:"q13", sec:"grammar", type:"fill", text:"Make negative: Bradley ___ like playing other bands' music.", ans:"doesn't", alt:"does not" },
-  { id:"q14", sec:"reading", type:"tf", text:"True or False: In the band, there are two boys and two girls.", ans:true },
-  { id:"q15", sec:"reading", type:"tf", text:"True or False: The band wrote 'Butterfly Blues' themselves.", ans:true },
-  { id:"q16", sec:"reading", type:"mc",
-    text:"Why did Josh want the band to do a charity concert?",
-    opts:["To buy new guitars for the band","To raise money for new school computers","To become famous"],
-    ans:1 },
-  { id:"q17", sec:"reading", type:"mc",
-    text:"How did they solve the argument about charity money?",
-    opts:["Adrian left the band","They gave half the money to children's homes too","They cancelled the concert"],
-    ans:1 },
-  { id:"q18", sec:"reading", type:"open", text:"Why did the band play a SECOND concert? (Write 1-2 sentences)" },
-  { id:"q19", sec:"dialogue", type:"mc",
-    text:"\"I thought the play was brilliant.\"",
-    opts:["Me neither. It was a bit boring.","I couldn't agree more. Everyone was brilliant.","Do you think so? I think United might beat them."],
-    ans:1 },
-  { id:"q20", sec:"dialogue", type:"mc",
-    text:"\"I didn't really enjoy the film.\"",
-    opts:["I couldn't agree more. Can't stop singing it.","Me neither. It was a bit boring.","Me too. Everyone was brilliant."],
-    ans:1 },
-  { id:"q21", sec:"dialogue", type:"fill", text:"In my ___, it's OK but not as good as the last film.", ans:"opinion", hint:"= I think that..." },
-  { id:"q22", sec:"dialogue", type:"mc",
-    text:"Which phrase shows STRONG agreement?",
-    opts:["Do you think so?","I couldn't agree more.","It's a bit disappointing."],
-    ans:1 },
-  { id:"q23", sec:"writing", type:"essay",
-    text:"Write an email (60-80 words) to a friend about a film you saw. Include: title, type, your opinion, recommendation." }
-];
-
-var ET_SEC_LABELS = {
-  vocab:"&#x1F4DA; Vocabulary",
-  grammar:"&#x270F;&#xFE0F; Grammar",
-  reading:"&#x1F4D6; Reading",
-  dialogue:"&#x1F4AC; Dialogue",
-  writing:"&#x270D;&#xFE0F; Writing"
-};
-var ET_SEC_COLORS = {
-  vocab:"#1976D2", grammar:"#7B1FA2", reading:"#E65100", dialogue:"#00796B", writing:"#C62828"
-};
-var _etTFState = {};
-
-function etRenderIbrahim() {
-  var con = document.getElementById("engtest-ibrahim-container");
-  if (!con) return;
-  var html = "<div style='background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.08);overflow:hidden;margin-bottom:16px'>";
-  html += "<div style='background:linear-gradient(135deg,#1565C0,#4A90D9);color:#fff;padding:14px 20px;font-weight:700;font-size:1em'>&#x1F3B5; Unit 1 &mdash; Music makes the world go round</div>";
-  html += "<div style='padding:18px 20px'>";
-  var curSec = "";
-  ET_QUESTIONS.forEach(function(q, qi) {
-    if (q.sec !== curSec) {
-      curSec = q.sec;
-      html += "<div style='font-weight:700;margin:18px 0 10px;padding:8px 14px;border-radius:6px;color:#fff;background:" + ET_SEC_COLORS[curSec] + "'>" + ET_SEC_LABELS[curSec] + "</div>";
-    }
-    html += "<div style='margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #eee' id='etq-" + q.id + "'>";
-    html += "<div style='font-weight:600;margin-bottom:10px;font-size:0.93em;line-height:1.5'><span style='display:inline-block;background:#4caf50;color:#fff;border-radius:50%;width:22px;height:22px;text-align:center;line-height:22px;font-size:0.8em;margin-right:7px'>" + (qi+1) + "</span>" + q.text + "</div>";
-    if (q.type === "mc") {
-      q.opts.forEach(function(o, oi) {
-        html += "<label style='display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:7px;border:2px solid #ddd;margin-bottom:6px;cursor:pointer;font-size:0.9em' id='etopt-" + q.id + "-" + oi + "'><input type='radio' name='et-" + q.id + "' value='" + oi + "' style='width:17px;height:17px'> " + o + "</label>";
-      });
-    } else if (q.type === "fill") {
-      html += "<input type='text' id='etfill-" + q.id + "' placeholder='...' style='border:none;border-bottom:2px solid #999;outline:none;font-size:0.95em;padding:3px 8px;min-width:140px;font-family:inherit'>";
-      if (q.hint) html += "<div style='font-size:0.8em;color:#888;margin-top:4px;font-style:italic'>&#x1F4A1; " + q.hint + "</div>";
-    } else if (q.type === "tf") {
-      html += "<div style='display:flex;gap:12px;margin-top:6px'>";
-      html += "<button onclick=\"etTF('" + q.id + "',true)\" id='ettf-" + q.id + "-t' style='padding:7px 18px;border:2px solid #bbb;border-radius:18px;cursor:pointer;font-weight:600;background:#fff;font-size:0.88em'>TRUE</button>";
-      html += "<button onclick=\"etTF('" + q.id + "',false)\" id='ettf-" + q.id + "-f' style='padding:7px 18px;border:2px solid #bbb;border-radius:18px;cursor:pointer;font-weight:600;background:#fff;font-size:0.88em'>FALSE</button>";
-      html += "</div>";
-    } else if (q.type === "multi") {
-      q.opts.forEach(function(o, oi) {
-        html += "<label style='display:flex;align-items:center;gap:9px;padding:7px 12px;border-radius:7px;border:2px solid #ddd;margin-bottom:5px;cursor:pointer;font-size:0.9em'><input type='checkbox' name='et-" + q.id + "' value='" + oi + "' style='width:17px;height:17px'> " + o + "</label>";
-      });
-    } else if (q.type === "match3") {
-      q.pairs.forEach(function(p, pi) {
-        html += "<div style='display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap'>";
-        html += "<div style='flex:1;min-width:150px;background:#e3f2fd;padding:7px 11px;border-radius:6px;font-size:0.88em'>" + p.left + "</div>";
-        html += "<select id='etmatch-" + q.id + "-" + pi + "' style='padding:7px;border:2px solid #bbb;border-radius:6px;font-size:0.88em;min-width:160px'><option value=''>-- choose --</option>";
-        p.opts.forEach(function(o, oi) { html += "<option value='" + oi + "'>" + o + "</option>"; });
-        html += "</select></div>";
-      });
-    } else if (q.type === "open" || q.type === "essay") {
-      var ph = q.type === "essay" ? "Hi [friend],\\n\\n...\\n\\nBye,\\nIbrahim" : "Write your answer here...";
-      var wcAttr = q.type === "essay" ? " onkeyup=\"etWC(this,'etWC-" + q.id + "')\"" : "";
-      html += "<textarea id='etfill-" + q.id + "' rows='" + (q.type==="essay"?7:3) + "' style='width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:0.9em;font-family:inherit;resize:vertical' placeholder='" + ph + "'" + wcAttr + "></textarea>";
-      if (q.type === "essay") {
-        html += "<div id='etWC-" + q.id + "' style='font-size:0.8em;color:#888;text-align:right;margin-top:3px'>Words: 0 / target 60-80</div>";
-        html += "<div style='background:#e3f2fd;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:0.85em;line-height:1.8'><b>&#x1F4A1; Useful phrases:</b><br>It's really awesome / great... | It's a bit disappointing... | My favourite... | I'm not so keen on... | I couldn't recommend it more.</div>";
-      }
-    }
-    html += "</div>";
-  });
-  html += "</div>";
-  html += "<div style='padding:0 20px 20px;text-align:center'>";
-  html += "<button onclick='etSubmit()' style='background:linear-gradient(135deg,#2c7a3f,#4caf50);color:#fff;border:none;padding:13px 40px;font-size:1em;font-weight:700;border-radius:25px;cursor:pointer;box-shadow:0 4px 12px rgba(76,175,80,0.4)'>&#x2705; Abschicken &amp; Speichern</button>";
-  html += "</div></div>";
-  con.innerHTML = html;
-}
-
-function etTF(qid, val) {
-  _etTFState[qid] = val;
-  var bt = document.getElementById("ettf-"+qid+"-t");
-  var bf = document.getElementById("ettf-"+qid+"-f");
-  if(bt){ bt.style.background = val===true?"#1976D2":"#fff"; bt.style.color = val===true?"#fff":"#222"; }
-  if(bf){ bf.style.background = val===false?"#e65100":"#fff"; bf.style.color = val===false?"#fff":"#222"; }
-}
-
-function etWC(el, wcId) {
-  var w = el.value.trim() === "" ? 0 : el.value.trim().split(/\s+/).length;
-  var el2 = document.getElementById(wcId);
-  if (el2) { el2.textContent = "Words: " + w + " / target 60-80"; el2.style.color = (w>=60&&w<=80)?"#2e7d32":(w>80?"#e53935":"#888"); }
-}
-
-function etCollectAnswers() {
-  var ans = {};
-  ET_QUESTIONS.forEach(function(q) {
-    if (q.type === "mc") {
-      var sel = document.querySelector("input[name='et-" + q.id + "']:checked");
-      ans[q.id] = sel ? parseInt(sel.value) : null;
-    } else if (q.type === "fill" || q.type === "open" || q.type === "essay") {
-      var el = document.getElementById("etfill-" + q.id);
-      ans[q.id] = el ? el.value.trim() : "";
-    } else if (q.type === "tf") {
-      ans[q.id] = _etTFState[q.id] !== undefined ? _etTFState[q.id] : null;
-    } else if (q.type === "multi") {
-      ans[q.id] = Array.from(document.querySelectorAll("input[name='et-" + q.id + "']:checked")).map(function(i){return parseInt(i.value);});
-    } else if (q.type === "match3") {
-      var vals = {};
-      q.pairs.forEach(function(p, pi) {
-        var sel = document.getElementById("etmatch-" + q.id + "-" + pi);
-        vals[pi] = sel && sel.value !== "" ? parseInt(sel.value) : null;
-      });
-      ans[q.id] = vals;
-    }
-  });
-  return ans;
-}
-
-function etCalcScore(ans) {
-  var score = { total:0, earned:0, secs:{} };
-  Object.keys(ET_SEC_LABELS).forEach(function(s){ score.secs[s] = {earned:0, total:0}; });
-  ET_QUESTIONS.forEach(function(q) {
-    var sec = q.sec;
-    score.secs[sec].total++; score.total++;
-    if (q.type === "open" || q.type === "essay") {
-      if ((ans[q.id]||"").length > 15) { score.secs[sec].earned++; score.earned++; }
-    } else if (q.type === "mc") {
-      if (ans[q.id] === q.ans) { score.secs[sec].earned++; score.earned++; }
-    } else if (q.type === "fill") {
-      var v = (ans[q.id]||"").toLowerCase().trim();
-      if (v === q.ans.toLowerCase() || (q.alt && v === q.alt.toLowerCase())) { score.secs[sec].earned++; score.earned++; }
-    } else if (q.type === "tf") {
-      if (ans[q.id] === q.ans) { score.secs[sec].earned++; score.earned++; }
-    } else if (q.type === "multi") {
-      var a = (ans[q.id]||[]).slice().sort().join(",");
-      var b = q.ans.slice().sort().join(",");
-      if (a === b) { score.secs[sec].earned++; score.earned++; }
-    } else if (q.type === "match3") {
-      q.pairs.forEach(function(p, pi) {
-        score.secs[sec].total++; score.total++;
-        if (ans[q.id] && ans[q.id][pi] === p.ans) { score.secs[sec].earned++; score.earned++; }
-      });
-      score.secs[sec].total--; score.total--;  // correct for initial increment
-    }
-  });
-  return score;
-}
-
-function etSubmit() {
-  var ans = etCollectAnswers();
-  var score = etCalcScore(ans);
-  var pct = Math.round(score.earned / score.total * 100);
-  var now = new Date();
-  var record = {
-    date: now.toLocaleDateString("de-AT"),
-    time: now.toLocaleTimeString("de-AT", {hour:"2-digit",minute:"2-digit"}),
-    score: score.earned, total: score.total, pct: pct,
-    secs: score.secs, answers: ans, ts: now.getTime()
-  };
-  var path = "fatemi/engtest_ibrahim/" + now.getTime();
-  try {
-    var dbRef = window._fbRef(window._fbDb, path);
-    window._fbSet(dbRef, record).then(function() {
-      etShowResult(score, pct, record, true);
-    }).catch(function() {
-      var saved = JSON.parse(localStorage.getItem("engtest_ibrahim") || "[]");
-      saved.push(record); localStorage.setItem("engtest_ibrahim", JSON.stringify(saved));
-      etShowResult(score, pct, record, false);
-    });
-  } catch(e) {
-    var saved = JSON.parse(localStorage.getItem("engtest_ibrahim") || "[]");
-    saved.push(record); localStorage.setItem("engtest_ibrahim", JSON.stringify(saved));
-    etShowResult(score, pct, record, false);
-  }
-}
-
-function etShowResult(score, pct, record, synced) {
-  var color = pct>=80?"#4caf50":pct>=60?"#ff9800":"#e53935";
-  var emoji = pct>=80?"&#x1F3C6;":pct>=60?"&#x1F44D;":"&#x1F4AA;";
-  var msg = pct>=80?"Excellent, Ibrahim! Well done!":pct>=60?"Good job! Review the sections below.":"Keep practising!";
-  var html = "<div style='background:white;border-radius:12px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.1);margin-top:8px;text-align:center'>";
-  html += "<div style='width:100px;height:100px;border-radius:50%;background:" + color + ";color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.7em;font-weight:700'>" + pct + "%<span style='font-size:0.4em;font-weight:400'>" + record.score + "/" + record.total + " Pts</span></div>";
-  html += "<div style='font-size:1.2em;font-weight:700;margin-bottom:6px'>" + emoji + " " + (pct>=80?"Excellent!":pct>=60?"Good Job!":"Keep Trying!") + "</div>";
-  html += "<div style='color:#555;font-size:0.9em;margin-bottom:18px'>" + msg + "</div>";
-  html += "<table style='width:100%;border-collapse:collapse;text-align:left;margin-bottom:16px'>";
-  html += "<tr style='background:#f5f5f5'><th style='padding:8px 12px;font-size:0.85em'>Section</th><th style='padding:8px 12px;font-size:0.85em'>Score</th><th style='padding:8px 12px;font-size:0.85em'>%</th></tr>";
-  Object.keys(score.secs).forEach(function(k) {
-    var s = score.secs[k];
-    var sp = s.total>0 ? Math.round(s.earned/s.total*100) : 0;
-    var sc = sp>=80?"#2e7d32":sp>=60?"#e65100":"#c62828";
-    html += "<tr><td style='padding:8px 12px;font-size:0.85em;border-bottom:1px solid #eee'>" + ET_SEC_LABELS[k] + "</td><td style='padding:8px 12px;font-size:0.85em;border-bottom:1px solid #eee'>" + s.earned + "/" + s.total + "</td><td style='padding:8px 12px;font-size:0.85em;border-bottom:1px solid #eee;color:" + sc + ";font-weight:700'>" + sp + "%</td></tr>";
-  });
-  html += "</table>";
-  html += "<div style='font-size:0.82em;color:" + (synced?"#2e7d32":"#888") + "'>" + (synced?"&#x2705; Gespeichert &amp; an Vater gesendet!":"&#x26A0;&#xFE0F; Lokal gespeichert") + "</div></div>";
-  var con = document.getElementById("engtest-ibrahim-container");
-  if (con) con.innerHTML = html + "<div style='text-align:center;margin-top:14px'><button onclick='etRenderIbrahim()' style='background:#4A90D9;color:#fff;border:none;padding:10px 28px;border-radius:20px;cursor:pointer;font-size:0.9em'>&#x1F504; Nochmals versuchen</button></div>";
-}
-
-function etRenderMansoorResults() {
-  var con = document.getElementById("engtest-results-mansoor");
-  if (!con) return;
-  function renderResults(records) {
-    if (!records || records.length === 0) {
-      con.innerHTML = "<div style='color:#888;font-size:0.9em;padding:12px 0'>Noch keine Testergebnisse von Ibrahim.</div>";
-      return;
-    }
-    records.sort(function(a,b){ return b.ts - a.ts; });
-    var html = "";
-    records.slice(0,5).forEach(function(rec, idx) {
-      var color = rec.pct>=80?"#4caf50":rec.pct>=60?"#ff9800":"#e53935";
-      var emoji = rec.pct>=80?"&#x1F3C6;":rec.pct>=60?"&#x1F44D;":"&#x1F4AA;";
-      html += "<div style='background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 6px rgba(0,0,0,0.08);display:flex;align-items:center;gap:14px;flex-wrap:wrap'>";
-      html += "<div style='width:56px;height:56px;border-radius:50%;background:" + color + ";color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.1em;font-weight:700;flex-shrink:0'>" + rec.pct + "%</div>";
-      html += "<div style='flex:1;min-width:160px'>";
-      html += "<div style='font-weight:700;font-size:0.95em'>" + emoji + " " + rec.date + " um " + rec.time + (idx===0?" <span style='background:#4caf50;color:#fff;font-size:0.7em;padding:1px 6px;border-radius:10px;margin-left:6px'>Neu</span>":"") + "</div>";
-      html += "<div style='font-size:0.85em;color:#555;margin-top:3px'>" + rec.score + " / " + rec.total + " Punkte";
-      if (rec.secs) {
-        var weak = [];
-        Object.keys(rec.secs).forEach(function(k){
-          var s = rec.secs[k];
-          if(s.total>0 && Math.round(s.earned/s.total*100)<60) weak.push(k);
-        });
-        if (weak.length>0) html += " &nbsp;|&nbsp; <span style='color:#e53935'>&#x26A0;&#xFE0F; Schwach: " + weak.join(", ") + "</span>";
-        else html += " &nbsp;|&nbsp; <span style='color:#2e7d32'>&#x2705; Alle Bereiche OK</span>";
-      }
-      html += "</div></div></div>";
-    });
-    con.innerHTML = html;
-  }
-  try {
-    var dbRef = window._fbRef(window._fbDb, "fatemi/engtest_ibrahim");
-    window._fbOnValue(dbRef, function(snapshot) {
-      var data = snapshot.val();
-      renderResults(data ? Object.values(data) : []);
-    });
-  } catch(e) {
-    renderResults(JSON.parse(localStorage.getItem("engtest_ibrahim") || "[]"));
-  }
-}
-
-// Auto-render on DOMContentLoaded
-document.addEventListener("DOMContentLoaded", function() {
-  var activeTab = document.querySelector(".tab.active");
-  if (activeTab) {
-    var c = activeTab.getAttribute("data-child");
-    if (c === "ibrahim") { if(typeof etRenderIbrahim==="function") etRenderIbrahim(); }
-    if (c === "mansoor") { if(typeof etRenderMansoorResults==="function") etRenderMansoorResults(); }
-  }
-});
-
 </script>
 </body>
 </html>
