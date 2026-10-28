@@ -2064,64 +2064,90 @@ init();
 // ============================================================
 
 var ET_QUESTIONS = [
+  // ── VOCABULARY ──────────────────────────────────────────────
   { id:"q1", sec:"vocab", type:"mc",
     text:"Sam Small saw an advert for a band looking for a singer ___",
-    opts:["and said he didn't have what it takes.","and decided to give it a try.","and he is on his way up.","he did some training with his mum."],
+    opts:["and said he didn\'t have what it takes.","and decided to give it a try.","and he is on his way up."],
     ans:1 },
   { id:"q2", sec:"vocab", type:"fill",
-    text:"Sam was disappointed but he didn't ___ on his dream.",
-    ans:"give up", hint:"phrasal verb = stop trying" },
+    text:"Sam was disappointed but he didn\'t ___ on his dream. (phrasal verb = stop trying)",
+    ans:"give up", hint:"2 words" },
   { id:"q3", sec:"vocab", type:"mc",
-    text:"What does 'audition' mean?",
+    text:"What does \'audition\' mean?",
     opts:["A music concert for fans","A test performance to get a role in a band or show","A type of musical instrument"],
     ans:1 },
   { id:"q4", sec:"vocab", type:"multi",
-    text:"Which are musical styles from Unit 1? Select ALL that apply:",
+    text:"Which are musical styles mentioned in Unit 1? Select ALL that apply:",
     opts:["jazz","blues","football","reggae","opera","classical","chemistry"],
     ans:[0,1,3,4,5] },
   { id:"q5a", sec:"vocab", type:"match3",
-    text:"Match the phrases:",
+    text:"Match the expressions with their meanings:",
     pairs:[
       { left:"\"to give up\"", opts:["to stop trying","to have the talent needed","to be successful"], ans:0 },
       { left:"\"to have got what it takes\"", opts:["to stop trying","to have the talent needed","to be successful"], ans:1 },
       { left:"\"to make it\"", opts:["to stop trying","to have the talent needed","to be successful"], ans:2 }
     ]
   },
-  { id:"q6", sec:"grammar", type:"fill", text:"Dan and I ___ the guitar.", ans:"play", hint:"Dan and I = plural" },
-  { id:"q7", sec:"grammar", type:"fill", text:"Bradley ___ and plays bass.", ans:"sings", hint:"Bradley = he" },
-  { id:"q8", sec:"grammar", type:"fill", text:"What kind of music ___ the band play?", ans:"does" },
-  { id:"q9", sec:"grammar", type:"fill", text:"Shannon ___ (dream) of being a pop star.", ans:"dreamed", alt:"dreamt" },
-  { id:"q10", sec:"grammar", type:"fill", text:"She ___ (take) some lessons.", ans:"took", hint:"Irregular!" },
-  { id:"q11", sec:"grammar", type:"fill", text:"The day before the show, the guitar player ___ (get) ill.", ans:"got", hint:"Irregular!" },
-  { id:"q12", sec:"grammar", type:"fill", text:"Bradley ___ (ask) her to play for them.", ans:"asked" },
-  { id:"q13", sec:"grammar", type:"fill", text:"Make negative: Bradley ___ like playing other bands' music.", ans:"doesn't", alt:"does not" },
-  { id:"q14", sec:"reading", type:"tf", text:"True or False: In the band, there are two boys and two girls.", ans:true },
-  { id:"q15", sec:"reading", type:"tf", text:"True or False: The band wrote 'Butterfly Blues' themselves.", ans:true },
+  // ── GRAMMAR ─────────────────────────────────────────────────
+  { id:"q6", sec:"grammar", type:"fill",
+    text:"✏️ Present Simple — fill in the correct form:<br><br>Dan and I ___ (play) the guitar in the band.",
+    ans:"play", hint:"Dan and I = we → plural, no -s" },
+  { id:"q7", sec:"grammar", type:"fill",
+    text:"✏️ Present Simple:<br><br>Bradley ___ (sing) and plays bass.",
+    ans:"sings", hint:"Bradley = he → add -s" },
+  { id:"q8", sec:"grammar", type:"fill",
+    text:"✏️ Question form — Present Simple:<br><br>What kind of music ___ the band play? (does / do)",
+    ans:"does", hint:"the band = it/they → use \'does\' in questions" },
+  { id:"q9", sec:"grammar", type:"fill",
+    text:"✏️ Past Simple — fill in the correct form:<br><br>Last year, Shannon ___ (dream) of being a pop star.",
+    ans:"dreamed", alt:"dreamt", hint:"Regular verb → add -ed (or dreamt)" },
+  { id:"q10", sec:"grammar", type:"fill",
+    text:"✏️ Past Simple — irregular verb:<br><br>So she ___ (take) some guitar lessons.",
+    ans:"took", hint:"Irregular! take → took" },
+  { id:"q11", sec:"grammar", type:"fill",
+    text:"✏️ Past Simple — irregular verb:<br><br>The day before the show, the guitar player ___ (get) ill.",
+    ans:"got", hint:"Irregular! get → got" },
+  { id:"q12", sec:"grammar", type:"fill",
+    text:"✏️ Past Simple — regular verb:<br><br>So Bradley ___ (ask) her to play for them.",
+    ans:"asked", hint:"Regular → add -ed" },
+  { id:"q13", sec:"grammar", type:"fill",
+    text:"✏️ Present Simple negative:<br><br>Bradley ___ (not like) playing other bands\' music.",
+    ans:"doesn\'t like", alt:"does not like", hint:"He/she/it → doesn\'t + base verb" },
+  // ── READING ─────────────────────────────────────────────────
+  { id:"q14", sec:"reading", type:"tf",
+    text:"True or False: In the band, there are two boys and two girls.", ans:true },
+  { id:"q15", sec:"reading", type:"tf",
+    text:"True or False: The band wrote \'Butterfly Blues\' themselves.", ans:true },
   { id:"q16", sec:"reading", type:"mc",
     text:"Why did Josh want the band to do a charity concert?",
     opts:["To buy new guitars for the band","To raise money for new school computers","To become famous"],
     ans:1 },
   { id:"q17", sec:"reading", type:"mc",
-    text:"How did they solve the argument about charity money?",
-    opts:["Adrian left the band","They gave half the money to children's homes too","They cancelled the concert"],
+    text:"How did they solve the argument about the charity money?",
+    opts:["Adrian left the band","They gave half the money to children\'s homes too","They cancelled the concert"],
     ans:1 },
-  { id:"q18", sec:"reading", type:"open", text:"Why did the band play a SECOND concert? (Write 1-2 sentences)" },
+  { id:"q18", sec:"reading", type:"open",
+    text:"Why did the band play a SECOND concert? Write 1-2 sentences." },
+  // ── DIALOGUE ────────────────────────────────────────────────
   { id:"q19", sec:"dialogue", type:"mc",
-    text:"\"I thought the play was brilliant.\"",
-    opts:["Me neither. It was a bit boring.","I couldn't agree more. Everyone was brilliant.","Do you think so? I think United might beat them."],
+    text:"Choose the best response:<br><br>A: \"I thought the play was brilliant.\"<br>B: \"___\"",
+    opts:["Me neither. It was a bit boring.","I couldn\'t agree more. Everyone was brilliant.","Do you think so? I think United might beat them."],
     ans:1 },
   { id:"q20", sec:"dialogue", type:"mc",
-    text:"\"I didn't really enjoy the film.\"",
-    opts:["I couldn't agree more. Can't stop singing it.","Me neither. It was a bit boring.","Me too. Everyone was brilliant."],
+    text:"Choose the best response:<br><br>A: \"I didn\'t really enjoy the film.\"<br>B: \"___\"",
+    opts:["I couldn\'t agree more. Can\'t stop singing it.","Me neither. It was a bit boring.","Me too. Everyone was brilliant."],
     ans:1 },
-  { id:"q21", sec:"dialogue", type:"fill", text:"In my ___, it's OK but not as good as the last film.", ans:"opinion", hint:"= I think that..." },
+  { id:"q21", sec:"dialogue", type:"fill",
+    text:"Complete the sentence with ONE word:<br><br>\"In my ___, it\'s OK but not as good as the last film.\"",
+    ans:"opinion", hint:"= I think that..." },
   { id:"q22", sec:"dialogue", type:"mc",
-    text:"Which phrase shows STRONG agreement?",
-    opts:["Do you think so?","I couldn't agree more.","It's a bit disappointing."],
+    text:"Which phrase shows the STRONGEST agreement?",
+    opts:["Do you think so?","I couldn\'t agree more.","It\'s a bit disappointing."],
     ans:1 },
+  // ── WRITING ─────────────────────────────────────────────────
   { id:"q23", sec:"writing", type:"essay",
-    text:"Write an email (60-80 words) to a friend about a film you saw. Include: title, type, your opinion, recommendation." }
-];
+    text:"✍️ Write an email (60-80 words) to a friend about a film or concert you saw recently.<br><br>Include: <b>title · type of film/music · your opinion · recommendation</b>" }
+]];
 
 var ET_SEC_LABELS = {
   vocab:"&#x1F4DA; Vocabulary",
@@ -2129,6 +2155,13 @@ var ET_SEC_LABELS = {
   reading:"&#x1F4D6; Reading",
   dialogue:"&#x1F4AC; Dialogue",
   writing:"&#x270D;&#xFE0F; Writing"
+};
+var ET_SEC_DESC = {
+  vocab:"Choose the correct answer or fill in the missing word.",
+  grammar:"Fill in the correct form of the verb. Watch the tense!",
+  reading:"Answer the questions about the story of the band.",
+  dialogue:"Choose the best reply or complete the sentence.",
+  writing:"Write a short email using the phrases from Unit 1."
 };
 var ET_SEC_COLORS = {
   vocab:"#1976D2", grammar:"#7B1FA2", reading:"#E65100", dialogue:"#00796B", writing:"#C62828"
