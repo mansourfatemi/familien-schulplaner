@@ -713,6 +713,14 @@
       <div style="color:#fff;font-size:1.4em">&#x27A1;&#xFE0F;</div>
     </div>
     <div id="engtest-ibrahim-container"></div>
+    <div class="section-title">&#x1F4E7; Email Writing Guide</div>
+    <div onclick="openEmailGuide()" style="background:linear-gradient(135deg,#2e7d32,#66bb6a);border-radius:12px;padding:16px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;box-shadow:0 3px 10px rgba(76,175,80,0.35)">
+      <div>
+        <div style="color:#fff;font-weight:700;font-size:1em">&#x270D;&#xFE0F; How to Write an Email — Step by Step</div>
+        <div style="color:rgba(255,255,255,0.85);font-size:0.82em;margin-top:4px">4-part structure &bull; sample emails &bull; useful phrases &bull; practice</div>
+      </div>
+      <div style="color:#fff;font-size:1.4em">&#x27A1;&#xFE0F;</div>
+    </div>
   </div>
 
   <div class="panel" id="panel-hosna">
@@ -2283,6 +2291,140 @@ var ET_SEC_COLORS = {
 };
 var _etTFState = {};
 
+
+function openEmailGuide() {
+  var existing = document.getElementById('emailguide-fullpage');
+  if (existing) { existing.remove(); }
+  var overlay = document.createElement('div');
+  overlay.id = 'emailguide-fullpage';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#f5f7fa;z-index:9999;overflow-y:auto;font-family:inherit';
+
+  var html = '<div style="max-width:700px;margin:0 auto;padding:16px">';
+
+  // Header
+  html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;position:sticky;top:0;background:#f5f7fa;padding:12px 0;z-index:10;border-bottom:2px solid #c8e6c9">'
+    + '<button onclick="closeEmailGuide()" style="background:#2e7d32;color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:1.2em;cursor:pointer;flex-shrink:0">&#x2190;</button>'
+    + '<div><div style="font-weight:700;font-size:1.05em">&#x1F4E7; How to Write an Email — Unit 1</div>'
+    + '<div style="font-size:0.8em;color:#666">Step-by-step guide with examples</div></div>'
+    + '</div>';
+
+  // ── STEP 1: Structure ──
+  html += '<div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.07)">';
+  html += '<div style="font-weight:700;font-size:1em;color:#1565c0;margin-bottom:14px">&#x1F4CB; STEP 1 — The 4-Part Structure</div>';
+  html += '<div style="display:grid;gap:10px">';
+  var parts = [
+    ['1','Introduction','#1565c0','#e3f2fd','What is it? When did you hear/see it?','<i>I recently listened to... / I went to a concert last Saturday...</i>'],
+    ['2','Your Opinion','#2e7d32','#e8f5e9','Do you like it? What is special about it?','<i>In my opinion, it\'s really awesome because... / My favourite track is...</i>'],
+    ['3','Comparison','#e65100','#fff3e0','Better or worse than something before?','<i>I think it\'s much better than... / It\'s not as good as...</i>'],
+    ['4','Recommendation','#6a1b9a','#f3e5f5','Would you recommend it? Why?','<i>I\'d definitely recommend it because... / You should give it a try!</i>'],
+  ];
+  parts.forEach(function(p) {
+    html += '<div style="border-left:4px solid ' + p[2] + ';background:' + p[3] + ';border-radius:0 8px 8px 0;padding:12px 14px">'
+      + '<div style="font-weight:700;color:' + p[2] + ';font-size:0.9em">Part ' + p[0] + ' — ' + p[1] + '</div>'
+      + '<div style="font-size:0.85em;color:#444;margin-top:3px">' + p[4] + '</div>'
+      + '<div style="font-size:0.82em;color:#666;margin-top:4px">' + p[5] + '</div>'
+      + '</div>';
+  });
+  html += '</div></div>';
+
+  // ── STEP 2: Useful Phrases ──
+  html += '<div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.07)">';
+  html += '<div style="font-weight:700;font-size:1em;color:#1565c0;margin-bottom:14px">&#x1F4AC; STEP 2 — Useful Phrases</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
+  var phrases = [
+    ['&#x2705; Positive','#e8f5e9','#2e7d32',
+      "It\'s really awesome!|My favourite track is...|I love the way...|I couldn\'t agree more.|I\'d definitely recommend it.|It\'s absolutely fantastic!"],
+    ['&#x274C; Negative / Critical','#fff3e0','#e65100',
+      "It\'s a bit disappointing.|It\'s a bit boring.|I\'m not so keen on...|I don\'t like the way...|I can\'t stand it.|The sound quality was poor."],
+  ];
+  phrases.forEach(function(ph) {
+    html += '<div style="background:' + ph[1] + ';border-radius:8px;padding:12px">'
+      + '<div style="font-weight:700;color:' + ph[2] + ';font-size:0.85em;margin-bottom:8px">' + ph[0] + '</div>';
+    ph[3].split('|').forEach(function(p) {
+      html += '<div style="font-size:0.82em;padding:3px 0;border-bottom:1px solid rgba(0,0,0,0.06)">' + p + '</div>';
+    });
+    html += '</div>';
+  });
+  html += '</div></div>';
+
+  // ── STEP 3: Grammar reminder ──
+  html += '<div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.07)">';
+  html += '<div style="font-weight:700;font-size:1em;color:#1565c0;margin-bottom:14px">&#x270F;&#xFE0F; STEP 3 — Grammar in Emails</div>';
+  html += '<div style="background:#e8eaf6;border-radius:8px;padding:14px;margin-bottom:10px;font-size:0.88em">'
+    + '<b>Present Simple</b> → for facts, habits, opinions NOW<br>'
+    + '<span style="color:#2e7d32">&#x2714; I <b>know</b> you love rock music.</span><br>'
+    + '<span style="color:#2e7d32">&#x2714; The singer <b>has</b> an incredible voice.</span></div>';
+  html += '<div style="background:#e8eaf6;border-radius:8px;padding:14px;font-size:0.88em">'
+    + '<b>Past Simple</b> → for finished actions in the past<br>'
+    + '<span style="color:#2e7d32">&#x2714; I <b>went</b> to a concert last Saturday.</span><br>'
+    + '<span style="color:#2e7d32">&#x2714; The band <b>played</b> three songs.</span><br>'
+    + '<span style="color:#e53935">&#x2718; I <b>didn\'t enjoyed</b> it.</span> &rarr; <span style="color:#2e7d32">I <b>didn\'t enjoy</b> it.</span></div>';
+  html += '</div>';
+
+  // ── STEP 4: Sample Email ──
+  html += '<div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.07)">';
+  html += '<div style="font-weight:700;font-size:1em;color:#1565c0;margin-bottom:14px">&#x1F4D6; STEP 4 — Sample Email (read carefully!)</div>';
+  html += '<div style="background:#fafafa;border:1px solid #ddd;border-radius:8px;padding:16px;font-size:0.87em;line-height:1.9">';
+  html += '<div style="color:#888;margin-bottom:10px"><b>To:</b> julia.schmidt@school.at<br><b>From:</b> ibrahim@example.com<br><b>Subject:</b> Have you heard the new Arctic Monkeys album?</div>';
+  html += '<b>Hi Julia,</b><br><br>';
+  html += '<span style="background:#bbdefb;border-radius:3px;padding:1px 3px">I\'m writing to tell you about an amazing album I listened to last weekend. It\'s the new album by Arctic Monkeys, and I bought it on Friday after school.</span><br><br>';
+  html += '<span style="background:#c8e6c9;border-radius:3px;padding:1px 3px">In my opinion, it is absolutely fantastic from the first track to the last. The melodies are beautiful and the lyrics are very clever. My favourite track is the fourth one because it has an incredible guitar solo. I love the way the singer\'s voice sounds so emotional.</span><br><br>';
+  html += '<span style="background:#ffe0b2;border-radius:3px;padding:1px 3px">I think it\'s much better than their last album, which was a little too slow for me. This time the songs have more energy and sound really modern.</span><br><br>';
+  html += '<span style="background:#e1bee7;border-radius:3px;padding:1px 3px">I\'d definitely recommend it to you because I know you love rock music. I\'m sure you will listen to it again and again!</span><br><br>';
+  html += '<b>Best wishes,<br>Ibrahim</b>';
+  html += '</div>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">';
+  [['&#x1F535; Blue = Introduction','#bbdefb'],['&#x1F7E2; Green = Opinion','#c8e6c9'],
+   ['&#x1F7E0; Orange = Comparison','#ffe0b2'],['&#x1F7E3; Purple = Recommendation','#e1bee7']].forEach(function(l) {
+    html += '<span style="background:' + l[1] + ';font-size:0.75em;padding:3px 8px;border-radius:10px">' + l[0] + '</span>';
+  });
+  html += '</div></div>';
+
+  // ── STEP 5: Checklist ──
+  html += '<div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.07)">';
+  html += '<div style="font-weight:700;font-size:1em;color:#1565c0;margin-bottom:14px">&#x2705; STEP 5 — Checklist before you submit</div>';
+  var checks = [
+    'At least 120 words written',
+    'Part 1: Introduction — what & when',
+    'Part 2: Opinion — what you think',
+    'Part 3: Comparison — better/worse than',
+    'Part 4: Recommendation — yes/no and why',
+    'At least 5 useful phrases used',
+    'Present Simple used (facts/opinions)',
+    'Past Simple used (what happened)',
+    'No: "He doesn\'t plays" → He doesn\'t play',
+    'No: "She didn\'t went" → She didn\'t go',
+  ];
+  checks.forEach(function(c, i) {
+    html += '<label style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f0f0f0;cursor:pointer;font-size:0.88em">'
+      + '<input type="checkbox" style="width:18px;height:18px"> ' + c + '</label>';
+  });
+  html += '</div>';
+
+  // ── STEP 6: Practice area ──
+  html += '<div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:24px;box-shadow:0 2px 8px rgba(0,0,0,0.07)">';
+  html += '<div style="font-weight:700;font-size:1em;color:#1565c0;margin-bottom:6px">&#x270D;&#xFE0F; STEP 6 — Write your own email!</div>';
+  html += '<div style="font-size:0.83em;color:#666;margin-bottom:12px">Topic: Write about a song, album, or concert you like. <b>At least 120 words.</b></div>';
+  html += '<textarea id="email-practice-area" onkeyup="egWC()" rows="12" style="width:100%;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:0.9em;font-family:inherit;resize:vertical;line-height:1.7" placeholder="Hi [name],&#10;&#10;[Introduction — what and when?]&#10;&#10;[Opinion — what do you think?]&#10;&#10;[Comparison — better/worse?]&#10;&#10;[Recommendation — should they try it?]&#10;&#10;Best wishes,&#10;Ibrahim"></textarea>';
+  html += '<div id="eg-wc" style="text-align:right;font-size:0.82em;color:#888;margin-top:5px">Words: 0 / target 120+</div>';
+  html += '</div>';
+
+  html += '</div>'; // max-width wrapper
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+}
+
+function closeEmailGuide() { var o=document.getElementById("emailguide-fullpage"); if(o) o.remove(); }
+
+function egWC() {
+  var ta = document.getElementById("email-practice-area");
+  var wc = document.getElementById("eg-wc");
+  if (!ta || !wc) return;
+  var w = ta.value.trim() === "" ? 0 : ta.value.trim().split(/\s+/).length;
+  wc.textContent = "Words: " + w + " / target 120+";
+  wc.style.color = w >= 120 ? "#2e7d32" : w >= 80 ? "#e65100" : "#888";
+}
+
 function openEngTest() {
   // Create full-page overlay
   var existing = document.getElementById('engtest-fullpage');
@@ -2372,7 +2514,7 @@ function etRenderIbrahim() {
       html += "<textarea id='etfill-" + q.id + "' rows='" + (q.type==="essay"?7:3) + "' style='width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:0.9em;font-family:inherit;resize:vertical' placeholder='" + ph + "'" + wcAttr + "></textarea>";
       if (q.type === "essay") {
         html += "<div id='etWC-" + q.id + "' style='font-size:0.8em;color:#888;text-align:right;margin-top:3px'>Words: 0 / target 60-80</div>";
-        html += "<div style='background:#e3f2fd;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:0.85em;line-height:1.8'><b>&#x1F4A1; Useful phrases:</b><br>It's really awesome / great... | It's a bit disappointing... | My favourite... | I'm not so keen on... | I couldn't recommend it more.</div>";
+        html += "<div style='background:#e3f2fd;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:0.85em;line-height:1.8'><b>&#x1F4A1; Useful phrases:</b><br>It's really awesome / great... | It's a bit disappointing... | My favourite... | I\'m not so keen on... | I couldn't recommend it more.</div>";
       }
     }
     html += "</div>";
