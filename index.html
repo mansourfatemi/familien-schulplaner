@@ -671,6 +671,11 @@
   .member-row-sub { font-size:0.82em; color:var(--text-dim); margin-top:2px; }
   .member-row-stats { font-size:0.78em; color:var(--mc-color,#888); margin-top:3px; font-weight:700; }
   .member-row-chevron { color:#cbd5e1; font-size:1.3em; flex-shrink:0; }
+
+  /* ======= PERSONAL PAGE BACK BAR ======= */
+  .back-bar { display:none; align-items:center; gap:10px; padding:12px 20px; background:#f7f8fa; border-bottom:1px solid var(--border); }
+  .back-btn { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid var(--border); color:var(--text); padding:8px 16px; border-radius:20px; font-weight:700; font-size:0.9em; cursor:pointer; }
+  .back-btn:hover { background:#eef1f5; }
 </style>
 </head>
 <body>
@@ -703,6 +708,8 @@
     <span class="avatar" style="background:#6366f1;font-size:0.7em">&#x1F4CB;</span> Verlauf
   </div>
 </div>
+
+<div class="back-bar" id="backBar"><div class="back-btn" onclick="switchTab('all')">&#x2190; Zurück zur Übersicht</div></div>
 
 <div class="content">
   <div class="panel active" id="panel-all">
@@ -1210,6 +1217,9 @@ function switchTab(child) {
   document.querySelector('.tab[data-child="' + child + '"]').classList.add('active');
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + child).classList.add('active');
+  const isPersonal = ['ibrahim','hosna','jasmin','zainab','mansoor'].includes(child);
+  document.querySelector('.tabs').style.display = isPersonal ? 'none' : 'flex';
+  document.getElementById('backBar').style.display = isPersonal ? 'flex' : 'none';
   if (child === 'all') buildOverview();
   if (child === 'history') buildHistory();
   if (child === 'mansoor') { initDrinkTracker('mansoor'); buildMansoorKidsOverview(); setTimeout(function(){ if(typeof etRenderMansoorResults==='function') etRenderMansoorResults(); }, 80); }

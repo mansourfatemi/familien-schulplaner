@@ -1,4 +1,4 @@
-const CACHE = 'schulplaner-v10-20261112-deckexpand';
+const CACHE = 'schulplaner-v11-20261112-backbtn';
 const ASSETS = ['./index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
