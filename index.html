@@ -582,17 +582,19 @@
     transition: all 0.2s;
   }
   .fc-subj-chip:hover { filter: brightness(0.97); }
-  .fc-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .fc-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-bottom: 16px; }
   .fc-card {
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
-    padding: 12px; cursor: pointer; position: relative; min-height: 120px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border: 2px solid var(--fc-accent, #c7d2fe); border-right: 6px solid var(--fc-accent, #6366f1);
+    border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 16px; cursor: pointer; position: relative; min-height: 120px;
     display: flex; flex-direction: column; justify-content: center; text-align: center;
-    transition: transform 0.15s;
+    transition: transform 0.15s, box-shadow 0.15s;
   }
-  .fc-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+  .fc-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.14); }
   .fc-photo { width: 100%; max-height: 110px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
-  .fc-q { font-weight: 700; font-size: 0.95em; }
-  .fc-a { font-weight: 700; font-size: 0.95em; color: #2563eb; }
+  .fc-q { font-weight: 800; font-size: 1.05em; color: var(--fc-accent, #4338ca); }
+  .fc-a { font-weight: 700; font-size: 0.92em; color: var(--text); line-height: 1.35; }
   .fc-hint { font-size: 0.7em; color: var(--text-dim); margin-top: 6px; }
   .fc-delete {
     position: absolute; top: 6px; left: 6px; color: var(--text-dim);
@@ -1739,8 +1741,9 @@ function buildFlashcards(child) {
   if (!cards.length) {
     html += '<div class="fc-empty">Noch keine Karteikarten f&#252;r ' + escHtml(activeSubj) + '. Foto der Lektion hochladen und Frage/Antwort eintragen!</div>';
   }
+  const _fcColor = getSubjectColor(activeSubj);
   cards.forEach((c, idx) => {
-    html += '<div class="fc-card" onclick="fcFlip(this)">'
+    html += '<div class="fc-card" style="--fc-accent:' + _fcColor + '" onclick="fcFlip(this)">'
       + '<span class="fc-delete" onclick="event.stopPropagation();fcDelete(\'' + child + '\',\'' + activeSubj.replace(/'/g,"\\'") + '\',' + idx + ')">&#x1F5D1;</span>'
       + (c.photo ? '<img class="fc-photo" src="' + c.photo + '">' : '')
       + '<div class="fc-face fc-front"><div class="fc-q">' + escHtml(c.q) + '</div><div class="fc-hint">&#x1F446; Antippen f&#252;r Antwort</div></div>'
