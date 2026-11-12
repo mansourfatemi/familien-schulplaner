@@ -2071,10 +2071,10 @@ function renderVokabelStudy() {
   const deckInfo = VT_DECKS[vtState.deck];
   const data = loadFlashcards('hosna') || {};
   const cards = data[deckInfo.key] || [];
-  let deckRow = '<div style="display:flex;gap:8px;flex-wrap:wrap;background:#13203b;padding:0 14px 12px;margin-top:-2px">';
+  let deckRow = '<div style="display:flex;gap:10px;flex-wrap:wrap;background:#13203b;padding:0 16px 16px;margin-top:-2px">';
   Object.keys(VT_DECKS).forEach(dk => {
     const isAct = dk === vtState.deck;
-    deckRow += '<span onclick="vtSetDeck(\'' + dk + '\')" style="cursor:pointer;padding:5px 12px;border-radius:14px;font-size:0.75em;font-weight:700;' + (isAct ? 'background:#22c55e;color:#fff' : 'background:#1f2f52;color:#9ca8c2') + '">' + VT_DECKS[dk].icon + ' ' + VT_DECKS[dk].label + '</span>';
+    deckRow += '<span onclick="vtSetDeck(\'' + dk + '\')" style="cursor:pointer;padding:10px 18px;border-radius:20px;font-size:0.95em;font-weight:800;flex:1;min-width:120px;text-align:center;transition:transform .15s;' + (isAct ? 'background:#22c55e;color:#fff;box-shadow:0 3px 10px rgba(34,197,94,0.5)' : 'background:#1f2f52;color:#c7d2e1') + '">' + VT_DECKS[dk].icon + ' ' + VT_DECKS[dk].label + '</span>';
   });
   deckRow += '</div>';
   if (!cards.length) { container.innerHTML = '<div class="vt-wrap"><div class="vt-header"><div class="vt-header-title">' + deckInfo.icon + ' ' + deckInfo.label + '</div></div>' + deckRow + '<div class="fc-empty" style="padding:20px">Noch keine Karten in diesem Thema.</div></div>'; return; }
