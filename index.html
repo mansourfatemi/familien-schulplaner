@@ -646,9 +646,10 @@
   .vt-answer-btn:hover { filter:brightness(1.08); }
   .vt-answer-text { font-weight:700; font-size:1.05em; color:#166534; background:#f0fdf4; border-radius:12px; padding:14px 18px; line-height:1.6; }
   .vt-hint { font-size:0.75em; color:#aaa; margin-top:10px; }
-  .vt-navrow { display:flex; align-items:center; justify-content:center; gap:18px; margin:22px 0 14px; }
-  .vt-diamond { width:12px; height:12px; background:#22c55e; transform:rotate(45deg); cursor:pointer; }
-  .vt-diamond:hover { filter:brightness(1.15); }
+  .vt-navrow { display:flex; align-items:center; justify-content:center; gap:22px; margin:22px 0 14px; }
+  .vt-navbtn { width:42px; height:42px; border-radius:50%; background:#fff; border:2px solid #22c55e; color:#16a34a; display:flex; align-items:center; justify-content:center; font-size:1.4em; font-weight:800; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.1); transition:transform .15s, background .15s, color .15s; margin:0 auto; }
+  .vt-navbtn:hover { background:#22c55e; color:#fff; transform:scale(1.1); }
+  .vt-navlabel { font-size:0.65em; color:#9a8f6f; margin-top:4px; font-weight:700; text-align:center; }
   .vt-badge { background:linear-gradient(135deg,#22c55e,#15803d); color:#fff; font-weight:800; font-size:1.1em; min-width:46px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:10px; box-shadow:0 0 0 4px #dcfce7,0 4px 10px rgba(34,197,94,0.4); }
   .vt-pills { display:flex; justify-content:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
   .vt-pill { border:1.5px solid #22c55e; color:#15803d; background:#fff; padding:6px 16px; border-radius:20px; font-size:0.8em; font-weight:700; }
@@ -2128,9 +2129,9 @@ function renderVokabelStudy() {
     html += '</div>';
 
     html += '<div class="vt-navrow">'
-      + '<div class="vt-diamond" onclick="vtPrev()"></div>'
+      + '<div><div class="vt-navbtn" onclick="vtPrev()">&#x2039;</div><div class="vt-navlabel">Zur\u00fcck</div></div>'
       + '<div class="vt-badge">' + (vtState.idx+1) + '</div>'
-      + '<div class="vt-diamond" onclick="vtNext()"></div>'
+      + '<div><div class="vt-navbtn" onclick="vtNext()">&#x203A;</div><div class="vt-navlabel">Weiter</div></div>'
       + '</div>';
 
     html += '<div class="vt-pills"><div class="vt-pill">&#x1F4A1; Begriff</div><div class="vt-pill">' + deckInfo.icon + ' ' + escHtml(deckInfo.label) + '</div></div>';
