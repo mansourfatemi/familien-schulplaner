@@ -913,7 +913,7 @@ const CHILDREN = {
   },
   hosna: {
     name: 'Hosna', color: '#E91E8C', grade: '5. Klasse',
-    subjects: ['Mathematik','Deutsch','Englisch','Sachunterricht','Musik','Sport','Religion','Bildnerische Erziehung','Werken','Technisches Werken','Quran']
+    subjects: ['Mathematik','Deutsch','Englisch','Geographie','Sachunterricht','Musik','Sport','Religion','Bildnerische Erziehung','Werken','Technisches Werken','Quran']
   },
   jasmin: {
     name: 'Jasmin', color: '#FF9800', grade: '2. Klasse',
@@ -1926,6 +1926,40 @@ function fcExitReview(child) {
   buildFlashcards(child);
 }
 
+
+// ======= Vokabeltest GWB (S23, 1.6.A) - Hosna, Freitag 13.11.2026 =======
+function seedVokabeltestHosnaGWB() {
+  var FLAG = 'vokabeltest_gwb_s23_seeded_v1';
+  if (localStorage.getItem(FLAG)) return;
+  var data = loadFlashcards('hosna') || {};
+  if (!data['Geographie']) data['Geographie'] = [];
+  var terms = [
+    { q: 'Stadt', a: 'Siedlung mit vielen Einwohnern, Gebaeuden, Geschaeften und Verwaltung - Gegenteil von Land/Dorf. Beispiel: Ljubljana ist eine Stadt (die Hauptstadt Sloweniens).' },
+    { q: 'Staat', a: 'Ein Land mit eigener Regierung, eigenen Gesetzen und festen Grenzen. Beispiel: Slowenien ist ein Staat in Europa.' },
+    { q: 'angrenzen', a: 'Direkt neben etwas liegen, eine gemeinsame Grenze haben. Beispiel: Italien grenzt im Westen an Slowenien.' },
+    { q: 'Gebirge', a: 'Eine Gruppe von mehreren hohen Bergen, die zusammengehoeren. Beispiel: Die Steiner Alpen sind ein Gebirge in Slowenien.' },
+    { q: 'Niederschlag', a: 'Regen, Schnee oder Hagel, der vom Himmel faellt. Wird in Millimeter (mm) gemessen.' },
+    { q: 'Menge', a: 'Wie viel von etwas vorhanden ist. Beispiel: die Niederschlagsmenge = wie viel Regen in einer Region faellt.' },
+    { q: 'jaehrlich', a: 'Einmal im Jahr bzw. bezogen auf ein ganzes Jahr. Beispiel: die jaehrliche Niederschlagsmenge von Celje.' },
+    { q: 'Region', a: 'Ein bestimmtes Gebiet bzw. Teilgebiet eines Landes mit aehnlichen Merkmalen (z. B. Klima, Landschaft).' },
+    { q: 'der Geringste', a: 'Der/die/das Kleinste bzw. Wenigste (Steigerung von „gering“ = klein, wenig). Beispiel: die Region mit dem geringsten Niederschlag.' },
+    { q: 'Bodennutzung', a: 'Wie der Boden bzw. die Landschaft verwendet wird - z. B. Ackerbau, Wald, Wiesen, Siedlung.' },
+    { q: 'dominieren', a: 'Ueberwiegen, am haeufigsten bzw. staerksten vorkommen. Beispiel: Im Nordosten Sloweniens dominiert der Ackerbau.' },
+    { q: 'Grenze', a: 'Die Linie, die zwei Staaten oder Gebiete voneinander trennt.' },
+    { q: 'Ackerbau', a: 'Der Anbau von Pflanzen (z. B. Getreide, Gemuese) auf Feldern zur Ernte.' },
+    { q: 'entlang', a: 'Laengs einer Linie bzw. Strecke verlaufend. Beispiel: Der Wald zieht sich entlang der Grenze zu Oesterreich.' }
+  ];
+  var today = fcTodayKey();
+  terms.forEach(function(t) {
+    var exists = data['Geographie'].some(function(c) { return c.q === t.q; });
+    if (!exists) {
+      data['Geographie'].push({ q: t.q, a: t.a, photo: null, created: Date.now(), box: 0, due: today });
+    }
+  });
+  saveFlashcards('hosna', data);
+  localStorage.setItem(FLAG, '1');
+}
+
 function init() {
   updateDateHeaders();
   ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildHomework(child); });
@@ -1936,6 +1970,7 @@ function init() {
   ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(c => initDrinkTracker(c));
   buildMansoorKidsOverview();
 }
+seedVokabeltestHosnaGWB();
 init();
 
 
