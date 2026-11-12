@@ -2195,6 +2195,60 @@ function seedGWChapterDecks() {
   localStorage.setItem(FLAG, '1');
 }
 
+
+// ======= Seed Kapitel-1 & Kapitel-2 EXTRA detail cards (page-by-page review) =======
+function seedGWChapterDecksV2() {
+  var FLAG = 'gw_chapter_decks_seeded_v2';
+  if (localStorage.getItem(FLAG)) return;
+  var data = loadFlashcards('hosna') || {};
+  if (!data['Geographie_Kap1']) data['Geographie_Kap1'] = [];
+  if (!data['Geographie_Kap2']) data['Geographie_Kap2'] = [];
+  var kap1 = [
+    { q: 'Wo wohnt Salma und wie viele Einwohner hat ihr Ort?', a: 'Salma wohnt in Gramais im Lechtal (Tirol) - der Ort hat nur 45 Einwohner.' },
+    { q: 'Wie weit und mit welchem Verkehrsmittel fährt Salma täglich zur Schule?', a: 'Rund 40 km mit dem Bus (nach Reutte).' },
+    { q: 'In welcher Stadt wohnt Paul und wie kommt er zur Schule?', a: 'Paul wohnt in Graz und fährt mit dem Rad oder nutzt Straßenbahn/Bus.' },
+    { q: 'Nenne 3 Freizeitmöglichkeiten von Salma auf dem Land.', a: 'Skifahren, Mountainbiken, Klarinette spielen.' },
+    { q: 'Nenne 3 Freizeitmöglichkeiten von Paul in der Stadt.', a: 'Trampolinpark, Shoppen, Beachvolleyball, Schwimmen im Augartenbad.' },
+    { q: 'Nenne mindestens 5 Beispiele für Infrastruktur-Einrichtungen.', a: 'Spielplatz, Sportanlage, Krankenhaus, Bahnhof, Supermarkt, Kirche, Freibad, Tankstelle, Kino, Radweg.' },
+    { q: 'Was zeigt eine Windrose genau?', a: 'Alle Haupt- und Nebenhimmelsrichtungen rund um einen Mittelpunkt, wie bei einem Kompass.' },
+    { q: 'Was ist der Unterschied zwischen einem kleinen Maßstab (z. B. 1:750.000) und einem großen Maßstab (z. B. 1:10.000)?', a: 'Kleiner Maßstab: größeres Gebiet, aber weniger Details. Großer Maßstab: kleineres Gebiet, aber mehr Details.' },
+    { q: 'Welche Stadt liegt westlich von Wien in Niederösterreich?', a: 'St. Pölten.' },
+    { q: 'Was zeigen Punktsignaturen zur Stadtgröße?', a: 'Unterschiedliche Symbole je nach Einwohnerzahl - z. B. Stadt mit über 1 Million Einwohnern oder Stadt mit unter 20.000 Einwohnern.' },
+    { q: 'Nenne 3 Beispiele für Liniensignaturen auf physischen Karten.', a: 'Fluss, Autobahn, Staatsgrenze (auch: Kanal, Hauptstraße, Landesgrenze).' },
+    { q: 'Was bedeutet eine weiße Fläche auf einer physischen Karte oft?', a: 'Ein mit Gletschern/Eis bedecktes Gebiet.' },
+    { q: 'Was sind Isohypsen?', a: 'Linien auf einer Karte, die alle Punkte mit der gleichen Höhe verbinden.' },
+    { q: 'Wie heißt die größte Stadt Siziliens?', a: 'Palermo.' },
+    { q: 'Wie heißt der höchste Berg Siziliens?', a: 'Der Ätna (Etna).' },
+    { q: 'Nenne 2 Beispiele für thematische Karten außer der politischen Karte.', a: 'Klimakarte, Wirtschaftskarte (auch: Verkehrsnetzkarte, Geschichtskarte, Wanderkarte).' },
+    { q: 'Was ist die Hauptstadt Sloweniens?', a: 'Ljubljana.' },
+    { q: 'Welcher Staat grenzt im Westen an Slowenien?', a: 'Italien.' },
+    { q: 'Welcher Staat grenzt im Süden an Slowenien?', a: 'Kroatien.' },
+    { q: 'In welcher Region Sloweniens fällt der meiste Niederschlag?', a: 'In den Steiner Alpen (Gebirge) - 1600 bis unter 2400 mm jährlich.' },
+    { q: 'Welche Bodennutzung dominiert im Nordosten Sloweniens?', a: 'Ackerbau.' },
+    { q: 'Welche Bodennutzung dominiert entlang der Grenze zu Österreich?', a: 'Wald.' }
+  ];
+  var kap2 = [
+    { q: 'Was bekommen manche Kinder statt Taschengeld?', a: 'Zum Beispiel Videospiele oder Konzertkarten statt Bargeld - Taschengeld ist nicht selbstverständlich.' },
+    { q: 'Nenne 3 Werte, die im Leben wichtig sein können.', a: 'Zum Beispiel: Freizeit, Glück, Gesundheit, Freundschaft, Familie, Sicherheit, Erfolg.' },
+    { q: 'Was bedeutet: Das Taschengeld ist nicht von meinem Verhalten abhängig?', a: 'Das Taschengeld wird unabhängig vom Benehmen/den Leistungen regelmäßig ausgezahlt - es ist keine Belohnung oder Strafe.' },
+    { q: 'Was bedeutet: frei über das Taschengeld verfügen können?', a: 'Das Kind darf selbst entscheiden, wofür es das Geld ausgibt.' },
+    { q: 'Nimmt die Höhe des Taschengeldes mit dem Alter zu oder ab?', a: 'Sie nimmt mit dem Alter zu (z. B. 6-9 Jahre wenig, 16-18 Jahre deutlich mehr).' }
+  ];
+  var today = fcTodayKey();
+  kap1.forEach(function(t) {
+    if (!data['Geographie_Kap1'].some(function(c){ return c.q === t.q; })) {
+      data['Geographie_Kap1'].push({ q: t.q, a: t.a, photo: null, created: Date.now(), box: 0, due: today });
+    }
+  });
+  kap2.forEach(function(t) {
+    if (!data['Geographie_Kap2'].some(function(c){ return c.q === t.q; })) {
+      data['Geographie_Kap2'].push({ q: t.q, a: t.a, photo: null, created: Date.now(), box: 0, due: today });
+    }
+  });
+  saveFlashcards('hosna', data);
+  localStorage.setItem(FLAG, '1');
+}
+
 function init() {
   updateDateHeaders();
   ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildHomework(child); });
@@ -2208,6 +2262,7 @@ function init() {
 seedVokabeltestHosnaGWB();
 fixVokabeltestUmlautsV1();
 seedGWChapterDecks();
+seedGWChapterDecksV2();
 init();
 
 
