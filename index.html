@@ -656,6 +656,21 @@
   .vt-qlist-item { background:#fff; border:1px solid #eee5d0; border-radius:10px; padding:12px 14px; margin-bottom:8px; cursor:pointer; }
   .vt-qlist-q { font-weight:700; }
   .vt-qlist-a { font-size:0.85em; color:#166534; margin-top:6px; display:none; }
+
+  /* ======= MEMBER QUICK-LAUNCHER (Overview, Qari-list style) ======= */
+  .member-list { display:flex; flex-direction:column; gap:12px; margin-bottom:22px; }
+  .member-row {
+    background:#fff; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,.08);
+    display:flex; align-items:center; gap:14px; padding:14px 16px; cursor:pointer;
+    border-left:5px solid var(--mc-color,#ccc); transition:transform .15s, box-shadow .15s;
+  }
+  .member-row:hover { transform:translateX(4px); box-shadow:0 4px 14px rgba(0,0,0,.14); }
+  .member-row-avatar { width:52px; height:52px; border-radius:50%; background:var(--mc-color,#888); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.05em; flex-shrink:0; }
+  .member-row-info { flex:1; min-width:0; }
+  .member-row-name { font-weight:800; font-size:1em; color:var(--text); }
+  .member-row-sub { font-size:0.82em; color:var(--text-dim); margin-top:2px; }
+  .member-row-stats { font-size:0.78em; color:var(--mc-color,#888); margin-top:3px; font-weight:700; }
+  .member-row-chevron { color:#cbd5e1; font-size:1.3em; flex-shrink:0; }
 </style>
 </head>
 <body>
@@ -693,13 +708,7 @@
   <div class="panel active" id="panel-all">
     <div class="section-title">&#x1F4CA; Tagesübersicht — <span id="overviewDate"></span></div>
     <div class="section-title">&#x1F46A; Schnellzugriff</div>
-    <div class="member-launcher">
-      <div class="member-card" style="--mc-color:var(--ibrahim-color)" onclick="switchTab('ibrahim')"><div class="member-avatar">SI</div><div class="member-name">Sayed Ibrahim</div></div>
-      <div class="member-card" style="--mc-color:var(--hosna-color)" onclick="switchTab('hosna')"><div class="member-avatar">HF</div><div class="member-name">Hosna</div></div>
-      <div class="member-card" style="--mc-color:var(--jasmin-color)" onclick="switchTab('jasmin')"><div class="member-avatar">JF</div><div class="member-name">Jasmin</div></div>
-      <div class="member-card" style="--mc-color:var(--zainab-color)" onclick="switchTab('zainab')"><div class="member-avatar">ZF</div><div class="member-name">Zainab</div></div>
-      <div class="member-card" style="--mc-color:var(--mansoor-color)" onclick="switchTab('mansoor')"><div class="member-avatar">MF</div><div class="member-name">Mansoor</div></div>
-    </div>
+    <div class="member-list" id="memberLauncher"></div>
     <div class="stats-row" id="overviewStats"></div>
     <div id="overviewCards"></div>
   </div>
@@ -1149,7 +1158,33 @@ function jumpToDate(val, child) {
   updateDateHeaders();
 }
 
+
+function buildMemberLauncher() {
+  const el = document.getElementById('memberLauncher');
+  if (!el) return;
+  const order = ['ibrahim','hosna','jasmin','zainab','mansoor'];
+  let html = '';
+  order.forEach(child => {
+    const info = CHILDREN[child];
+    let dueTotal = 0;
+    info.subjects.forEach(s => { dueTotal += fcDueCount(child, s); });
+    const initials = info.name.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+    const statsTxt = dueTotal > 0 ? ('&#x1F3B4; ' + dueTotal + ' Karte(n) f\u00e4llig') : '&#x2705; Alles erledigt';
+    html += '<div class="member-row" style="--mc-color:var(--' + child + '-color)" onclick="switchTab(\'' + child + '\')">'
+      + '<div class="member-row-avatar">' + initials + '</div>'
+      + '<div class="member-row-info">'
+      + '<div class="member-row-name">' + escHtml(info.name) + '</div>'
+      + '<div class="member-row-sub">' + escHtml(info.grade) + '</div>'
+      + '<div class="member-row-stats">' + statsTxt + '</div>'
+      + '</div>'
+      + '<div class="member-row-chevron">&#x203A;</div>'
+      + '</div>';
+  });
+  el.innerHTML = html;
+}
+
 function buildOverview() {
+  buildMemberLauncher();
   let totalAll = 0, doneAll = 0, cardsHtml = '';
   ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(child => {
     const info = CHILDREN[child];
