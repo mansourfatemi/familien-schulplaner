@@ -678,9 +678,29 @@
   .back-bar { display:none; align-items:center; gap:10px; padding:12px 20px; background:#f7f8fa; border-bottom:1px solid var(--border); }
   .back-btn { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid var(--border); color:var(--text); padding:8px 16px; border-radius:20px; font-weight:700; font-size:0.9em; cursor:pointer; }
   .back-btn:hover { background:#eef1f5; }
+
+  /* ======= INSTALL PROMPT BANNER ======= */
+  .install-banner { position:fixed; bottom:0; left:0; right:0; background:#13203b; color:#fff; display:none; align-items:center; gap:12px; padding:14px 16px; box-shadow:0 -4px 16px rgba(0,0,0,.25); z-index:9999; }
+  .install-banner-icon { font-size:1.9em; flex-shrink:0; }
+  .install-banner-text { flex:1; min-width:0; }
+  .install-banner-title { font-weight:800; font-size:0.95em; }
+  .install-banner-sub { font-size:0.78em; color:#c7d2e1; margin-top:2px; }
+  .install-banner-btn { background:#22c55e; color:#fff; border:none; padding:9px 18px; border-radius:20px; font-weight:800; font-size:0.85em; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+  .install-banner-btn:hover { filter:brightness(1.1); }
+  .install-banner-close { font-size:1.2em; cursor:pointer; color:#9ca8c2; padding:0 2px 0 6px; flex-shrink:0; }
 </style>
 </head>
 <body>
+
+<div class="install-banner" id="installBanner">
+  <div class="install-banner-icon">&#x1F4F2;</div>
+  <div class="install-banner-text">
+    <div class="install-banner-title">Familien-Schulplaner installieren</div>
+    <div class="install-banner-sub" id="installBannerSub">Für schnelleren Zugriff ohne Browser</div>
+  </div>
+  <button class="install-banner-btn" id="installBannerBtn" onclick="installApp()">Installieren</button>
+  <span class="install-banner-close" onclick="dismissInstallBanner()">&#x2715;</span>
+</div>
 
 <div class="header">
   <h1>&#x1F468;&#x1F467;&#x1F466; Familie Fatemi — Schulplaner</h1>
@@ -2268,6 +2288,60 @@ function seedGWChapterDecksV2() {
   localStorage.setItem(FLAG, '1');
 }
 
+
+// ======= INSTALL PROMPT (Add to Home Screen) =======
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  showInstallBanner('android');
+});
+
+function isStandaloneApp() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function isIOSDevice() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+function installBannerDismissedToday() {
+  return localStorage.getItem('installBannerDismissed') === fcTodayKey();
+}
+function showInstallBanner(platform) {
+  if (isStandaloneApp() || installBannerDismissedToday()) return;
+  const banner = document.getElementById('installBanner');
+  const sub = document.getElementById('installBannerSub');
+  const btn = document.getElementById('installBannerBtn');
+  if (!banner || !sub || !btn) return;
+  if (platform === 'ios') {
+    sub.innerHTML = 'Tippe unten auf &#x1F53C; Teilen, dann auf "Zum Home-Bildschirm"';
+    btn.textContent = 'Verstanden';
+    btn.onclick = dismissInstallBanner;
+  } else {
+    sub.textContent = 'F\u00fcr schnelleren Zugriff ohne Browser';
+    btn.textContent = 'Installieren';
+    btn.onclick = installApp;
+  }
+  banner.style.display = 'flex';
+}
+function installApp() {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(function() { dismissInstallBanner(); });
+  } else {
+    dismissInstallBanner();
+  }
+}
+function dismissInstallBanner() {
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.style.display = 'none';
+  localStorage.setItem('installBannerDismissed', fcTodayKey());
+}
+function checkInstallPromptIOS() {
+  if (!isStandaloneApp() && isIOSDevice()) {
+    setTimeout(function() { showInstallBanner('ios'); }, 2500);
+  }
+}
+
 function init() {
   updateDateHeaders();
   ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildHomework(child); });
@@ -2283,6 +2357,7 @@ fixVokabeltestUmlautsV1();
 seedGWChapterDecks();
 seedGWChapterDecksV2();
 init();
+checkInstallPromptIOS();
 
 
 
