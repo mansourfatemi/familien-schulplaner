@@ -1,4 +1,4 @@
-const CACHE = 'schulplaner-v13-20261112-navbtn';
+const CACHE = 'schulplaner-v14-20261112-notabs';
 const ASSETS = ['./index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
