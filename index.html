@@ -710,7 +710,6 @@
     <div class="section-title">&#x1F46A; Schnellzugriff</div>
     <div class="member-list" id="memberLauncher"></div>
     <div class="stats-row" id="overviewStats"></div>
-    <div id="overviewCards"></div>
   </div>
 
   <div class="panel" id="panel-ibrahim">
@@ -1185,40 +1184,17 @@ function buildMemberLauncher() {
 
 function buildOverview() {
   buildMemberLauncher();
-  let totalAll = 0, doneAll = 0, cardsHtml = '';
+  let totalAll = 0, doneAll = 0;
   ['ibrahim','hosna','jasmin','zainab','mansoor'].forEach(child => {
-    const info = CHILDREN[child];
     const items = loadHomework(child, currentDate);
-    const total = items.length, done = items.filter(i => i.done).length;
-    totalAll += total; doneAll += done;
-    const pct = total > 0 ? Math.round(done/total*100) : 0;
-    const barColor = done === total && total > 0 ? 'var(--green)' : info.color;
-    cardsHtml += '<div class="hw-section" style="border-left:3px solid ' + info.color + '">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
-      + '<strong style="color:' + info.color + '">' + info.name + ' (' + info.grade + ')</strong>'
-      + '<span style="color:var(--text-dim);font-size:0.85em">' + done + '/' + total + ' bestätigt</span></div>'
-      + '<div style="margin-bottom:10px">' + goalBadgeHtml(items) + '</div>'
-      + '<div style="background:#e0e4ea;border-radius:6px;height:8px;overflow:hidden;margin-bottom:10px">'
-      + '<div style="background:' + barColor + ';height:100%;width:' + pct + '%;border-radius:6px;transition:width 0.3s"></div></div>';
-    if (total === 0) { cardsHtml += '<div style="color:var(--text-dim);font-size:0.85em;text-align:center;padding:8px">Keine Hausaufgaben für heute</div>'; }
-    else { items.forEach(item => {
-      const icon = item.done ? '&#x2705;' : '&#x2B1C;';
-      const style = item.done ? 'text-decoration:line-through;opacity:0.5' : '';
-      const color = getSubjectColor(item.subject);
-      const timeTag = (item.timeFrom && item.timeTo) ? ' <span style="color:#2563eb;font-size:0.8em">&#x1F552; ' + item.timeFrom + '–' + item.timeTo + '</span>'
-        : item.timeFrom ? ' <span style="color:#2563eb;font-size:0.8em">&#x1F552; ab ' + item.timeFrom + '</span>' : '';
-      cardsHtml += '<div style="padding:6px 0;font-size:0.88em;' + style + '">' + icon
-        + ' <span style="background:' + color + '22;color:' + color + ';padding:1px 8px;border-radius:10px;font-size:0.8em;font-weight:600">' + escHtml(item.subject) + '</span>'
-        + timeTag + ' ' + escHtml(item.text) + '</div>';
-    }); }
-    cardsHtml += '</div>';
+    totalAll += items.length;
+    doneAll += items.filter(i => i.done).length;
   });
   const pctAll = totalAll > 0 ? Math.round(doneAll/totalAll*100) : 0;
   document.getElementById('overviewStats').innerHTML =
     '<div class="stat-card"><div class="stat-num" style="color:var(--green)">' + doneAll + '/' + totalAll + '</div><div class="stat-label">Aufgaben erledigt</div></div>'
     + '<div class="stat-card"><div class="stat-num" style="color:' + (pctAll===100&&totalAll>0?'var(--green)':'var(--text)') + '">' + pctAll + '%</div><div class="stat-label">Fortschritt</div></div>'
     + '<div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Mitglieder</div></div>';
-  document.getElementById('overviewCards').innerHTML = cardsHtml;
   document.getElementById('overviewDate').textContent = formatDateDE(currentDate);
 }
 
