@@ -732,8 +732,8 @@
       </div>
     </div>
 
-    <div class="section-title">&#x1F4A7;&#x2615; Trinktracker</div>
-    <div class="drink-tracker">
+    <div class="section-title" style="display:none">&#x1F4A7;&#x2615; Trinktracker</div>
+    <div class="drink-tracker" style="display:none">
       <div class="drink-items">
         <div class="drink-item">
           <span class="drink-icon-btn" onclick="drinkAdd('hosna','water')" title="Klicken = 1 Glas Wasser getrunken!">&#x1F964;</span>
@@ -756,12 +756,12 @@
       <div id="drink-hosna-liter" style="display:none;text-align:center;font-size:0.85em;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;margin-top:8px"></div>
       <button class="drink-reset-btn" onclick="drinkReset('hosna')">&#x1F504; Heute zur&#252;cksetzen</button>
     </div>
-    <div class="section-title">&#x1F4DD; Hausaufgaben</div>
-    <div class="hw-section" id="hw-hosna"></div>
-    <div class="section-title">&#x1F4CA; Tagesbericht</div>
-    <div class="hw-section" id="report-day-hosna"></div>
-    <div class="section-title">&#x1F4C8; Wochenbericht</div>
-    <div class="hw-section" id="report-week-hosna"></div>
+    <div class="section-title" style="display:none">&#x1F4DD; Hausaufgaben</div>
+    <div class="hw-section" id="hw-hosna" style="display:none"></div>
+    <div class="section-title" style="display:none">&#x1F4CA; Tagesbericht</div>
+    <div class="hw-section" id="report-day-hosna" style="display:none"></div>
+    <div class="section-title" style="display:none">&#x1F4C8; Wochenbericht</div>
+    <div class="hw-section" id="report-week-hosna" style="display:none"></div>
     <div class="section-title">&#x1F3B4; Karteikarten (Flashcards)</div>
     <div class="hw-section" id="flashcards-hosna"></div>
   </div>
@@ -1708,9 +1708,12 @@ function buildFlashcards(child) {
   const data = loadFlashcards(child) || {};
   const subjects = CHILDREN[child].subjects;
   if (!fcSubjectSel[child] || !subjects.includes(fcSubjectSel[child])) fcSubjectSel[child] = subjects[0];
+  if (child === 'hosna') fcSubjectSel[child] = 'Geographie';
   const activeSubj = fcSubjectSel[child];
 
-  let html = '<div class="fc-subject-tabs">';
+  let html = '';
+  if (child !== 'hosna') {
+  html += '<div class="fc-subject-tabs">';
   subjects.forEach(s => {
     const color = getSubjectColor(s);
     const isActive = s === activeSubj;
@@ -1722,6 +1725,7 @@ function buildFlashcards(child) {
     html += '<span class="fc-subj-chip" style="' + style + '" onclick="fcSwitchSubject(\'' + child + '\',\'' + s.replace(/'/g,"\\'") + '\')">' + escHtml(s) + badge + '</span>';
   });
   html += '</div>';
+  }
 
   const dueCount = fcDueCount(child, activeSubj);
   html += '<div class="fc-review-bar">';
