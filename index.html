@@ -1938,20 +1938,20 @@ function seedVokabeltestHosnaGWB() {
   var data = loadFlashcards('hosna') || {};
   if (!data['Geographie']) data['Geographie'] = [];
   var terms = [
-    { q: 'Stadt', a: 'Siedlung mit vielen Einwohnern, Gebaeuden, Geschaeften und Verwaltung - Gegenteil von Land/Dorf. Beispiel: Ljubljana ist eine Stadt (die Hauptstadt Sloweniens).' },
+    { q: 'Stadt', a: 'Siedlung mit vielen Einwohnern, Gebäuden, Geschäften und Verwaltung - Gegenteil von Land/Dorf. Beispiel: Ljubljana ist eine Stadt (die Hauptstadt Sloweniens).' },
     { q: 'Staat', a: 'Ein Land mit eigener Regierung, eigenen Gesetzen und festen Grenzen. Beispiel: Slowenien ist ein Staat in Europa.' },
     { q: 'angrenzen', a: 'Direkt neben etwas liegen, eine gemeinsame Grenze haben. Beispiel: Italien grenzt im Westen an Slowenien.' },
-    { q: 'Gebirge', a: 'Eine Gruppe von mehreren hohen Bergen, die zusammengehoeren. Beispiel: Die Steiner Alpen sind ein Gebirge in Slowenien.' },
-    { q: 'Niederschlag', a: 'Regen, Schnee oder Hagel, der vom Himmel faellt. Wird in Millimeter (mm) gemessen.' },
-    { q: 'Menge', a: 'Wie viel von etwas vorhanden ist. Beispiel: die Niederschlagsmenge = wie viel Regen in einer Region faellt.' },
-    { q: 'jaehrlich', a: 'Einmal im Jahr bzw. bezogen auf ein ganzes Jahr. Beispiel: die jaehrliche Niederschlagsmenge von Celje.' },
-    { q: 'Region', a: 'Ein bestimmtes Gebiet bzw. Teilgebiet eines Landes mit aehnlichen Merkmalen (z. B. Klima, Landschaft).' },
+    { q: 'Gebirge', a: 'Eine Gruppe von mehreren hohen Bergen, die zusammengehören. Beispiel: Die Steiner Alpen sind ein Gebirge in Slowenien.' },
+    { q: 'Niederschlag', a: 'Regen, Schnee oder Hagel, der vom Himmel fällt. Wird in Millimeter (mm) gemessen.' },
+    { q: 'Menge', a: 'Wie viel von etwas vorhanden ist. Beispiel: die Niederschlagsmenge = wie viel Regen in einer Region fällt.' },
+    { q: 'jährlich', a: 'Einmal im Jahr bzw. bezogen auf ein ganzes Jahr. Beispiel: die jährliche Niederschlagsmenge von Celje.' },
+    { q: 'Region', a: 'Ein bestimmtes Gebiet bzw. Teilgebiet eines Landes mit ähnlichen Merkmalen (z. B. Klima, Landschaft).' },
     { q: 'der Geringste', a: 'Der/die/das Kleinste bzw. Wenigste (Steigerung von „gering“ = klein, wenig). Beispiel: die Region mit dem geringsten Niederschlag.' },
     { q: 'Bodennutzung', a: 'Wie der Boden bzw. die Landschaft verwendet wird - z. B. Ackerbau, Wald, Wiesen, Siedlung.' },
-    { q: 'dominieren', a: 'Ueberwiegen, am haeufigsten bzw. staerksten vorkommen. Beispiel: Im Nordosten Sloweniens dominiert der Ackerbau.' },
+    { q: 'dominieren', a: 'Überwiegen, am häufigsten bzw. stärksten vorkommen. Beispiel: Im Nordosten Sloweniens dominiert der Ackerbau.' },
     { q: 'Grenze', a: 'Die Linie, die zwei Staaten oder Gebiete voneinander trennt.' },
-    { q: 'Ackerbau', a: 'Der Anbau von Pflanzen (z. B. Getreide, Gemuese) auf Feldern zur Ernte.' },
-    { q: 'entlang', a: 'Laengs einer Linie bzw. Strecke verlaufend. Beispiel: Der Wald zieht sich entlang der Grenze zu Oesterreich.' }
+    { q: 'Ackerbau', a: 'Der Anbau von Pflanzen (z. B. Getreide, Gemüse) auf Feldern zur Ernte.' },
+    { q: 'entlang', a: 'Längs einer Linie bzw. Strecke verlaufend. Beispiel: Der Wald zieht sich entlang der Grenze zu Österreich.' }
   ];
   var today = fcTodayKey();
   terms.forEach(function(t) {
@@ -1960,6 +1960,33 @@ function seedVokabeltestHosnaGWB() {
       data['Geographie'].push({ q: t.q, a: t.a, photo: null, created: Date.now(), box: 0, due: today });
     }
   });
+  saveFlashcards('hosna', data);
+  localStorage.setItem(FLAG, '1');
+}
+
+
+// ======= One-time migration: fix umlaut encoding in already-seeded Vokabeltest cards =======
+function fixVokabeltestUmlautsV1() {
+  var FLAG = 'vokabeltest_gwb_umlaut_fix_v1';
+  if (localStorage.getItem(FLAG)) return;
+  var data = loadFlashcards('hosna') || {};
+  var cards = data['Geographie'] || [];
+  var map = {
+    'Siedlung mit vielen Einwohnern, Gebaeuden, Geschaeften und Verwaltung - Gegenteil von Land/Dorf. Beispiel: Ljubljana ist eine Stadt (die Hauptstadt Sloweniens).': 'Siedlung mit vielen Einwohnern, Gebäuden, Geschäften und Verwaltung - Gegenteil von Land/Dorf. Beispiel: Ljubljana ist eine Stadt (die Hauptstadt Sloweniens).',
+    'Eine Gruppe von mehreren hohen Bergen, die zusammengehoeren. Beispiel: Die Steiner Alpen sind ein Gebirge in Slowenien.': 'Eine Gruppe von mehreren hohen Bergen, die zusammengehören. Beispiel: Die Steiner Alpen sind ein Gebirge in Slowenien.',
+    'Regen, Schnee oder Hagel, der vom Himmel faellt. Wird in Millimeter (mm) gemessen.': 'Regen, Schnee oder Hagel, der vom Himmel fällt. Wird in Millimeter (mm) gemessen.',
+    'Wie viel von etwas vorhanden ist. Beispiel: die Niederschlagsmenge = wie viel Regen in einer Region faellt.': 'Wie viel von etwas vorhanden ist. Beispiel: die Niederschlagsmenge = wie viel Regen in einer Region fällt.',
+    'Einmal im Jahr bzw. bezogen auf ein ganzes Jahr. Beispiel: die jaehrliche Niederschlagsmenge von Celje.': 'Einmal im Jahr bzw. bezogen auf ein ganzes Jahr. Beispiel: die jährliche Niederschlagsmenge von Celje.',
+    'Ein bestimmtes Gebiet bzw. Teilgebiet eines Landes mit aehnlichen Merkmalen (z. B. Klima, Landschaft).': 'Ein bestimmtes Gebiet bzw. Teilgebiet eines Landes mit ähnlichen Merkmalen (z. B. Klima, Landschaft).',
+    'Ueberwiegen, am haeufigsten bzw. staerksten vorkommen. Beispiel: Im Nordosten Sloweniens dominiert der Ackerbau.': 'Überwiegen, am häufigsten bzw. stärksten vorkommen. Beispiel: Im Nordosten Sloweniens dominiert der Ackerbau.',
+    'Der Anbau von Pflanzen (z. B. Getreide, Gemuese) auf Feldern zur Ernte.': 'Der Anbau von Pflanzen (z. B. Getreide, Gemüse) auf Feldern zur Ernte.',
+    'Laengs einer Linie bzw. Strecke verlaufend. Beispiel: Der Wald zieht sich entlang der Grenze zu Oesterreich.': 'Längs einer Linie bzw. Strecke verlaufend. Beispiel: Der Wald zieht sich entlang der Grenze zu Österreich.'
+  };
+  cards.forEach(function(c) {
+    if (c.q === 'jaehrlich') c.q = 'jährlich';
+    if (map[c.a]) c.a = map[c.a];
+  });
+  data['Geographie'] = cards;
   saveFlashcards('hosna', data);
   localStorage.setItem(FLAG, '1');
 }
@@ -1975,6 +2002,7 @@ function init() {
   buildMansoorKidsOverview();
 }
 seedVokabeltestHosnaGWB();
+fixVokabeltestUmlautsV1();
 init();
 
 
