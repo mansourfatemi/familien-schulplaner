@@ -2028,22 +2028,36 @@ function fixVokabeltestUmlautsV1() {
 
 
 // ======= VOKABELTEST STUDY MODE (Hosna) =======
-let vtState = { idx: 0, revealed: false, tab: 'cards' };
+const VT_DECKS = {
+  vokabeln: { key: 'Geographie', label: 'Vokabeltest', sub: 'Seite 23 \u00b7 \u00dcbung 1.6.A', icon: '\uD83C\uDDE9\uD83C\uDDEA' },
+  kap1: { key: 'Geographie_Kap1', label: 'Kap 1: Lebensumfeld', sub: 'Infrastruktur, Himmelsrichtungen, Karten', icon: '\uD83D\uDDFA\uFE0F' },
+  kap2: { key: 'Geographie_Kap2', label: 'Kap 2: Taschengeld', sub: 'Taschengeld & Haushaltsbudget', icon: '\uD83D\uDCB6' }
+};
+let vtState = { deck: 'vokabeln', idx: 0, revealed: false, tab: 'cards' };
+function vtSetDeck(d) { vtState.deck = d; vtState.idx = 0; vtState.revealed = false; vtState.tab = 'cards'; renderVokabelStudy(); }
 
 function renderVokabelStudy() {
   const container = document.getElementById('flashcards-hosna');
   if (!container) return;
+  const deckInfo = VT_DECKS[vtState.deck];
   const data = loadFlashcards('hosna') || {};
-  const cards = data['Geographie'] || [];
-  if (!cards.length) { container.innerHTML = '<div class="fc-empty">Noch keine Karten.</div>'; return; }
+  const cards = data[deckInfo.key] || [];
+  let deckRow = '<div style="display:flex;gap:8px;flex-wrap:wrap;background:#13203b;padding:0 14px 12px;margin-top:-2px">';
+  Object.keys(VT_DECKS).forEach(dk => {
+    const isAct = dk === vtState.deck;
+    deckRow += '<span onclick="vtSetDeck(\'' + dk + '\')" style="cursor:pointer;padding:5px 12px;border-radius:14px;font-size:0.75em;font-weight:700;' + (isAct ? 'background:#22c55e;color:#fff' : 'background:#1f2f52;color:#9ca8c2') + '">' + VT_DECKS[dk].icon + ' ' + VT_DECKS[dk].label + '</span>';
+  });
+  deckRow += '</div>';
+  if (!cards.length) { container.innerHTML = '<div class="vt-wrap"><div class="vt-header"><div class="vt-header-title">' + deckInfo.icon + ' ' + deckInfo.label + '</div></div>' + deckRow + '<div class="fc-empty" style="padding:20px">Noch keine Karten in diesem Thema.</div></div>'; return; }
   if (vtState.idx >= cards.length) vtState.idx = 0;
   if (vtState.idx < 0) vtState.idx = cards.length - 1;
 
   let html = '<div class="vt-wrap">';
   html += '<div class="vt-header"><div>'
-    + '<div class="vt-header-title">&#x1F1E9;&#x1F1EA; Vokabeltest GWB</div>'
-    + '<div class="vt-header-sub">Karte ' + (vtState.idx+1) + ' von ' + cards.length + '</div>'
+    + '<div class="vt-header-title">' + deckInfo.icon + ' ' + escHtml(deckInfo.label) + '</div>'
+    + '<div class="vt-header-sub">Karte ' + (vtState.idx+1) + ' von ' + cards.length + ' &middot; ' + escHtml(deckInfo.sub) + '</div>'
     + '</div><div style="font-size:1.3em">&#x1F319;</div></div>';
+  html += deckRow;
 
   html += '<div class="vt-tabs">'
     + '<div class="vt-tab' + (vtState.tab==='fav'?' active':'') + '" onclick="vtSetTab(\'fav\')">&#x2B50; Favoriten</div>'
@@ -2090,8 +2104,8 @@ function renderVokabelStudy() {
       + '<div class="vt-diamond" onclick="vtNext()"></div>'
       + '</div>';
 
-    html += '<div class="vt-pills"><div class="vt-pill">&#x1F4A1; Begriff</div><div class="vt-pill">&#x1F4D6; Geographie</div></div>';
-    html += '<div class="vt-breadcrumb">Seite 23 &middot; &Uuml;bung 1.6.A &middot; Vokabeltest Fr. 13.11.</div>';
+    html += '<div class="vt-pills"><div class="vt-pill">&#x1F4A1; Begriff</div><div class="vt-pill">' + deckInfo.icon + ' ' + escHtml(deckInfo.label) + '</div></div>';
+    html += '<div class="vt-breadcrumb">' + escHtml(deckInfo.sub) + '</div>';
   }
 
   html += '</div></div>';
@@ -2113,6 +2127,55 @@ function vtToggleFav(i) {
   renderVokabelStudy();
 }
 
+
+// ======= Seed Kapitel-1 & Kapitel-2 content decks (Hosna GW) =======
+function seedGWChapterDecks() {
+  var FLAG = 'gw_chapter_decks_seeded_v1';
+  if (localStorage.getItem(FLAG)) return;
+  var data = loadFlashcards('hosna') || {};
+  if (!data['Geographie_Kap1']) data['Geographie_Kap1'] = [];
+  if (!data['Geographie_Kap2']) data['Geographie_Kap2'] = [];
+  var kap1 = [
+    { q: 'Was bedeutet „Infrastruktur“?', a: 'Wichtige Einrichtungen und Angebote eines Ortes - z. B. Schulen, Straßen, Straßenbeleuchtung, Geschäfte, Krankenhäuser. Unterscheidet sich stark zwischen Stadt und Land.' },
+    { q: 'Nenne einen Unterschied zwischen Salmas (Land) und Pauls (Stadt) Schulweg.', a: 'Salma fährt ca. 40 km/Tag mit dem Bus durchs Lechtal (Tirol). Paul fährt mit dem Rad oder nutzt Straßenbahn/Bus im dichten öffentlichen Verkehrsnetz von Graz.' },
+    { q: 'Was sind die vier Hauptthimmelsrichtungen?', a: 'Norden, Osten, Süden, Westen.' },
+    { q: 'Was sind Nebenhimmelsrichtungen?', a: 'Nordost, Südost, Südwest, Nordwest - sie liegen zwischen den Hauptthimmelsrichtungen.' },
+    { q: 'Was ist eine Windrose?', a: 'Eine Darstellung aller Himmelsrichtungen (wie ein Kompass), die zeigt, wo Norden, Süden usw. liegen.' },
+    { q: 'Was bedeutet der Maßstab 1:10.000 auf einer Karte?', a: '1 cm auf der Karte entspricht 10.000 cm (= 100 m) in der Wirklichkeit.' },
+    { q: 'Was zeigen Punktsignaturen auf physischen Karten?', a: 'Informationen an einem bestimmten Punkt - z. B. Stadtgröße, Kirche, Flughafen, Pass, Gipfel.' },
+    { q: 'Was zeigen Liniensignaturen?', a: 'Linienhafte Elemente - z. B. Fluss, Kanal, Autobahn, Hauptstraße, Staats- und Landesgrenze.' },
+    { q: 'Wie werden Höhen und Tiefen auf physischen Karten dargestellt?', a: 'Mit Farben (z. B. Grün/Braun für Höhe, Blau für Wassertiefe) und Isohypsen (Linien, die Punkte gleicher Höhe verbinden).' },
+    { q: 'Was ist der Unterschied zwischen absoluter und relativer Höhe?', a: 'Absolute Höhe = Höhe über dem Meeresspiegel. Relative Höhe = Höhenunterschied zwischen zwei Punkten (z. B. Ort und Gipfel).' },
+    { q: 'Was ist eine thematische Karte?', a: 'Eine Karte, die ein bestimmtes Thema zeigt - z. B. politische Karte, Klimakarte, Wirtschaftskarte, Verkehrsnetzkarte.' },
+    { q: 'Zu welcher Kartenart gehört „Die Wiener U-Bahn-Linien“?', a: 'Verkehrsnetzkarte.' },
+    { q: 'Zu welcher Kartenart gehört „Die durchschnittliche Dauer der Schneedecke in Österreich“?', a: 'Klimakarte.' },
+    { q: 'Zu welcher Kartenart gehört „Römische Ausgrabungen in Österreich“?', a: 'Geschichtskarte.' },
+    { q: 'Zu welcher Kartenart gehört „Bodenschätze, die in Österreich abgebaut werden“?', a: 'Wirtschaftskarte.' }
+  ];
+  var kap2 = [
+    { q: 'Was ist Taschengeld?', a: 'Geld, das Kinder/Jugendliche regelmäßig (meist von den Eltern) bekommen und über das sie selbst frei verfügen können.' },
+    { q: 'Was sind fixe/regelmäßige Ausgaben?', a: 'Ausgaben, die immer gleich bleiben und regelmäßig anfallen - z. B. Miete, Versicherung, Strom.' },
+    { q: 'Was sind flexible/unregelmäßige Ausgaben?', a: 'Ausgaben, die unterschiedlich hoch sind und nicht regelmäßig anfallen - z. B. Kleidung, Hobbys, Reparaturen.' },
+    { q: 'Was ist ein Haushaltsbudget?', a: 'Eine Planung der monatlichen Einnahmen und Ausgaben eines Haushalts.' },
+    { q: 'Wie viel gibt ein durchschnittlicher Haushalt in Österreich monatlich aus?', a: 'Rund 3.250 Euro.' },
+    { q: 'Wofür gibt ein durchschnittlicher österreichischer Haushalt am meisten Geld aus?', a: 'Für Wohnen.' },
+    { q: 'Wovon hängt die Höhe des Taschengeldes ab?', a: 'Vom Familieneinkommen, der Anzahl der Kinder und den familieninternen Regeln - nicht jede Familie gibt gleich viel.' }
+  ];
+  var today = fcTodayKey();
+  kap1.forEach(function(t) {
+    if (!data['Geographie_Kap1'].some(function(c){ return c.q === t.q; })) {
+      data['Geographie_Kap1'].push({ q: t.q, a: t.a, photo: null, created: Date.now(), box: 0, due: today });
+    }
+  });
+  kap2.forEach(function(t) {
+    if (!data['Geographie_Kap2'].some(function(c){ return c.q === t.q; })) {
+      data['Geographie_Kap2'].push({ q: t.q, a: t.a, photo: null, created: Date.now(), box: 0, due: today });
+    }
+  });
+  saveFlashcards('hosna', data);
+  localStorage.setItem(FLAG, '1');
+}
+
 function init() {
   updateDateHeaders();
   ['ibrahim','hosna','jasmin','zainab'].forEach(child => { buildHomework(child); });
@@ -2125,6 +2188,7 @@ function init() {
 }
 seedVokabeltestHosnaGWB();
 fixVokabeltestUmlautsV1();
+seedGWChapterDecks();
 init();
 
 
