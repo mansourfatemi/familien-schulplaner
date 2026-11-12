@@ -624,6 +624,38 @@
   .fc-grade-hard { background:#f59e0b; }
   .fc-grade-easy { background:#34d399;color:#000; }
   .fc-review-exit { margin-top:14px;background:none;border:1px solid var(--border);color:var(--text-dim);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.85em; }
+
+  /* ======= VOKABELTEST STUDY MODE (Hosna) ======= */
+  .vt-wrap { border-radius:16px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.15); margin-bottom:20px; }
+  .vt-header { background:#13203b; color:#fff; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; }
+  .vt-header-title { font-weight:800; font-size:1.05em; }
+  .vt-header-sub { font-size:0.78em; color:#9ca8c2; margin-top:2px; }
+  .vt-tabs { display:flex; background:#fdfaf3; border-bottom:1px solid #eee5d0; }
+  .vt-tab { flex:1; text-align:center; padding:10px 0; font-size:0.85em; font-weight:700; color:#9a8f6f; cursor:pointer; border-bottom:3px solid transparent; }
+  .vt-tab.active { color:#16a34a; border-bottom-color:#16a34a; }
+  .vt-body { background:#fdfaf3; padding:24px 18px; }
+  .vt-card-frame { position:relative; background:#fff; border:2px solid #cfe8d1; border-radius:18px; padding:40px 20px 30px; text-align:center; min-height:240px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .vt-corner { position:absolute; width:22px; height:22px; border:3px solid #22c55e; }
+  .vt-corner.tl { top:8px; left:8px; border-right:none; border-bottom:none; border-radius:6px 0 0 0; }
+  .vt-corner.tr { top:8px; right:8px; border-left:none; border-bottom:none; border-radius:0 6px 0 0; }
+  .vt-fav { position:absolute; top:12px; left:12px; font-size:1.3em; cursor:pointer; color:#d1d5db; }
+  .vt-fav.active { color:#f59e0b; }
+  .vt-qicon { font-size:2.2em; color:#ec4899; margin-bottom:16px; }
+  .vt-qtext { font-weight:800; font-size:1.15em; line-height:1.6; color:#1a1a2e; margin-bottom:22px; }
+  .vt-answer-btn { background:#16a34a; color:#fff; border:none; padding:10px 26px; border-radius:30px; font-weight:700; font-size:0.9em; cursor:pointer; }
+  .vt-answer-btn:hover { filter:brightness(1.08); }
+  .vt-answer-text { font-weight:700; font-size:1.05em; color:#166534; background:#f0fdf4; border-radius:12px; padding:14px 18px; line-height:1.6; }
+  .vt-hint { font-size:0.75em; color:#aaa; margin-top:10px; }
+  .vt-navrow { display:flex; align-items:center; justify-content:center; gap:18px; margin:22px 0 14px; }
+  .vt-diamond { width:12px; height:12px; background:#22c55e; transform:rotate(45deg); cursor:pointer; }
+  .vt-diamond:hover { filter:brightness(1.15); }
+  .vt-badge { background:linear-gradient(135deg,#22c55e,#15803d); color:#fff; font-weight:800; font-size:1.1em; min-width:46px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:10px; box-shadow:0 0 0 4px #dcfce7,0 4px 10px rgba(34,197,94,0.4); }
+  .vt-pills { display:flex; justify-content:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  .vt-pill { border:1.5px solid #22c55e; color:#15803d; background:#fff; padding:6px 16px; border-radius:20px; font-size:0.8em; font-weight:700; }
+  .vt-breadcrumb { text-align:center; font-size:0.75em; color:#9a8f6f; padding-bottom:4px; }
+  .vt-qlist-item { background:#fff; border:1px solid #eee5d0; border-radius:10px; padding:12px 14px; margin-bottom:8px; cursor:pointer; }
+  .vt-qlist-q { font-weight:700; }
+  .vt-qlist-a { font-size:0.85em; color:#166534; margin-top:6px; display:none; }
 </style>
 </head>
 <body>
@@ -1705,6 +1737,7 @@ let fcSubjectSel = {};
 function buildFlashcards(child) {
   const container = document.getElementById('flashcards-' + child);
   if (!container) return;
+  if (child === 'hosna') { renderVokabelStudy(); return; }
   if (fcReview[child]) { renderFcReview(child); return; }
   const data = loadFlashcards(child) || {};
   const subjects = CHILDREN[child].subjects;
@@ -1991,6 +2024,93 @@ function fixVokabeltestUmlautsV1() {
   data['Geographie'] = cards;
   saveFlashcards('hosna', data);
   localStorage.setItem(FLAG, '1');
+}
+
+
+// ======= VOKABELTEST STUDY MODE (Hosna) =======
+let vtState = { idx: 0, revealed: false, tab: 'cards' };
+
+function renderVokabelStudy() {
+  const container = document.getElementById('flashcards-hosna');
+  if (!container) return;
+  const data = loadFlashcards('hosna') || {};
+  const cards = data['Geographie'] || [];
+  if (!cards.length) { container.innerHTML = '<div class="fc-empty">Noch keine Karten.</div>'; return; }
+  if (vtState.idx >= cards.length) vtState.idx = 0;
+  if (vtState.idx < 0) vtState.idx = cards.length - 1;
+
+  let html = '<div class="vt-wrap">';
+  html += '<div class="vt-header"><div>'
+    + '<div class="vt-header-title">&#x1F1E9;&#x1F1EA; Vokabeltest GWB</div>'
+    + '<div class="vt-header-sub">Karte ' + (vtState.idx+1) + ' von ' + cards.length + '</div>'
+    + '</div><div style="font-size:1.3em">&#x1F319;</div></div>';
+
+  html += '<div class="vt-tabs">'
+    + '<div class="vt-tab' + (vtState.tab==='fav'?' active':'') + '" onclick="vtSetTab(\'fav\')">&#x2B50; Favoriten</div>'
+    + '<div class="vt-tab' + (vtState.tab==='list'?' active':'') + '" onclick="vtSetTab(\'list\')">&#x2753; Alle Fragen</div>'
+    + '<div class="vt-tab' + (vtState.tab==='cards'?' active':'') + '" onclick="vtSetTab(\'cards\')">&#x1F3B4; Karten</div>'
+    + '</div>';
+
+  html += '<div class="vt-body">';
+
+  if (vtState.tab === 'list') {
+    cards.forEach((c, i) => {
+      html += '<div class="vt-qlist-item" onclick="vtToggleListAnswer(' + i + ')">'
+        + '<div class="vt-qlist-q">' + (i+1) + '. ' + escHtml(c.q) + '</div>'
+        + '<div class="vt-qlist-a" id="vtla-' + i + '">' + escHtml(c.a) + '</div>'
+        + '</div>';
+    });
+  } else if (vtState.tab === 'fav') {
+    const favCards = cards.filter(c => c.fav);
+    if (!favCards.length) {
+      html += '<div class="fc-empty">Noch keine Favoriten. Tippe auf &#x2B50; bei einer Karte!</div>';
+    } else {
+      favCards.forEach((c) => {
+        html += '<div class="vt-qlist-item"><div class="vt-qlist-q">' + escHtml(c.q) + '</div><div class="vt-qlist-a" style="display:block">' + escHtml(c.a) + '</div></div>';
+      });
+    }
+  } else {
+    const card = cards[vtState.idx];
+    html += '<div class="vt-card-frame">'
+      + '<div class="vt-corner tl"></div><div class="vt-corner tr"></div>'
+      + '<div class="vt-fav' + (card.fav?' active':'') + '" onclick="vtToggleFav(' + vtState.idx + ')">&#x2B50;</div>'
+      + '<div class="vt-qicon">&#x2753;</div>'
+      + '<div class="vt-qtext">' + escHtml(card.q) + '</div>';
+    if (vtState.revealed) {
+      html += '<div class="vt-answer-text">' + escHtml(card.a) + '</div>';
+    } else {
+      html += '<button class="vt-answer-btn" onclick="vtReveal()">&#x1F441; Antwort anzeigen</button>'
+        + '<div class="vt-hint">Erst in Gedanken antworten, dann ansehen</div>';
+    }
+    html += '</div>';
+
+    html += '<div class="vt-navrow">'
+      + '<div class="vt-diamond" onclick="vtPrev()"></div>'
+      + '<div class="vt-badge">' + (vtState.idx+1) + '</div>'
+      + '<div class="vt-diamond" onclick="vtNext()"></div>'
+      + '</div>';
+
+    html += '<div class="vt-pills"><div class="vt-pill">&#x1F4A1; Begriff</div><div class="vt-pill">&#x1F4D6; Geographie</div></div>';
+    html += '<div class="vt-breadcrumb">Seite 23 &middot; &Uuml;bung 1.6.A &middot; Vokabeltest Fr. 13.11.</div>';
+  }
+
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
+function vtSetTab(t) { vtState.tab = t; vtState.revealed = false; renderVokabelStudy(); }
+function vtReveal() { vtState.revealed = true; renderVokabelStudy(); }
+function vtNext() { vtState.idx++; vtState.revealed = false; renderVokabelStudy(); }
+function vtPrev() { vtState.idx--; vtState.revealed = false; renderVokabelStudy(); }
+function vtToggleListAnswer(i) {
+  const el = document.getElementById('vtla-' + i);
+  if (el) el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+}
+function vtToggleFav(i) {
+  const data = loadFlashcards('hosna') || {};
+  const cards = data['Geographie'] || [];
+  if (cards[i]) { cards[i].fav = !cards[i].fav; data['Geographie'] = cards; saveFlashcards('hosna', data); }
+  renderVokabelStudy();
 }
 
 function init() {
