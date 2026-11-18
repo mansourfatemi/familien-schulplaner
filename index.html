@@ -729,11 +729,23 @@
   <div class="tab" data-child="history" onclick="switchTab('history')" style="color:#6366f1">
     <span class="avatar" style="background:#6366f1;font-size:0.7em">&#x1F4CB;</span> Verlauf
   </div>
+  <div class="tab" data-child="feedback" onclick="switchTab('feedback')" style="color:#0f766e">
+    <span class="avatar" style="background:#0f766e;font-size:0.7em">&#x1F4AC;</span> Naye Quran <span id="fbNewBadge" style="display:none;background:#dc2626;color:#fff;border-radius:10px;padding:0 6px;font-size:.75em;margin-right:4px"></span>
+  </div>
 </div>
 
 <div class="back-bar" id="backBar"><div class="back-btn" onclick="switchTab('all')">&#x2190; Zurück zur Übersicht</div></div>
 
 <div class="content">
+  <div class="panel" id="panel-feedback">
+    <div class="section-title">&#x1F4AC; Naye Quran — Nutzer-Feedback / نظرات کاربران</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px;align-items:center">
+      <select id="fbFilter" onchange="buildFeedback()" style="padding:6px 10px;border-radius:8px;border:1px solid #ccc"><option value="open">Offen (neu + gesehen + geplant)</option><option value="new">Nur neu</option><option value="done">Erledigt</option><option value="all">Alle</option></select>
+      <button onclick="buildFeedback()" style="padding:6px 12px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer">&#x1F504; Aktualisieren</button>
+      <span id="fbCount" style="color:#666;font-size:.9em"></span>
+    </div>
+    <div id="fbList" style="direction:rtl"></div>
+  </div>
   <div class="panel active" id="panel-all">
     <div class="section-title">&#x1F4CA; Tagesübersicht — <span id="overviewDate"></span></div>
     <div class="section-title">&#x1F46A; Schnellzugriff</div>
@@ -1251,6 +1263,7 @@ function switchTab(child) {
   document.getElementById('backBar').style.display = isSubPage ? 'flex' : 'none';
   if (child === 'all') buildOverview();
   if (child === 'history') buildHistory();
+  if (child === 'feedback') buildFeedback();
   if (child === 'mansoor') { initDrinkTracker('mansoor'); buildMansoorKidsOverview(); setTimeout(function(){ if(typeof etRenderMansoorResults==='function') etRenderMansoorResults(); }, 80); }
   else if (['ibrahim','hosna','jasmin','zainab'].includes(child)) initDrinkTracker(child);
   if (child === 'ibrahim') { setTimeout(function(){ if(typeof buildFlashcards==='function') buildFlashcards('ibrahim'); if(typeof etRenderIbrahim==='function') etRenderIbrahim(); }, 80); }
@@ -3333,5 +3346,40 @@ document.addEventListener("DOMContentLoaded", function() {
 
   <!-- Service Worker Registration -->
   
+
+<script>
+// ===== Naye Quran feedback review (Firebase REST) =====
+const NQ_FB = 'https://fatemi-schulplaner-default-rtdb.europe-west1.firebasedatabase.app/nayequran_feedback';
+const NQ_ST = {new:['Neu','#dc2626'], seen:['Gesehen','#2563eb'], planned:['Geplant','#d97706'], done:['Erledigt','#16a34a'], archived:['Archiviert','#6b7280']};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+async function buildFeedback(){
+  const list=document.getElementById('fbList'); if(!list) return; list.innerHTML='<div style="color:#888;text-align:center;padding:20px">Lade...</div>';
+  let data={}; try{ const r=await fetch(NQ_FB+'.json'); if(!r.ok) throw new Error('HTTP '+r.status); data=(await r.json())||{}; }
+  catch(e){ list.innerHTML='<div style="color:#dc2626;padding:12px">Fehler beim Laden: '+esc(e.message)+'<br><small>Firebase-Regeln für <code>nayequran_feedback</code> prüfen (.read muss true sein).</small></div>'; return; }
+  const f=document.getElementById('fbFilter').value;
+  let items=Object.entries(data).filter(([k])=>k[0]!=='_').map(([id,v])=>Object.assign({id},v)).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const nNew=items.filter(x=>(x.status||'new')==='new').length, badge=document.getElementById('fbNewBadge');
+  if(badge){ badge.textContent=nNew; badge.style.display=nNew?'inline-block':'none'; }
+  items=items.filter(x=>{const s=x.status||'new'; return f==='all'||(f==='new'&&s==='new')||(f==='done'&&s==='done')||(f==='open'&&['new','seen','planned'].includes(s));});
+  document.getElementById('fbCount').textContent=items.length+' Einträge';
+  if(!items.length){ list.innerHTML='<div style="color:#888;text-align:center;padding:20px;direction:ltr">Keine Einträge.</div>'; return; }
+  list.innerHTML=items.map(x=>{
+    const s=x.status||'new', [lab,col]=NQ_ST[s]||NQ_ST.new, d=x.ts?new Date(x.ts).toLocaleString('de-AT'):'';
+    const ctx=[x.qari,x.tilawat,x.fraz?('فراز '+x.fraz):''].filter(Boolean).join(' › ');
+    return '<div style="background:#fff;border:1px solid #e5e7eb;border-right:5px solid '+col+';border-radius:12px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.05)">'
+      +'<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.85em;color:#666;direction:ltr"><span>'+esc(d)+' · '+esc(x.app||'')+'</span><span style="font-weight:700;color:'+col+'">'+lab+'</span></div>'
+      +'<div style="margin:6px 0 4px;font-size:.9em"><b>'+esc(x.type||'')+'</b>'+(x.name?' — '+esc(x.name):' — <i>ناشناس</i>')+(ctx?'<br><span style="color:#0f766e">'+esc(ctx)+'</span>':'')+'</div>'
+      +'<div style="white-space:pre-wrap;line-height:1.7;font-size:1.02em">'+esc(x.text)+'</div>'
+      +'<div style="margin-top:8px;direction:ltr"><select onchange="nqSetStatus(\''+x.id+'\',this.value)" style="padding:4px 8px;border-radius:6px;border:1px solid #ccc">'
+      +Object.entries(NQ_ST).map(([k,[l]])=>'<option value="'+k+'"'+(k===s?' selected':'')+'>'+l+'</option>').join('')+'</select></div></div>';
+  }).join('');
+}
+async function nqSetStatus(id,status){
+  try{ const r=await fetch(NQ_FB+'/'+id+'.json',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status, statusTs:Date.now()})}); if(!r.ok) throw new Error('HTTP '+r.status); buildFeedback(); }
+  catch(e){ alert('Status konnte nicht gespeichert werden: '+e.message); }
+}
+// badge on load
+setTimeout(async()=>{ try{ const r=await fetch(NQ_FB+'.json?shallow=false'); const d=(await r.json())||{}; const n=Object.values(d).filter(v=>v&&(v.status||'new')==='new').length; const b=document.getElementById('fbNewBadge'); if(b){b.textContent=n;b.style.display=n?'inline-block':'none';} }catch(e){} },1500);
+</script>
 </body>
 </html>
