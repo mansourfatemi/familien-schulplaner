@@ -1,4 +1,4 @@
-const CACHE = 'schulplaner-v15-20261112-installprompt-fb202611181405';
+const CACHE = 'schulplaner-v15-20261112-installprompt-fb202611190913';
 const ASSETS = ['./index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
